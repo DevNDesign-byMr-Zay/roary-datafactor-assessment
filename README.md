@@ -21,6 +21,7 @@ The maintained reference service is intentionally layered instead of monolithic:
 - `src/logger.mjs` — structured Pino logging.
 - `src/server.mjs` — process startup and port binding.
 - `index.test.mjs` — credential-free Supertest/Jest endpoint tests using injected doubles.
+- `tests/` — focused unit and edge-contract specs for application failures, cloud construction, persistence, logging, provider-response parsing, server bootstrap, and request validation.
 
 The application factory accepts cloud/database dependencies, so importing or testing the service does **not** require Google Application Default Credentials and does not bind a network port.
 
@@ -32,9 +33,10 @@ Requirements: Node.js 20+ and npm.
 git clone https://github.com/DevNDesign-byMr-Zay/roary-datafactor-assessment.git
 cd roary-datafactor-assessment
 npm ci
-npm test
-npm run lint
+npm run check
 ```
+
+`npm run check` lints the maintained service and all test specs, then runs Jest with enforced coverage thresholds. The current coverage floor is 85% for statements/functions/lines and 75% for branches across every module under `src/`.
 
 For production execution, copy `.env.example` values into your deployment environment and configure Google Application Default Credentials. No credential files belong in this repository.
 
@@ -61,20 +63,26 @@ JSON body:
 }
 ```
 
-`text` is required and bounded; `sessionId` is bounded and defaults to `default`. Invalid payloads return a structured 400 response. Provider failures return a sanitized 500 without exposing raw exception strings.
+`text` is required and bounded; `sessionId` is bounded and defaults to `default`. Invalid payloads return a structured 400 response. Provider or persistence failures return a sanitized 500 without exposing raw exception strings.
+
+## Test strategy
+
+The maintained service is tested at both HTTP and module boundaries. Tests cover health/chat success, invalid and oversized input, strict unknown-field rejection, provider and persistence failures, chronological history reconstruction, write-failure propagation, model-response fallbacks, cloud initialization, logger configuration, server startup, 404 handling, and dependency-injection requirements.
+
+The historical corpus under `Software Engineering & AI Tooling/` is preserved as assessment/provenance material and is not falsely counted as covered by the reference-service coverage metric. Representative corpus artifacts are promoted into executable test surfaces in focused commits rather than bulk-modifying historical source.
 
 ## Quality gates
 
-Every push is expected to pass:
+Every push and pull request runs a Drive-independent quality workflow containing:
 
 ```bash
-npm ci
+npm ci --ignore-scripts
 npm audit --audit-level=high
 npm run lint
-npm test
+npm run test:coverage
 ```
 
-The repository also contains weekly Dependabot configuration for npm and GitHub Actions dependencies, reproducible lockfile automation, and Drive-corpus import/verification workflows.
+The same checks run weekly so dependency/security state is re-evaluated against current advisories. Dependabot is configured for npm and GitHub Actions dependencies. Drive-corpus import and verification workflows remain separate maintenance concerns.
 
 ## Privacy and IP scope
 
