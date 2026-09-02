@@ -38,4 +38,5 @@ jobs:
             exit 0
           fi
           git commit -m "build: refresh npm lockfile [skip ci]"
+          git pull --rebase origin main
           git push origin HEAD:main
