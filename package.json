@@ -1,0 +1,22 @@
+{
+  "name": "conversational-ai-service-assessment",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "@google-cloud/vertexai": "^1.7.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^13.5.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "jest": "^30.1.3",
+    "supertest": "^7.1.4"
+  }
+}
