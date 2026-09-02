@@ -1,0 +1,45 @@
+# Importer revision: direct-https-32
+name: Import Drive code corpus
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/import-drive.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: drive-code-import
+  cancel-in-progress: true
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Install Drive importer dependency
+        run: python3 -m pip install --disable-pip-version-check --no-cache-dir "gdown==6.1.0"
+
+      - name: Import Software Engineering & AI Tooling
+        run: python3 .github/scripts/import_drive.py
+
+      - name: Commit mirrored code corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "Software Engineering & AI Tooling" IMPORT_REPORT.md IMPORT_FAILURES.json
+          if git diff --cached --quiet; then
+            echo "Drive corpus already matches the repository."
+            exit 0
+          fi
+          git commit -m "Import Software Engineering & AI Tooling code corpus [skip ci]"
+          git push origin HEAD:main
