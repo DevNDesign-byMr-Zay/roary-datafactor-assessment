@@ -1,26 +1,28 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
-const initializeApp = jest.fn();
-const firestore = jest.fn(() => ({ kind: 'firestore' }));
-const admin = { apps: [], initializeApp, firestore };
+const firestoreInstances = [];
+const Firestore = jest.fn(function FirestoreMock(options) {
+  this.options = options;
+  this.kind = 'firestore';
+  firestoreInstances.push(this);
+});
 const generateContent = jest.fn(async (request) => ({ request }));
 const GoogleGenAI = jest.fn(function GoogleGenAIMock(options) {
   this.options = options;
   this.models = { generateContent };
 });
 
-jest.unstable_mockModule('firebase-admin', () => ({ default: admin }));
+jest.unstable_mockModule('@google-cloud/firestore', () => ({ Firestore }));
 jest.unstable_mockModule('@google/genai', () => ({ GoogleGenAI }));
 
 const { createCloudDependencies, createVertexCompatibleClient } = await import('../src/cloud.mjs');
 
 describe('cloud dependency factory', () => {
   beforeEach(() => {
-    initializeApp.mockClear();
-    firestore.mockClear();
+    Firestore.mockClear();
     GoogleGenAI.mockClear();
     generateContent.mockClear();
-    admin.apps.length = 0;
+    firestoreInstances.length = 0;
   });
 
   test('uses safe assessment defaults when cloud env values are absent', () => {
@@ -28,14 +30,14 @@ describe('cloud dependency factory', () => {
 
     expect(result.project).toBe('assessment-project');
     expect(result.location).toBe('us-central1');
-    expect(initializeApp).toHaveBeenCalledTimes(1);
     expect(GoogleGenAI).toHaveBeenCalledWith({
       vertexai: true,
       project: 'assessment-project',
       location: 'us-central1',
       apiVersion: 'v1',
     });
-    expect(firestore).toHaveBeenCalledTimes(1);
+    expect(Firestore).toHaveBeenCalledWith({ projectId: 'assessment-project' });
+    expect(result.db).toBe(firestoreInstances[0]);
   });
 
   test('uses explicit project and location environment values', () => {
@@ -52,15 +54,17 @@ describe('cloud dependency factory', () => {
       location: 'europe-west1',
       apiVersion: 'v1',
     });
+    expect(Firestore).toHaveBeenCalledWith({ projectId: 'project-a' });
   });
 
-  test('does not reinitialize Firebase when an app already exists', () => {
-    admin.apps.push({ name: 'existing' });
+  test('creates independent Firestore clients for independently constructed dependency sets', () => {
+    const first = createCloudDependencies({ GOOGLE_CLOUD_PROJECT: 'project-a' });
+    const second = createCloudDependencies({ GOOGLE_CLOUD_PROJECT: 'project-b' });
 
-    createCloudDependencies({});
-
-    expect(initializeApp).not.toHaveBeenCalled();
-    expect(firestore).toHaveBeenCalledTimes(1);
+    expect(Firestore).toHaveBeenCalledTimes(2);
+    expect(first.db).not.toBe(second.db);
+    expect(first.db.options).toEqual({ projectId: 'project-a' });
+    expect(second.db.options).toEqual({ projectId: 'project-b' });
   });
 
   test('adapts the Gen AI client to the maintained model contract', async () => {
