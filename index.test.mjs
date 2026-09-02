@@ -11,13 +11,13 @@ function makeLogger() {
   };
 }
 
-function makeDb(seed = []) {
+function makeDb(seedDescending = []) {
   const writes = [];
   const collection = {
     orderBy: jest.fn(() => ({
       limit: jest.fn(() => ({
         get: jest.fn(async () => ({
-          docs: seed.map((row) => ({ data: () => row })),
+          docs: seedDescending.map((row) => ({ data: () => row })),
         })),
       })),
     })),
@@ -61,8 +61,8 @@ describe('assessment service', () => {
 
   test('POST /chat returns a mocked model reply and persists both turns', async () => {
     const { db, writes } = makeDb([
-      { role: 'user', text: 'Earlier question' },
       { role: 'assistant', text: 'Earlier answer' },
+      { role: 'user', text: 'Earlier question' },
     ]);
     const { vertexClient, model } = makeVertex(async () => ({
       response: { text: () => 'Mocked answer' },
