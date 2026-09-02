@@ -21,9 +21,19 @@ The maintained reference service is intentionally layered instead of monolithic:
 - `src/logger.mjs` — structured Pino logging.
 - `src/server.mjs` — process startup and port binding.
 - `index.test.mjs` — credential-free Supertest/Jest endpoint tests using injected doubles.
-- `tests/` — focused unit and edge-contract specs for application failures, cloud construction, persistence, logging, provider-response parsing, server bootstrap, and request validation.
+- `tests/` — focused unit, edge-contract, and promoted-corpus specs.
 
 The application factory accepts cloud/database dependencies, so importing or testing the service does **not** require Google Application Default Credentials and does not bind a network port. Production cloud construction uses `@google/genai` for Vertex AI access and `@google-cloud/firestore` directly rather than the broader Firebase Admin dependency tree.
+
+## Maintained and measured surface
+
+The quality surface is deliberately broader than the reference service. In addition to every module under `src/`, three authentic final/canonical corpus artifacts are promoted into the same lint, test, and coverage gates:
+
+- **Authentication & Security** — `Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs`
+- **API Foundations** — `Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs`
+- **Storage & File Services** — `Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs`
+
+These corpus tests cover authorization success/failure, fail-closed configuration, preflight behavior, CORS allow/deny/error propagation, signed-read URL generation, validation, missing configuration, and signing failures. The historical/versioned corpus remains provenance material and is not bulk-rewritten or falsely labeled as maintained production code.
 
 ## Fresh-clone setup
 
@@ -36,7 +46,7 @@ npm ci
 npm run check
 ```
 
-`npm run check` lints the maintained service and all test specs, then runs Jest with enforced coverage thresholds. The current coverage floor is 85% for statements/functions/lines and 75% for branches across every module under `src/`.
+`npm run check` lints the maintained service, promoted corpus artifacts, and all test specs, then runs Jest with enforced coverage thresholds. The global coverage floor is 85% for statements/functions/lines and 75% for branches across the measured surface.
 
 For production execution, copy `.env.example` values into your deployment environment and configure Google Application Default Credentials. No credential files belong in this repository.
 
@@ -69,7 +79,7 @@ JSON body:
 
 The maintained service is tested at both HTTP and module boundaries. Tests cover health/chat success, invalid and oversized input, strict unknown-field rejection, provider and persistence failures, chronological history reconstruction, write-failure propagation, model-response fallbacks, cloud initialization, Google Gen AI adapter behavior, direct Firestore construction, logger configuration, server startup, 404 handling, and dependency-injection requirements.
 
-The historical corpus under `Software Engineering & AI Tooling/` is preserved as assessment/provenance material and is not falsely counted as covered by the reference-service coverage metric. Representative corpus artifacts are promoted into executable test surfaces in focused commits rather than bulk-modifying historical source.
+Test density is increased by promoting distinct behaviorally meaningful final/canonical artifacts into the same enforcement surface, not by generating shallow tests for every historical snapshot. New promotions should arrive as focused feature/test commits and cover normal behavior, boundaries, configuration, and failures.
 
 ## Quality gates
 
