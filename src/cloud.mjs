@@ -1,5 +1,5 @@
+import { Firestore } from '@google-cloud/firestore';
 import { GoogleGenAI } from '@google/genai';
-import admin from 'firebase-admin';
 
 function toSystemInstructionText(systemInstruction) {
   return systemInstruction?.parts
@@ -39,14 +39,10 @@ export function createCloudDependencies(env = process.env) {
   const project = env.GOOGLE_CLOUD_PROJECT || 'assessment-project';
   const location = env.VERTEX_LOCATION || 'us-central1';
 
-  if (!admin.apps.length) {
-    admin.initializeApp();
-  }
-
   return {
     project,
     location,
     vertexClient: createVertexCompatibleClient({ project, location }),
-    db: admin.firestore(),
+    db: new Firestore({ projectId: project }),
   };
 }
