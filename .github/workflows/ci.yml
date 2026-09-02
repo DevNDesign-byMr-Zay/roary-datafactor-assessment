@@ -2,18 +2,29 @@ name: assessment/ci
 
 on:
   push:
-    branches: [ "**" ]
+    branches: ["**"]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  build:
+  quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm install --ignore-scripts
-      - run: npm test --if-present
-      - run: node -e "require('./package.json'); console.log('Build manifest OK')"
+          node-version: "20"
+          cache: npm
+      - name: Reproducible install
+        run: npm ci --ignore-scripts
+      - name: Dependency security audit
+        run: npm audit --audit-level=high
+      - name: Lint maintained service code
+        run: npm run lint
+      - name: Run automated tests
+        run: npm test
