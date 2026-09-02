@@ -1,0 +1,2 @@
+/* Aster CSS v112 — authenticated buyer-safe derivative: When image modal is open, keep it tucked away unless explicitly shown. */
+body.rt-image-modal-open #scrollToBottomBtn{ opacity: .0 !important; pointer-events:none !important; }

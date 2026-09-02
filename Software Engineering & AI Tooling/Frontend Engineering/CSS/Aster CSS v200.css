@@ -1,0 +1,4 @@
+/* Aster CSS v200 — authenticated buyer-safe derivative: image-tool side-panel styling variant 4. */
+.rtp-mood-preview::after{
+content:"";position:absolute;inset:0;opacity:calc(.12 + (var(--relight-i) * .22));background:radial-gradient(120% 140% at 20% 0,rgba(168,85,247,.35),rgba(0,0,0,0) 55%),linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.35))
+}

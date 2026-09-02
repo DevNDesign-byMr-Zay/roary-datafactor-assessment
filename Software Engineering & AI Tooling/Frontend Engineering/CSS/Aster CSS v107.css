@@ -1,0 +1,2 @@
+/* Aster CSS v107 — authenticated buyer-safe derivative: v80: Center the + icon, message area, and send icon vertically in the main composer. */
+.composer-wrap{ display:flex !important; align-items:center !important; }

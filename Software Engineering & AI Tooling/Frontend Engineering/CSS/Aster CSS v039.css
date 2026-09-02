@@ -1,0 +1,8 @@
+/* Aster CSS v039
+Authenticated historical derivative: thin side-panel scrolling with a sticky execution footer.
+*/
+[data-aster-tool-panel]{overflow:hidden;display:flex;flex-direction:column;}
+[data-aster-tool-panel-body]{min-height:0;overflow-y:auto;scrollbar-width:thin;overscroll-behavior:contain;}
+[data-aster-tool-panel-body]::-webkit-scrollbar{width:6px;}
+[data-aster-tool-panel-body]::-webkit-scrollbar-thumb{background:rgba(127,127,127,.45);border-radius:999px;}
+[data-aster-tool-exec-footer]{position:sticky;bottom:0;z-index:5;background:inherit;}

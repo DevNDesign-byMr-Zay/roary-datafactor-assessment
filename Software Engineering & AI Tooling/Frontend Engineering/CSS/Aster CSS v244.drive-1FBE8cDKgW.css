@@ -1,0 +1,8 @@
+.sidebar{
+      width:330px; min-width:270px; max-width:420px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-right:1px solid var(--stroke);
+      padding:14px 12px 12px;
+      display:flex; flex-direction:column; gap:10px;
+      backdrop-filter: blur(10px);
+    }

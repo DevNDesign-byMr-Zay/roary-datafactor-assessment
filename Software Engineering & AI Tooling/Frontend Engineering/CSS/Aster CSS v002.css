@@ -1,0 +1,90 @@
+/* Aster expansion preview — behind-image animated glow and restored frame */
+#asterExpandOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000000;
+}
+
+/* Keep the overlay passive while preserving direct interaction with the expansion frame. */
+#asterExpandOverlay * { pointer-events: none; }
+#asterExpandFrame,
+#asterExpandFrame * { pointer-events: auto; }
+
+#asterExpandFillAnim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: .88;
+  background:
+    radial-gradient(90% 140% at 18% 30%, rgba(124,58,237,.62) 0%, rgba(124,58,237,0) 62%),
+    radial-gradient(110% 160% at 82% 72%, rgba(168,85,247,.55) 0%, rgba(168,85,247,0) 66%),
+    radial-gradient(140% 120% at 55% 52%, rgba(88,28,135,.42) 0%, rgba(88,28,135,0) 70%),
+    conic-gradient(from 0deg,
+      rgba(88,28,135,0) 0%,
+      rgba(124,58,237,.38) 18%,
+      rgba(168,85,247,.44) 36%,
+      rgba(236,72,153,.22) 52%,
+      rgba(168,85,247,.40) 68%,
+      rgba(124,58,237,.32) 84%,
+      rgba(88,28,135,0) 100%);
+  background-size: 180% 180%, 190% 190%, 220% 220%, 170% 170%;
+  background-position: 10% 20%, 80% 75%, 50% 50%, 50% 50%;
+  filter: blur(16px) saturate(1.12);
+  transform: translateZ(0);
+  will-change: background-position, transform, opacity, clip-path;
+  animation:
+    asterExpandGlowMove 5.4s ease-in-out infinite alternate,
+    asterExpandGlowPulse 7.2s ease-in-out infinite alternate,
+    asterExpandGlowRotate 10.5s linear infinite;
+}
+
+@keyframes asterExpandGlowMove {
+  0%   { background-position: 12% 18%, 78% 72%, 50% 50%, 45% 55%; }
+  50%  { background-position: 70% 30%, 30% 82%, 58% 40%, 60% 40%; }
+  100% { background-position: 22% 82%, 70% 24%, 45% 60%, 52% 50%; }
+}
+
+@keyframes asterExpandGlowPulse {
+  0%   { opacity: .82; filter: blur(15px) saturate(1.10); }
+  100% { opacity: .92; filter: blur(18px) saturate(1.16); }
+}
+
+@keyframes asterExpandGlowRotate {
+  from { transform: translateZ(0) rotate(0deg); }
+  to   { transform: translateZ(0) rotate(360deg); }
+}
+
+#asterExpandFrame {
+  position: absolute;
+  border: 1px dotted rgba(230,241,255,.78) !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  z-index: 999999 !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.asterExpandHandle {
+  z-index: 3;
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: rgba(168,85,247,.95);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.45);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+/* Keep the superseded overlay disabled after the behind-image preview revision. */
+.aster-expand-overlay,
+.aster-expand-overlay.on {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}

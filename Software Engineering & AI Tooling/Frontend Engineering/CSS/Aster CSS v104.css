@@ -1,0 +1,7 @@
+/* Aster CSS v104 — authenticated buyer-safe derivative: Hover color -> purple. */
+.tool-chip .aster-attach-x:hover,
+  .aster-attach-chip .aster-attach-x:hover {
+    color: #b56cff !important;
+    border-color: rgba(181,108,255,.65) !important;
+    background: rgba(181,108,255,.14) !important;
+  }

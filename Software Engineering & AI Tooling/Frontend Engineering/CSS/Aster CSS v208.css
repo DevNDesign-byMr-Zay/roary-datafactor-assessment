@@ -1,0 +1,4 @@
+/* Aster CSS v208 — authenticated buyer-safe derivative: object-removal mask-editor styling variant 2. */
+body.rt-erase-mode #rtEraseCursor,body.rt-erase-mode:not(.rt-erase-hover) #rtEraseCursor,body[data-rt-orbtool=erase] #rtEraseCursor,body[data-rt-orbtool=remove] #rtEraseCursor{
+display:block
+}

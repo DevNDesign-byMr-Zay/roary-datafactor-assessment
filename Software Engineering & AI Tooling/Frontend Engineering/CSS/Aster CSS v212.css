@@ -1,0 +1,4 @@
+/* Aster CSS v212 — authenticated buyer-safe derivative: relight panel layout styling variant 18. */
+#rtOrb[data-tool=relight]{
+--rtAccentA:rgba(56,189,248,1);--rtAccentB:rgba(129,140,248,1);--rtAccentRing:rgba(56,189,248,0.30);--rtAccentGlow:rgba(56,189,248,0.58)
+}

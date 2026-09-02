@@ -1,0 +1,4 @@
+/* Aster CSS v196 — authenticated buyer-safe derivative: image-tool side-panel styling. */
+.rtp-mood-preview span{
+position:absolute;left:50%;bottom:7px;transform:translateX(-50%);width:calc(100% - 14px);text-align:center;font-size:11px;font-weight:800;letter-spacing:.02em;color:rgba(255,255,255,.92);text-shadow:0 6px 18px rgba(0,0,0,.65);padding:4px 8px;border-radius:999px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}

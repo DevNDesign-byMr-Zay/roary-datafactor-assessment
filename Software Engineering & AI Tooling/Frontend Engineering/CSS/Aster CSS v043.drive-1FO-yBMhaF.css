@@ -1,0 +1,5 @@
+/* Aster CSS v043 — buyer-safe image-tool containment and mask-layer layout. */
+[data-aster-image-shell]{position:relative;overflow:hidden}
+[data-aster-image-shell] img{max-width:100%;max-height:100%;object-fit:contain}
+[data-aster-mask-layer]{position:absolute;inset:0;touch-action:none;user-select:none}
+[data-aster-mask-layer][hidden]{display:none!important}

@@ -1,0 +1,6 @@
+/* Aster CSS v088 — authenticated buyer-safe derivative: Keep composer clickable even when overlays/scrims are visible. */
+.composer, .composer-wrap, .composer-shell, #composerInput, #sendBtn, #attachBtn{
+    position: relative !important;
+    z-index: 2147482500 !important;
+    pointer-events: auto !important;
+  }

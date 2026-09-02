@@ -1,0 +1,2 @@
+/* Aster CSS v068 — authenticated buyer-safe derivative: Ensure hover can trigger even if nearby elements overlap slightly. */
+#activeToolsChips .tool-chip, .aster-attach-chip{ overflow:visible !important; }

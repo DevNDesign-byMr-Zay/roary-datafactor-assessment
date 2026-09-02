@@ -1,0 +1,2 @@
+/* Aster CSS v120 — authenticated buyer-safe derivative: reference-media card hover feedback. */
+.ref-media-strip a:hover{transform:scale(1.03);filter:brightness(1.03);box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 18px rgba(177,132,255,.16)}

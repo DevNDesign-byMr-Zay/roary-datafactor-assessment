@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ASTER • Studio (Stable Memory UI)</title>
+  <meta name="description" content="ASTER Studio stable UI with persistent memory, media library, diagnostics, and mask-based object removal." />
+  <style>
+    :root{
+      --bg:#070712;
+      --panel:#0e0e1b;
+      --panel2:#111124;
+      --text:#e9e9ff;
+      --muted:#a7a7c9;
+      --stroke:rgba(255,255,255,.10);
+      --purple:#a855f7;
+      --purple2:#7c3aed;
+      --danger:#ff4d6d;
+      --ok:#43ffb4;
+      --warn:#ffd56b;
+      --shadow: 0 12px 40px rgba(0,0,0,.5);
+      --radius:18px;
+      --radius2:26px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background:
+        radial-gradient(1000px 600px at 15% 10%, rgba(124,58,237,.16), transparent 60%),
+        radial-gradient(800px 500px at 80% 30%, rgba(168,85,247,.14), transparent 55%),
+        radial-gradient(1000px 600px at 70% 110%, rgba(99,102,241,.10), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      overflow:hidden;
+    }
+
+    .app{display:flex;height:100%;width:100%}
+    .sidebar{
+      width:340px; min-width:280px; max-width:460px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-right:1px solid var(--stroke);
+      padding:14px 12px 12px;
+      display:flex; flex-direction:column; gap:10px;
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background:linear-gradient(135deg, rgba(168,85,247,.12), rgba(124,58,237,.06));
+      box-shadow: var(--shadow);
+    }
+    .brand .title{font-weight:900; letter-spacing:.10em; font-size:12px; text-transform:uppercase}
+    .brand .tag{font-size:12px; color:var(--muted)}
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:9px 12px;
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(168,85,247,.35); background:rgba(168,85,247,.08)}
+    .btn:active{transform: translateY(0px) scale(.99)}
+    .btn.primary{
+      border-color: rgba(168,85,247,.45);
+      background:linear-gradient(135deg, rgba(168,85,247,.22), rgba(124,58,237,.12));
+      font-weight:850;
+    }
+    .btn.danger{border-color: rgba(255,77,109,.35); background:rgba(255,77,109,.10)}
+    .btn.ghost{background:transparent}
+    .btn.small{padding:7px 10px;border-radius:12px;font-size:12px}
+    .btn.icon{
+      width:40px;height:40px;border-radius:16px; padding:0; justify-content:center;
+    }
+
+    .tabs{display:flex; gap:8px; padding:2px}
+    .tab{
+      flex:1;
+      text-align:center;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid var(--stroke);
+      cursor:pointer;
+      background:rgba(255,255,255,.02);
+      color:var(--muted);
+      font-weight:700;
+      font-size:12px;
+      letter-spacing:.03em;
+    }
+    .tab.active{
+      color:var(--text);
+      border-color: rgba(168,85,247,.4);
+      background:linear-gradient(135deg, rgba(168,85,247,.18), rgba(124,58,237,.06));
+    }
+
+    .list{
+      flex:1;
+      overflow:auto;
+      padding:8px 4px;
+      border-radius:var(--radius);
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.12);
+    }
+    .list::-webkit-scrollbar{width:10px}
+    .list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:20px}
+
+    .row{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 10px;
+      border-radius:14px;
+      margin:6px 6px;
+      border:1px solid transparent;
+      cursor:pointer;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .row:hover{background:rgba(255,255,255,.04); border-color:rgba(168,85,247,.22)}
+    .row.active{background:rgba(168,85,247,.10); border-color:rgba(168,85,247,.35)}
+    .row .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:linear-gradient(180deg, rgba(168,85,247,.9), rgba(124,58,237,.6));
+      box-shadow: 0 0 18px rgba(168,85,247,.35);
+    }
+    .row .meta{flex:1; min-width:0}
+    .row .name{font-weight:750; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .row .sub{font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+    .sidebarFooter{
+      display:flex; gap:8px;
+      padding:10px 4px 2px;
+      flex-wrap:wrap;
+    }
+
+    .main{flex:1; display:flex; flex-direction:column; min-width:0}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:12px 14px;
+      border-bottom:1px solid var(--stroke);
+      background:rgba(0,0,0,.14);
+      backdrop-filter: blur(10px);
+    }
+    .topbar .left{display:flex; align-items:center; gap:10px; min-width:0; flex-wrap:wrap}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .pill strong{color:var(--text); font-weight:800}
+    .pill .statusDot{
+      width:8px;height:8px;border-radius:999px;
+      background:rgba(255,255,255,.25);
+      box-shadow:none;
+    }
+    .pill.ok .statusDot{background:rgba(67,255,180,.9); box-shadow:0 0 14px rgba(67,255,180,.28)}
+    .pill.bad .statusDot{background:rgba(255,77,109,.95); box-shadow:0 0 14px rgba(255,77,109,.28)}
+    .pill.warn .statusDot{background:rgba(255,213,107,.95); box-shadow:0 0 14px rgba(255,213,107,.28)}
+    .select{
+      appearance:none;
+      border-radius:999px;
+      padding:8px 12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      outline:none;
+      font-weight:700;
+      font-size:12px;
+      cursor:pointer;
+    }
+
+    .chat{flex:1; overflow:auto; padding:18px 14px 10px; scroll-behavior:smooth}
+    .chat::-webkit-scrollbar{width:10px}
+    .chat::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:20px}
+
+    .msg{max-width: 940px; margin: 0 auto 12px; display:flex; gap:12px; align-items:flex-start}
+    .avatar{
+      width:38px;height:38px;border-radius:12px;
+      border:1px solid rgba(168,85,247,.25);
+      background:linear-gradient(135deg, rgba(168,85,247,.28), rgba(124,58,237,.10));
+      box-shadow: 0 0 24px rgba(168,85,247,.12);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:950;
+      letter-spacing:.03em;
+      user-select:none;
+      flex:0 0 auto;
+    }
+    .bubble{
+      flex:1;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      border-radius: var(--radius2);
+      padding: 12px 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .bubble .role{display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:8px; letter-spacing:.06em; text-transform:uppercase}
+    .bubble .content{white-space:pre-wrap; line-height:1.45; font-size:14px}
+    .bubble .media{margin-top:10px; display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:10px}
+    .thumb{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+      position:relative;
+      background:rgba(0,0,0,.18);
+      cursor:pointer;
+    }
+    .thumb img{width:100%; height:160px; object-fit:cover; display:block}
+    .thumb .tbar{
+      position:absolute; inset:auto 10px 10px 10px;
+      display:flex; gap:8px; justify-content:space-between; align-items:center;
+      opacity:0; transform: translateY(6px);
+      transition: .18s ease;
+    }
+    .thumb:hover .tbar{opacity:1; transform: translateY(0px)}
+    .chip{
+      font-size:11px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(168,85,247,.30);
+      background:linear-gradient(135deg, rgba(168,85,247,.18), rgba(124,58,237,.08));
+      color:var(--text);
+      box-shadow: 0 0 20px rgba(168,85,247,.08);
+      user-select:none;
+    }
+
+    .composerWrap{
+      padding:12px 14px 16px;
+      border-top:1px solid var(--stroke);
+      background:rgba(0,0,0,.14);
+      backdrop-filter: blur(12px);
+    }
+    .composer{
+      max-width: 1000px;
+      margin:0 auto;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      border-radius: 22px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      padding:10px;
+      box-shadow: var(--shadow);
+    }
+    .textbox{
+      flex:1;
+      min-height:40px;
+      max-height:160px;
+      border:none;
+      outline:none;
+      resize:none;
+      background:transparent;
+      color:var(--text);
+      font-size:14px;
+      line-height:1.4;
+      padding:8px 6px;
+    }
+    .sendBtn{
+      height:40px;
+      padding:0 14px;
+      border-radius:16px;
+      border:1px solid rgba(168,85,247,.45);
+      background:linear-gradient(135deg, rgba(168,85,247,.22), rgba(124,58,237,.12));
+      color:var(--text);
+      font-weight:900;
+      cursor:pointer;
+      transition:.15s ease;
+      flex:0 0 auto;
+    }
+    .sendBtn:hover{transform: translateY(-1px)}
+    .sendBtn:active{transform: translateY(0px) scale(.99)}
+    .hint{
+      font-size:12px; color:var(--muted);
+      padding:8px 12px;
+      border:1px dashed rgba(168,85,247,.28);
+      border-radius:18px;
+      background:rgba(168,85,247,.06);
+      max-width:1000px;margin:10px auto 0;
+    }
+
+    /* Modal editor */
+    .modal{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:22px;
+      z-index: 999999;
+    }
+    .modal.show{display:flex}
+    .modalCard{
+      width:min(1120px, 96vw);
+      height:min(780px, 92vh);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(18,18,40,.78), rgba(10,10,22,.70));
+      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+      overflow:hidden;
+      display:flex;
+    }
+    .modalLeft{flex:1; position:relative; background:rgba(0,0,0,.20)}
+    .modalRight{
+      width:360px;
+      border-left:1px solid rgba(255,255,255,.10);
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      background:rgba(0,0,0,.18);
+      backdrop-filter: blur(10px);
+    }
+    .modalHeader{display:flex; align-items:center; justify-content:space-between; padding:12px 12px; border-bottom:1px solid rgba(255,255,255,.10)}
+    .modalHeader .h{font-weight:950; letter-spacing:.08em; text-transform:uppercase; font-size:12px}
+    .modalHeader .x{
+      width:38px;height:38px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      cursor:pointer;
+      color:var(--text);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .stage{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:14px}
+    .stage .imgWrap{
+      position:relative;
+      max-width:100%;
+      max-height:100%;
+      border-radius:22px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 16px 60px rgba(0,0,0,.55);
+      background:rgba(0,0,0,.25);
+    }
+    .stage img{
+      display:block;
+      max-width:100%;
+      max-height: calc(92vh - 120px);
+      object-fit:contain;
+      user-select:none;
+      -webkit-user-drag:none;
+      position:relative;
+      z-index:2;
+    }
+    canvas#maskPreview{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      z-index:3;
+      pointer-events:auto;
+      touch-action:none;
+      cursor: crosshair;
+    }
+
+    .kv{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      padding:10px;
+      background:rgba(255,255,255,.03);
+    }
+    .kv .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+    .kv input[type="range"]{width:100%}
+    .kv label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:10px}
+    .kv label span{color:var(--text);font-weight:800}
+    .mini{font-size:12px;color:var(--muted);line-height:1.45}
+    .toolRow{display:flex; gap:8px; flex-wrap:wrap}
+    .divider{height:1px;background:rgba(255,255,255,.08); margin:8px 0}
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:22px;
+      transform:translateX(-50%);
+      background:rgba(10,10,18,.88);
+      border:1px solid rgba(168,85,247,.28);
+      box-shadow: 0 16px 50px rgba(0,0,0,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:16px;
+      font-size:12px;
+      letter-spacing:.02em;
+      z-index:1000000;
+      opacity:0;
+      pointer-events:none;
+      transition:.18s ease;
+      max-width: min(740px, 92vw);
+      white-space:pre-wrap;
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px)}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div>
+        <div class="title">ASTER STUDIO</div>
+        <div class="tag">stable memory • chat + media</div>
+      </div>
+      <button class="btn primary" id="newChatBtn">+ New</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" id="tabChats">Chats</div>
+      <div class="tab" id="tabMedia">Media</div>
+      <div class="tab" id="tabCfg">Config</div>
+      <div class="tab" id="tabDiag">Diag</div>
+    </div>
+
+    <div class="list" id="listChats"></div>
+    <div class="list" id="listMedia" style="display:none"></div>
+    <div class="list" id="listCfg" style="display:none;padding:12px"></div>
+    <div class="list" id="listDiag" style="display:none;padding:12px"></div>
+
+    <div class="sidebarFooter">
+      <button class="btn ghost small" id="exportBtn">Export</button>
+      <button class="btn ghost small" id="importBtn">Import</button>
+      <button class="btn ghost small" id="repairBtn">Repair</button>
+      <button class="btn ghost danger small" id="resetBtn">Reset UI</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="left">
+        <div class="pill"><strong id="threadTitle">New Chat</strong></div>
+
+        <div class="pill" id="routerStatus"><span class="statusDot"></span> Router <strong id="routerPill">5055</strong></div>
+        <div class="pill" id="imgStatus"><span class="statusDot"></span> Image <strong id="imgPill">5151</strong></div>
+        <div class="pill" id="llmStatus"><span class="statusDot"></span> LLM <strong id="llmPill">8001</strong></div>
+        <div class="pill">Mem <strong id="memPill">OK</strong></div>
+      </div>
+
+      <div class="right" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <select class="select" id="modelSel" title="Model">
+          <option value="gpt-4.1-mini">gpt-4.1-mini</option>
+          <option value="gpt-4.1">gpt-4.1</option>
+          <option value="gpt-4o-mini">gpt-4o-mini</option>
+          <option value="llama-3.1-70b">llama-3.1-70b</option>
+          <option value="deepseek-r1">deepseek-r1</option>
+        </select>
+        <button class="btn" id="openEditorBtn" title="Open image editor (select an image first)">Editor</button>
+      </div>
+    </div>
+
+    <div class="chat" id="chat"></div>
+
+    <div class="composerWrap">
+      <div class="composer">
+        <button class="btn icon" id="attachBtn" title="Attach image">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <textarea id="textbox" class="textbox" placeholder="Message ASTER…" rows="1"></textarea>
+
+        <button class="sendBtn" id="sendBtn">Send</button>
+      </div>
+
+      <div class="hint">
+        If tools don’t respond in <b>file://</b>, run: <code>python -m http.server 8787</code>
+        then open: <code>http://127.0.0.1:8787</code> (CORS stays sane).
+      </div>
+    </div>
+  </main>
+</div>
+
+<input id="fileInput" type="file" accept="image/*" style="display:none" />
+<input id="importInput" type="file" accept="application/json" style="display:none" />
+
+<!-- Editor modal -->
+<div class="modal" id="modal">
+  <div class="modalCard">
+    <div class="modalLeft">
+      <div class="modalHeader">
+        <div class="h">Image editor • erase/remove</div>
+        <div class="x" id="modalCloseBtn">✕</div>
+      </div>
+      <div class="stage">
+        <div class="imgWrap" id="imgWrap">
+          <img id="modalImg" alt="Selected image" />
+          <canvas id="maskPreview"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="modalRight">
+      <div class="kv">
+        <div class="k">Brush</div>
+        <label>Size <span id="brushSizeLbl">64</span></label>
+        <input id="brushSize" type="range" min="6" max="220" value="64" />
+        <label>Feather <span id="featherLbl">0</span></label>
+        <input id="feather" type="range" min="0" max="80" value="0" />
+      </div>
+
+      <div class="kv">
+        <div class="k">Mask</div>
+        <div class="toolRow">
+          <button class="btn small" id="clearMaskBtn">Clear</button>
+          <button class="btn small" id="invertMaskBtn">Invert</button>
+          <button class="btn small danger" id="eraseModeBtn" title="Hold ALT while drawing also works">Eraser</button>
+          <button class="btn small" id="demoMaskBtn" title="Paint a big demo mask rectangle">Demo Mask</button>
+        </div>
+        <div class="mini" style="margin-top:8px">
+          Paint the area you want removed. White = remove. <br/>
+          <span style="opacity:.9">ALT (or Eraser mode) subtracts from the mask.</span>
+        </div>
+        <div class="divider"></div>
+        <div class="mini" id="maskStats">Mask: (not measured yet)</div>
+      </div>
+
+      <div class="kv">
+        <div class="k">Execute</div>
+        <button class="btn primary" id="runRemoveBtn">Run Remove</button>
+        <div class="mini" id="runMeta" style="margin-top:8px">Sends <code>image+mask</code> to <code>/tool/remove</code> and cache-busts the returned URL.</div>
+      </div>
+
+      <div class="kv">
+        <div class="k">Backend</div>
+        <div class="mini">
+          Image base: <code id="imgBaseShow">http://127.0.0.1:5151</code><br/>
+          (If this is wrong, open Config and set it.)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  const DB_NAME = "aster_stable_memory_v2";
+  const DB_VER  = 2;
+  const LS_BACKUP = "aster_stable_backup_threads_v2";
+
+  const state = {
+    currentThreadId: null,
+    threads: [],
+    media: [],
+    selectedMediaId: null,
+    objectURLs: new Map(),
+    cfg: {
+      routerBase: localStorage.getItem("aster.routerBase") || "http://127.0.0.1:5055",
+      imageBase:  localStorage.getItem("aster.imageBackendBase") || "http://127.0.0.1:5151",
+      llmBase:    localStorage.getItem("aster.llmBase") || "http://127.0.0.1:8001/v1",
+      llmKey:     localStorage.getItem("aster.masterKey") || localStorage.getItem("ASTER_MASTER_KEY") || "local-dev-key",
+      model:      localStorage.getItem("aster.model") || "gpt-4.1-mini",
+    },
+    lastDiag: []
+  };
+
+  function toast(msg, kind="info"){
+    const el = $("#toast");
+    el.textContent = String(msg||"");
+    el.style.borderColor =
+      kind==="ok" ? "rgba(67,255,180,.35)" :
+      kind==="bad" ? "rgba(255,77,109,.35)" :
+      kind==="warn"? "rgba(255,213,107,.35)" :
+      "rgba(168,85,247,.28)";
+    el.classList.add("show");
+    clearTimeout(el._t);
+    el._t = setTimeout(()=> el.classList.remove("show"), 3200);
+  }
+  function logDiag(line){
+    const s = `[${new Date().toLocaleTimeString()}] ${line}`;
+    state.lastDiag.unshift(s);
+    state.lastDiag = state.lastDiag.slice(0, 80);
+    if($("#listDiag") && $("#listDiag").style.display!=="none") renderDiag();
+  }
+  function uuid(prefix="id"){
+    return prefix+"_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,10);
+  }
+  function escapeHtml(s){
+    s = String(s ?? "");
+    return s.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function escapeAttr(s){ return escapeHtml(s).replace(/`/g,"&#96;"); }
+
+  // ---- IndexedDB
+  let dbPromise = null;
+  function openDB(){
+    if(dbPromise) return dbPromise;
+    dbPromise = new Promise((resolve, reject)=>{
+      let req;
+      try{ req = indexedDB.open(DB_NAME, DB_VER); }catch(e){ reject(e); return; }
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if(!db.objectStoreNames.contains("threads")){
+          const st = db.createObjectStore("threads", { keyPath:"id" });
+          st.createIndex("updatedAt","updatedAt",{unique:false});
+        }
+        if(!db.objectStoreNames.contains("media")){
+          const st = db.createObjectStore("media", { keyPath:"id" });
+          st.createIndex("ts","ts",{unique:false});
+          st.createIndex("threadId","threadId",{unique:false});
+        }
+      };
+      req.onsuccess = ()=> resolve(req.result);
+      req.onerror = ()=> reject(req.error);
+      req.onblocked = ()=> reject(new Error("IndexedDB blocked (close other tabs)."));
+    });
+    return dbPromise;
+  }
+  async function dbTx(store, mode, fn){
+    const db = await openDB();
+    return await new Promise((resolve, reject)=>{
+      const tx = db.transaction(store, mode);
+      const st = tx.objectStore(store);
+      let out;
+      tx.oncomplete = ()=> resolve(out);
+      tx.onerror = ()=> reject(tx.error || new Error("IDB tx error"));
+      try{ out = fn(st); }catch(e){ reject(e); }
+    });
+  }
+  async function dbPut(store, obj){ return await dbTx(store, "readwrite", st => st.put(obj)); }
+  async function dbGet(store, key){
+    const db = await openDB();
+    return await new Promise(res=>{
+      const tx = db.transaction(store, "readonly");
+      const st = tx.objectStore(store);
+      const req = st.get(key);
+      req.onsuccess = ()=> res(req.result || null);
+      req.onerror = ()=> res(null);
+    });
+  }
+  async function dbAll(store, indexName=null, range=null, direction="prev"){
+    const db = await openDB();
+    return await new Promise(res=>{
+      const out=[];
+      const tx = db.transaction(store,"readonly");
+      const st = tx.objectStore(store);
+      const src = indexName ? st.index(indexName) : st;
+      const req = src.openCursor(range || null, direction);
+      req.onsuccess = ()=>{
+        const cur = req.result;
+        if(cur){ out.push(cur.value); cur.continue(); }
+        else res(out);
+      };
+      req.onerror = ()=> res(out);
+    });
+  }
+
+  async function deleteDB(){
+    try{
+      const db = await openDB().catch(()=>null);
+      try{ db && db.close && db.close(); }catch(e){}
+    }catch(e){}
+    dbPromise = null;
+    await new Promise(res=>{
+      const req = indexedDB.deleteDatabase(DB_NAME);
+      req.onsuccess=()=>res(); req.onerror=()=>res(); req.onblocked=()=>res();
+    });
+  }
+
+  // ---- Backup threads (no blobs)
+  function saveBackupThreads(threads){
+    try{
+      const compact = threads.map(t=>({
+        id:t.id, title:t.title, createdAt:t.createdAt, updatedAt:t.updatedAt,
+        messages:(t.messages||[]).map(m=>({id:m.id,role:m.role,content:m.content,mediaIds:m.mediaIds||[],ts:m.ts}))
+      }));
+      localStorage.setItem(LS_BACKUP, JSON.stringify({savedAt:Date.now(), threads:compact}));
+    }catch(e){}
+  }
+  async function restoreFromBackupIfEmpty(){
+    const all = await dbAll("threads","updatedAt",null,"prev");
+    if(all && all.length) return false;
+    let backup=null;
+    try{ backup = JSON.parse(localStorage.getItem(LS_BACKUP)||"null"); }catch(e){}
+    if(!backup?.threads?.length) return false;
+    logDiag("Restoring threads from localStorage backup…");
+    for(const t of backup.threads){ await dbPut("threads", t); }
+    return true;
+  }
+
+  // ---- Threads & media
+  function makeThread(){
+    const id = uuid("t"); const now = Date.now();
+    return { id, title:"New Chat", createdAt:now, updatedAt:now, messages:[] };
+  }
+  async function saveThread(t){ t.updatedAt = Date.now(); await dbPut("threads", t); }
+  async function addMessage(role, content, mediaIds=[]){
+    const t = await dbGet("threads", state.currentThreadId);
+    if(!t) return;
+    const msg = { id:uuid("m"), role, content:String(content||""), mediaIds:Array.isArray(mediaIds)?mediaIds:[], ts:Date.now() };
+    t.messages.push(msg);
+    if(role==="user" && t.title==="New Chat" && content){ t.title = String(content).trim().slice(0,48) || "Chat"; }
+    await saveThread(t);
+    state.threads = await dbAll("threads","updatedAt",null,"prev");
+    saveBackupThreads(state.threads);
+    renderChatsList(); renderChat();
+  }
+  async function addMediaToDB(blob, mime, threadId, title="", prompt=""){
+    const id = uuid("media");
+    const item = { id, ts:Date.now(), threadId:threadId||state.currentThreadId||"", mime:mime||blob?.type||"image/png", title:title||"Image", prompt:prompt||"", blob:blob||null };
+    await dbPut("media", item);
+    state.media = await dbAll("media","ts",null,"prev");
+    return id;
+  }
+  function mediaURL(mediaId){
+    if(!mediaId) return "";
+    if(state.objectURLs.has(mediaId)) return state.objectURLs.get(mediaId);
+    const it = state.media.find(x=>x.id===mediaId);
+    if(!it) return "";
+    if(it.blob){
+      const u = URL.createObjectURL(it.blob);
+      state.objectURLs.set(mediaId, u);
+      return u;
+    }
+    return "";
+  }
+
+  // ---- Render
+  function renderChatsList(){
+    const box = $("#listChats"); box.innerHTML="";
+    for(const t of state.threads){
+      const row = document.createElement("div");
+      row.className = "row" + (t.id===state.currentThreadId ? " active" : "");
+      row.innerHTML = `
+        <div class="dot"></div>
+        <div class="meta">
+          <div class="name">${escapeHtml(t.title||"Chat")}</div>
+          <div class="sub">${new Date(t.updatedAt||t.createdAt||Date.now()).toLocaleString()}</div>
+        </div>`;
+      row.onclick = ()=>{ state.currentThreadId = t.id; renderChatsList(); renderChat(); };
+      box.appendChild(row);
+    }
+    const ct = state.threads.find(x=>x.id===state.currentThreadId);
+    $("#threadTitle").textContent = ct?.title || "Chat";
+  }
+  function renderMediaList(){
+    const box = $("#listMedia"); box.innerHTML="";
+    if(!state.media.length){
+      box.innerHTML = `<div class="mini" style="padding:14px;color:var(--muted)">No media yet. Attach an image.</div>`;
+      return;
+    }
+    for(const it of state.media){
+      const row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = `
+        <div class="dot" style="opacity:.55"></div>
+        <div class="meta">
+          <div class="name">${escapeHtml(it.title||"Image")}</div>
+          <div class="sub">${new Date(it.ts||Date.now()).toLocaleString()}</div>
+        </div>`;
+      row.onclick = ()=>{ state.selectedMediaId = it.id; openEditor(it.id); };
+      box.appendChild(row);
+    }
+  }
+  function renderCfg(){
+    const box = $("#listCfg");
+    box.innerHTML = `
+      <div class="kv">
+        <div class="k">Endpoints</div>
+        <div class="mini" style="margin-bottom:10px">Set your local services. Defaults match ASTER ports.</div>
+
+        <label>Image backend base <span></span></label>
+        <input id="cfgImage" class="select" style="width:100%;border-radius:16px" value="${escapeAttr(state.cfg.imageBase)}" />
+
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn primary small" id="cfgSaveBtn">Save</button>
+        </div>
+      </div>
+    `;
+    setTimeout(()=>{
+      $("#cfgSaveBtn").onclick = ()=>{
+        state.cfg.imageBase  = $("#cfgImage").value.trim().replace(/\/+$/,'');
+        localStorage.setItem("aster.imageBackendBase", state.cfg.imageBase);
+        $("#imgBaseShow").textContent = state.cfg.imageBase;
+        toast("Saved config.", "ok");
+      };
+    },0);
+  }
+  function renderDiag(){
+    const box = $("#listDiag");
+    box.innerHTML = `
+      <div class="kv">
+        <div class="k">CLI sanity check</div>
+        <div class="mini">If you see: <code>Cannot bind argument to parameter 'Path' because it is null.</code> then <code>$img</code> / <code>$mask</code> were never set.</div>
+      </div>
+      <div class="kv" style="margin-top:10px">
+        <div class="k">Recent</div>
+        <div class="mini">${state.lastDiag.slice(0,18).map(x=>escapeHtml(x)).join("<br/>") || "—"}</div>
+      </div>
+    `;
+  }
+  async function renderChat(){
+    const box = $("#chat"); box.innerHTML="";
+    const t = await dbGet("threads", state.currentThreadId);
+    if(!t){ box.innerHTML = `<div class="mini" style="max-width:940px;margin:0 auto;color:var(--muted)">No thread loaded.</div>`; return; }
+    if(!t.messages.length){
+      box.innerHTML = `<div class="mini" style="max-width:940px;margin:0 auto;color:var(--muted)">Drop an image (+), click it, paint a mask, then Run Remove.</div>`;
+    }
+    for(const m of t.messages){
+      const msg = document.createElement("div");
+      msg.className = "msg";
+      msg.innerHTML = `
+        <div class="avatar">${m.role==="assistant"?"R":"You"}</div>
+        <div class="bubble">
+          <div class="role">
+            <span>${m.role==="assistant"?"ASTER":"You"}</span>
+            <span>${new Date(m.ts||Date.now()).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}</span>
+          </div>
+          <div class="content">${escapeHtml(m.content||"")}</div>
+          ${m.mediaIds && m.mediaIds.length ? `<div class="media">${m.mediaIds.map(id=>{
+              const u = mediaURL(id);
+              return `<div class="thumb" data-mid="${escapeAttr(id)}">
+                        <img src="${escapeAttr(u)}" alt="media"/>
+                        <div class="tbar">
+                          <div class="chip">Open</div>
+                          <div class="chip" style="opacity:.8">${escapeHtml((state.media.find(x=>x.id===id)?.title)||"Image")}</div>
+                        </div>
+                      </div>`;
+            }).join("")}</div>` : ""}
+        </div>
+      `;
+      box.appendChild(msg);
+    }
+    $$(".thumb", box).forEach(el=>{
+      el.onclick = ()=>{ const mid = el.getAttribute("data-mid"); state.selectedMediaId = mid; openEditor(mid); };
+    });
+    setTimeout(()=> box.scrollTop = box.scrollHeight + 9999, 0);
+  }
+
+  // ---- Tabs
+  function setTab(which){
+    $("#tabChats").classList.toggle("active", which==="chats");
+    $("#tabMedia").classList.toggle("active", which==="media");
+    $("#tabCfg").classList.toggle("active", which==="cfg");
+    $("#tabDiag").classList.toggle("active", which==="diag");
+    $("#listChats").style.display = which==="chats" ? "" : "none";
+    $("#listMedia").style.display = which==="media" ? "" : "none";
+    $("#listCfg").style.display   = which==="cfg" ? "" : "none";
+    $("#listDiag").style.display  = which==="diag" ? "" : "none";
+    if(which==="diag") renderDiag();
+  }
+  $("#tabChats").onclick = ()=> setTab("chats");
+  $("#tabMedia").onclick = ()=> setTab("media");
+  $("#tabCfg").onclick   = ()=> setTab("cfg");
+  $("#tabDiag").onclick  = ()=> setTab("diag");
+
+  // ---- Attach
+  const fileInput = $("#fileInput");
+  $("#attachBtn").onclick = ()=> fileInput.click();
+  fileInput.onchange = async (e)=>{
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    try{
+      const blob = await f.arrayBuffer().then(buf=> new Blob([buf], {type:f.type || "image/png"}));
+      const mid = await addMediaToDB(blob, blob.type, state.currentThreadId, f.name || "Upload", "");
+      await addMessage("user", "Uploaded an image.", [mid]);
+      state.selectedMediaId = mid;
+      toast("Image saved to memory.", "ok");
+      renderMediaList();
+    }catch(err){
+      toast("Failed to add image.", "bad");
+    }finally{
+      fileInput.value = "";
+    }
+  };
+
+  // ---- Composer (chat saved to memory even if LLM is off)
+  const textbox = $("#textbox");
+  textbox.addEventListener("input", ()=>{
+    textbox.style.height = "auto";
+    textbox.style.height = Math.min(160, textbox.scrollHeight) + "px";
+  });
+  $("#sendBtn").onclick = async ()=> {
+    const text = textbox.value.trim();
+    if(!text) return;
+    textbox.value=""; textbox.style.height="auto";
+    await addMessage("user", text);
+    await addMessage("assistant", "Locked in. (If you want LLM wired here too, tell me which endpoint you’re running and I’ll plug it in clean.)");
+  };
+
+  // ---- Editor: mask paint + remove
+  const modal = $("#modal");
+  const modalImg = $("#modalImg");
+  const maskCanvas = $("#maskPreview");
+  let maskCtx = maskCanvas.getContext("2d");
+  let drawing=false, eraseMode=false, invertMask=false, last=null;
+
+  function openEditor(mediaId){
+    if(!mediaId){ toast("Select an image first.", "bad"); return; }
+    const u = mediaURL(mediaId);
+    if(!u){ toast("Image not available.", "bad"); return; }
+    state.selectedMediaId = mediaId;
+    modalImg.src = u;
+    modal.classList.add("show");
+    $("#imgBaseShow").textContent = state.cfg.imageBase;
+    setTimeout(()=>{ resizeMaskCanvas(); clearMask(); measureMaskCoverage(); }, 60);
+  }
+  function closeEditor(){ modal.classList.remove("show"); drawing=false; last=null; }
+  $("#modalCloseBtn").onclick = closeEditor;
+  modal.addEventListener("click",(e)=>{ if(e.target===modal) closeEditor(); });
+  $("#openEditorBtn").onclick = ()=> openEditor(state.selectedMediaId);
+
+  function resizeMaskCanvas(){
+    const r = modalImg.getBoundingClientRect();
+    const w = Math.max(1, Math.round(r.width));
+    const h = Math.max(1, Math.round(r.height));
+    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio||1));
+    maskCanvas.width  = Math.round(w*dpr);
+    maskCanvas.height = Math.round(h*dpr);
+    maskCanvas.style.width = w+"px";
+    maskCanvas.style.height = h+"px";
+    maskCtx = maskCanvas.getContext("2d");
+    maskCtx.setTransform(dpr,0,0,dpr,0,0);
+    maskCtx.lineCap="round";
+    maskCtx.lineJoin="round";
+  }
+  window.addEventListener("resize", ()=>{ if(modal.classList.contains("show")) resizeMaskCanvas(); });
+
+  function brushSize(){ return Number($("#brushSize").value||64); }
+  function feather(){ return Number($("#feather").value||0); }
+
+  function clearMask(){
+    const r = maskCanvas.getBoundingClientRect();
+    maskCtx.clearRect(0,0,r.width,r.height);
+    invertMask=false;
+    $("#maskStats").textContent = "Mask: cleared";
+  }
+  $("#brushSize").oninput = ()=> { $("#brushSizeLbl").textContent = $("#brushSize").value; };
+  $("#feather").oninput   = ()=> { $("#featherLbl").textContent   = $("#feather").value; };
+
+  $("#clearMaskBtn").onclick = ()=>{ clearMask(); toast("Mask cleared.","ok"); };
+  $("#invertMaskBtn").onclick = ()=>{ invertMask = !invertMask; toast(invertMask ? "Invert ON" : "Invert OFF", "ok"); measureMaskCoverage(); };
+  $("#eraseModeBtn").onclick = ()=>{
+    eraseMode = !eraseMode;
+    $("#eraseModeBtn").textContent = eraseMode ? "Eraser: ON" : "Eraser";
+    toast(eraseMode ? "Eraser mode ON" : "Eraser mode OFF", "ok");
+  };
+  $("#demoMaskBtn").onclick = ()=>{
+    const r = maskCanvas.getBoundingClientRect();
+    maskCtx.save();
+    maskCtx.globalCompositeOperation = "source-over";
+    maskCtx.fillStyle = "rgba(255,255,255,1)";
+    maskCtx.fillRect(r.width*0.18, r.height*0.18, r.width*0.64, r.height*0.64);
+    maskCtx.restore();
+    measureMaskCoverage();
+    toast("Demo mask applied.", "ok");
+  };
+
+  function ptFromEvent(ev){
+    const r = maskCanvas.getBoundingClientRect();
+    return { x: ev.clientX - r.left, y: ev.clientY - r.top, w: r.width, h: r.height };
+  }
+
+  function stampDot(x,y,isErase){
+    const s = brushSize();
+    const f = feather();
+    maskCtx.save();
+    maskCtx.globalCompositeOperation = isErase ? "destination-out" : "source-over";
+    maskCtx.fillStyle = "rgba(255,255,255,1)";
+    if(f>0 && !isErase){
+      maskCtx.shadowColor = "rgba(255,255,255,1)";
+      maskCtx.shadowBlur = Math.min(80, f*2.2);
+    }else{
+      maskCtx.shadowBlur = 0;
+    }
+    maskCtx.beginPath();
+    maskCtx.arc(x,y,s/2,0,Math.PI*2);
+    maskCtx.fill();
+    maskCtx.restore();
+  }
+
+  function stampLine(a,b, isErase){
+    const s = brushSize();
+    const dist = Math.hypot(b.x-a.x, b.y-a.y);
+    const step = Math.max(2, s*0.18);
+    const n = Math.max(1, Math.ceil(dist/step));
+    for(let i=0;i<=n;i++){
+      const t = n===1 ? 1 : (i/n);
+      stampDot(a.x + (b.x-a.x)*t, a.y + (b.y-a.y)*t, isErase);
+    }
+  }
+
+  maskCanvas.addEventListener("pointerdown",(ev)=>{
+    drawing=true;
+    last = ptFromEvent(ev);
+    const isErase = eraseMode || ev.altKey || (ev.buttons&2);
+    stampDot(last.x,last.y,isErase);
+    try{ maskCanvas.setPointerCapture(ev.pointerId); }catch(e){}
+    ev.preventDefault();
+  }, {passive:false});
+
+  maskCanvas.addEventListener("pointermove",(ev)=>{
+    if(!drawing) return;
+    const p = ptFromEvent(ev);
+    const isErase = eraseMode || ev.altKey || (ev.buttons&2);
+    if(last) stampLine(last,p,isErase);
+    last = p;
+    ev.preventDefault();
+  }, {passive:false});
+
+  maskCanvas.addEventListener("pointerup",(ev)=>{
+    drawing=false;
+    last=null;
+    measureMaskCoverage();
+    try{ maskCanvas.releasePointerCapture(ev.pointerId); }catch(e){}
+  }, {passive:true});
+
+  function measureMaskCoverage(){
+    try{
+      const r = maskCanvas.getBoundingClientRect();
+      if(!r.width || !r.height) return;
+      const chk = document.createElement("canvas");
+      chk.width = 96; chk.height = 96;
+      const c = chk.getContext("2d");
+      c.drawImage(maskCanvas,0,0,r.width,r.height,0,0,96,96);
+      const d = c.getImageData(0,0,96,96).data;
+      let non=0;
+      for(let i=0;i<d.length;i+=4){ if(d[i]>12) non++; }
+      const ratio = non/(96*96);
+      $("#maskStats").textContent = `Mask coverage: ${(ratio*100).toFixed(2)}%` + (invertMask ? " • invert" : "");
+    }catch(e){}
+  }
+
+  async function maskToBlob(){
+    const it = state.media.find(x=>x.id===state.selectedMediaId);
+    if(!it || !it.blob) return null;
+
+    const nw = modalImg.naturalWidth || 0;
+    const nh = modalImg.naturalHeight || 0;
+    if(!nw || !nh) return null;
+
+    const off = document.createElement("canvas");
+    off.width = nw; off.height = nh;
+    const ctx = off.getContext("2d");
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,0,nw,nh);
+
+    const r = maskCanvas.getBoundingClientRect();
+    if(!r.width || !r.height) return null;
+
+    ctx.drawImage(maskCanvas, 0,0,r.width,r.height, 0,0,nw,nh);
+
+    if(invertMask){
+      const imgd = ctx.getImageData(0,0,nw,nh);
+      const d=imgd.data;
+      for(let i=0;i<d.length;i+=4){
+        const inv = 255 - d[i];
+        d[i]=d[i+1]=d[i+2]=inv; d[i+3]=255;
+      }
+      ctx.putImageData(imgd,0,0);
+    }else{
+      const imgd = ctx.getImageData(0,0,nw,nh);
+      const d=imgd.data;
+      for(let i=0;i<d.length;i+=4) d[i+3]=255;
+      ctx.putImageData(imgd,0,0);
+    }
+
+    return await new Promise(res=> off.toBlob(b=>res(b), "image/png"));
+  }
+
+  async function runRemove(){
+    const it = state.media.find(x=>x.id===state.selectedMediaId);
+    if(!it || !it.blob){ toast("No image selected.", "bad"); return; }
+    const maskBlob = await maskToBlob();
+    if(!maskBlob){ toast("Mask not ready.", "bad"); return; }
+
+    const base = (state.cfg.imageBase || "http://127.0.0.1:5151").replace(/\/+$/,'');
+    const url = base + "/tool/remove";
+
+    const fd = new FormData();
+    fd.append("image", new File([it.blob], "image.png", {type: it.mime || "image/png"}));
+    fd.append("mask",  new File([maskBlob], "mask.png", {type:"image/png"}));
+
+    toast("Running Remove…");
+    logDiag("Remove -> " + url);
+
+    let data;
+    try{
+      const resp = await fetch(url, { method:"POST", body: fd });
+      if(!resp.ok){
+        const body = await resp.text().catch(()=> "");
+        throw new Error(`Remove ${resp.status}: ${body||resp.statusText}`);
+      }
+      data = await resp.json().catch(()=> ({}));
+    }catch(err){
+      toast(String(err?.message||"Remove failed."), "bad");
+      logDiag("Remove error: " + (err?.message||err));
+      return;
+    }
+
+    const outUrl = data?.images?.[0]?.url || data?.image?.url || data?.url || "";
+    if(!outUrl){ toast("Remove returned no image URL.", "bad"); return; }
+
+    const fetchUrl = outUrl + (outUrl.includes("?") ? "&" : "?") + "cb=" + Date.now();
+
+    try{
+      const r = await fetch(fetchUrl, { method:"GET" });
+      if(!r.ok) throw new Error("Output fetch failed.");
+      const b = await r.blob();
+      const mid = await addMediaToDB(b, b.type || "image/png", state.currentThreadId, "Removed", "");
+      await addMessage("assistant", "Here’s the updated image.", [mid]);
+      state.selectedMediaId = mid;
+      modalImg.src = mediaURL(mid);
+      clearMask();
+      toast("Remove complete.", "ok");
+      renderMediaList();
+    }catch(e){
+      toast("Output fetch blocked (CORS). Use http://127.0.0.1:8787", "warn");
+      logDiag("Output fetch blocked: " + (e?.message||e));
+    }
+  }
+  $("#runRemoveBtn").onclick = runRemove;
+
+  // ---- Init
+  async function boot(){
+    await openDB();
+    state.threads = await dbAll("threads","updatedAt",null,"prev");
+    state.media   = await dbAll("media","ts",null,"prev");
+
+    await restoreFromBackupIfEmpty();
+    state.threads = await dbAll("threads","updatedAt",null,"prev");
+
+    if(!state.threads.length){
+      const t = makeThread();
+      await saveThread(t);
+      state.threads = [t];
+    }
+    state.currentThreadId = state.threads[0].id;
+
+    $("#imgBaseShow").textContent = state.cfg.imageBase;
+    renderChatsList();
+    renderMediaList();
+    renderCfg();
+    renderDiag();
+    renderChat();
+  }
+  boot().catch(e=>{
+    toast("Boot error. Try refreshing.", "bad");
+    logDiag("Boot crashed: " + (e?.message||e));
+  });
+
+  // Export/Import/Repair basics (kept simple here)
+  $("#exportBtn").onclick = async ()=>{
+    const obj = { exportedAt:new Date().toISOString(), threads: state.threads, mediaCount: state.media.length };
+    const blob = new Blob([JSON.stringify(obj,null,2)], {type:"application/json"});
+    const u = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href=u; a.download="aster_export.json"; a.click();
+    setTimeout(()=> URL.revokeObjectURL(u), 1000);
+    toast("Exported JSON.", "ok");
+  };
+  $("#repairBtn").onclick = async ()=>{ toast("If memory ever glitches: close other ASTER tabs, refresh, then re-open.", "warn"); };
+  $("#resetBtn").onclick = async ()=>{
+    if(!confirm("Reset UI memory (threads + media)?")) return;
+    await deleteDB();
+    try{ localStorage.removeItem(LS_BACKUP); }catch(e){}
+    toast("Reset complete. Reloading…","ok");
+    setTimeout(()=> location.reload(), 600);
+  };
+  $("#newChatBtn").onclick = async ()=>{
+    const t = makeThread();
+    await saveThread(t);
+    state.threads = await dbAll("threads","updatedAt",null,"prev");
+    state.currentThreadId = t.id;
+    saveBackupThreads(state.threads);
+    renderChatsList();
+    renderChat();
+    toast("New chat created.", "ok");
+  };
+})();
+</script>
+</body>
+</html>

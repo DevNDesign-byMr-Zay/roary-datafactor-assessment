@@ -1,0 +1,1 @@
+Preserve the historical engineering behavior while removing product, person, machine, project, bucket, URL, token, and private infrastructure identifiers. Do not introduce Neural Loom architecture or later-system behavior.

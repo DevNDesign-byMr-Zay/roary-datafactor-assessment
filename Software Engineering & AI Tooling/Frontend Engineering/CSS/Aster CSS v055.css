@@ -1,0 +1,4 @@
+/* Aster CSS v055 — expansion underlay stays behind the active image while controls remain interactive. */
+[data-aster-expand-underlay]{position:absolute;pointer-events:none;z-index:1}
+[data-aster-image-shell] img{position:relative;z-index:2}
+[data-aster-expand-frame],[data-aster-eraser-canvas]{z-index:5}

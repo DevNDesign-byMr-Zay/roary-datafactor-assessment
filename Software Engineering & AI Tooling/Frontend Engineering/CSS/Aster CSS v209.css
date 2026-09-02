@@ -1,0 +1,4 @@
+/* Aster CSS v209 — authenticated buyer-safe derivative: image-tool side-panel styling variant 12. */
+.rtp-mood-preview::before{
+content:"";position:absolute;inset:0;background-image:var(--thumb);background-size:cover;background-position:center;transform:scale(1.08);opacity:.95
+}

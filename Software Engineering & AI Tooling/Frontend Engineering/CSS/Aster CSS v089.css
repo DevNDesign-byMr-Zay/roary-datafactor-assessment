@@ -1,0 +1,49 @@
+/* Aster CSS v089 — authenticated buyer-safe derivative: TOOL CHIPS / TOOL TOGGLES (outlined, no bg/border). */
+#activeToolsChips,
+.active-tools-chips{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#activeToolsChips .tool-chip{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  padding: 4px 6px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 999px !important;
+  color: rgba(240,248,255,.88) !important;
+  cursor: pointer !important;
+}
+
+#activeToolsChips .tool-chip svg{
+  width: 18px !important;
+  height: 18px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.7 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  flex: 0 0 auto !important;
+  opacity: .95 !important;
+}
+#activeToolsChips .tool-chip svg *{
+  fill: none !important;
+  stroke: currentColor !important;
+}
+
+#activeToolsChips .tool-chip .tool-chip-label{
+  font-size: 12.5px !important;
+  line-height: 1 !important;
+  letter-spacing: .2px !important;
+  opacity: .95 !important;
+}
+
+#activeToolsChips .tool-chip:hover{
+  color: rgba(168,85,247,.95) !important;
+}

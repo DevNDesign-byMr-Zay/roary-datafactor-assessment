@@ -1,0 +1,4 @@
+/* Aster CSS v211 — authenticated buyer-safe derivative: image-tool side-panel styling variant 13. */
+#rtSidePanel[data-tool=enhance] .rtp-qbtn.is-active{
+border-color:rgba(168,85,247,.85);box-shadow:0 0 0 2px rgba(168,85,247,.20),0 14px 34px rgba(168,85,247,.14);color:#fff
+}

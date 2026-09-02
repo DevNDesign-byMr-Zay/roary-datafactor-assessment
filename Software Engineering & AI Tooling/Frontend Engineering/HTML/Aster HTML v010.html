@@ -1,0 +1,3239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ASTER Studio — Regenerated (External OCR, Sources Fixed)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/png" href="ASTER LOGO.png">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+<!-- libs -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.5/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad:false, theme: 'dark' });</script>
+
+<style>
+:root{
+  --glass-bg: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.22);
+  --panel-glow: 0 10px 40px rgba(255,255,255,0.06);
+  --text: #ffffff;
+  --muted: #b8b8b8;
+  --btn-gray: #3a3a3a;
+  --btn-gray-2: #2d2d2d;
+  --accent: #7aa2ff;
+}
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0; color:var(--text);
+  font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  background: radial-gradient(1200px 800px at 70% -10%, #1b1c20 0%, #0c0c0c 40%, #000 100%);
+  overflow:hidden;
+}
+*{ scrollbar-width:thin; scrollbar-color:#6a6a6a transparent; }
+*::-webkit-scrollbar{ width:10px; height:10px }
+*::-webkit-scrollbar-thumb{ background:#6a6a6a; border-radius:10px }
+*::-webkit-scrollbar-track{ background:transparent }
+
+.topbar{
+  position:fixed; inset:0 0 auto 0; height:64px; display:flex; align-items:center; gap:12px;
+  backdrop-filter: blur(16px); background: var(--glass-bg); border-bottom: 1px solid var(--glass-border);
+  padding: 0 16px; z-index: 1000; box-shadow: var(--panel-glow);
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand img.logo{ width:32px; height:32px; object-fit:contain; filter:drop-shadow(0 0 6px rgba(255,255,255,.2)); }
+.brand h1{ margin:0; font-weight:700; font-size:18px; letter-spacing:.8px; }
+
+.topbar-actions{ margin-left:auto; display:flex; align-items:center; gap:10px; min-width:0; }
+.icon-btn{
+  background: var(--btn-gray-2); border:1px solid #4a4a4a; color:var(--text);
+  padding:10px 14px; border-radius:12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+  transition: transform .15s ease, background .25s ease, border-color .25s ease;
+  white-space:nowrap;
+}
+.icon-btn:hover{ transform:translateY(-1px); background:#444; border-color:#6b6b6b; }
+.icon-btn svg{ width:18px; height:18px; }
+
+.layout{ position:absolute; inset:64px 0 0 0; display:flex; }
+
+/* LEFT SIDEBAR */
+.leftbar{
+  width: 320px; min-width: 320px; max-width: 320px;
+  flex: 0 0 320px; backdrop-filter: blur(16px); background: var(--glass-bg);
+  border-right:1px solid var(--glass-border); box-shadow: var(--panel-glow) inset;
+  display:flex; flex-direction:column; overflow:hidden; z-index:1; contain: inline-size;
+  transition: width .24s ease, min-width .24s ease, max-width .24s ease;
+}
+.leftbar.collapsed{ width: 130px; min-width: 130px; max-width: 130px; flex: 0 0 130px; }
+.leftbar-header{ border-bottom:1px solid var(--glass-border); padding:10px; }
+.leftbar-controls{ display:flex; align-items:center; gap:8px; justify-content:flex-start; }
+.sidebar-toggle{
+  background: var(--btn-gray); border:1px solid #575757; color:var(--text); padding:8px 10px; border-radius:12px; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; transition: all .25s ease; width:40px; height:36px;
+}
+.icon-hamburger, .icon-close{ width:18px; height:18px; }
+.icon-close{ display:none; }
+.leftbar:not(.collapsed) .icon-hamburger{ display:none; }
+.leftbar:not(.collapsed) .icon-close{ display:block; }
+.float-select{ position:relative; flex:1 1 auto; min-width:0; }
+.fs-btn{
+  width:100%; background: rgba(255,255,255,.06); border:1px solid var(--glass-border); color:var(--text);
+  border-radius:14px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  cursor:pointer; box-shadow: var(--panel-glow); transition: border-color .2s ease, background .2s ease;
+}
+
+.leftbar-title{ padding:8px 10px 6px 10px; font-weight:700; letter-spacing:.5px; white-space:nowrap; }
+.new-chat-wrap{ padding: 8px 10px; }
+.new-chat{ display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px; background: var(--btn-gray);
+  border:1px solid #575757; color:var(--text); cursor:pointer; transition: all .25s ease; }
+.leftbar.collapsed .new-chat{ width:40px; height:34px; justify-content:center; align-items:center; margin: 0 auto 0 36px; }
+.leftbar.collapsed .new-chat .label{ display:none; }
+.new-chat:hover{ background:#4a4a4a; }
+.new-chat svg{ width:18px; height:18px; display:block; }
+
+.conv-list{ overflow:auto; padding: 4px 8px 12px 8px; height:100%; }
+.conv-item{
+  background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 12px;
+  display:flex; align-items:center; gap:8px; margin-bottom:10px; cursor:pointer; transition: background .2s ease, border-color .2s ease; position:relative;
+}
+.conv-item:hover{ background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.22); }
+.conv-name{ flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pin{ color:#ffd479; opacity:.85; display:none; }
+.conv-item.pinned .pin{ display:inline; }
+.kebab{ background:transparent; border:0; color:var(--text); opacity:.85; cursor:pointer; padding:6px; border-radius:8px; }
+.kebab:hover{ background: rgba(255,255,255,.08); }
+.conv-menu{
+  position:absolute; right:8px; transform: translateY(28px); min-width: 160px; z-index:3500; display:none;
+  background: rgba(10,10,10,.96); backdrop-filter: blur(10px); border:1px solid rgba(255,255,255,.15); border-radius:12px; overflow:hidden;
+}
+.conv-menu.open{ display:block; }
+.conv-menu button{ width:100%; text-align:left; padding:10px 12px; background:transparent; border:0; color:var(--text); cursor:pointer; }
+.conv-menu button:hover{ background: rgba(255,255,255,.08); }
+
+.leftbar-footer{ padding:10px; border-top:1px solid var(--glass-border); color:var(--muted); font-size:11.5px; text-align:center; }
+
+.main{ display:flex; flex-direction:column; flex:1 1 auto; min-width:0; background:#000; }
+.chat{ flex:1 1 auto; overflow:auto; padding:20px 18px 120px 18px; }
+.chat-inner{ display:flex; flex-direction:column; }
+.msg{
+  max-width:78%; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14);
+  border-radius:16px; padding:12px 14px; margin:10px 0; line-height:1.5; backdrop-filter: blur(8px); word-break: break-word;
+}
+.msg.assistant{ align-self:flex-start; border-left:2px solid rgba(255,255,255,.35);} 
+.msg.user{ align-self:flex-end; background: rgba(255,255,255,.08); border-right:2px solid rgba(255,255,255,.30); }
+
+.composer-wrap{
+  position:absolute; left: 338px; right:20px; bottom:16px; display:flex; align-items:center; gap:10px;
+  z-index: 1200; padding-bottom: calc(env(safe-area-inset-bottom, 0px));
+}
+.attachments-row{
+  position:absolute; left: 338px; right:20px; bottom:86px; display:flex; gap:8px; flex-wrap:wrap;
+  max-height:120px; overflow:auto; padding:2px 2px 8px 2px;
+}
+.chip{ display:flex; align-items:center; gap:8px; padding:6px 10px; border:1px solid rgba(255,255,255,.15); border-radius:12px; background: rgba(255,255,255,.06); }
+.chip button{ background:transparent; border:0; color:var(--text); cursor:pointer; padding:0 4px; border-radius:6px; }
+.chip button:hover{ background: rgba(255,255,255,.1); }
+
+.composer{
+  flex:1; display:flex; align-items:center; gap:10px; padding:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border-radius: 18px 18px 22px 22px / 18px 18px 22px 22px;
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 8px 28px rgba(0,0,0,.5);
+  position:relative;
+}
+.composer textarea{
+  flex:1; resize:none; height:52px; max-height:52px; overflow-y:auto; background:transparent; border:0; outline:0; color:var(--text); font:400 15px/1.4 Roboto, sans-serif;
+}
+.btn{
+  background: var(--btn-gray); border:1px solid #5a5a5a; color:var(--text);
+  padding:10px 12px; border-radius:12px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-width:44px; transition: all .2s ease;
+}
+.btn:hover{ background:#4a4a4a; border-color:#6d6d6d; }
+.send-icon,.stop-icon{ width:18px; height:18px; transition:transform .15s ease, opacity .15s ease; }
+.stop-icon{ display:none; }
+.btn.sending .send-icon{ display:none; }
+.btn.sending .stop-icon{ display:inline-block; }
+
+.settings-panel{
+  position:absolute; top:0; right:0; bottom:0; width:440px; max-width:92vw; background: var(--glass-bg); backdrop-filter: blur(16px);
+  border-left:1px solid var(--glass-border); box-shadow: var(--panel-glow); transform: translateX(100%); transition: transform .35s ease; padding:16px 14px 24px 14px; overflow:auto; z-index:2000;
+}
+.settings-panel.open{ transform: translateX(0%); }
+.overlay{ position:fixed; top:64px; left:0; right:0; bottom:0; background: rgba(0,0,0,.25); backdrop-filter: blur(6px); opacity:0; pointer-events:none; transition: opacity .25s ease; z-index:1500; }
+.overlay.show{ opacity:1; pointer-events:auto; }
+.section{ margin-bottom:20px; }
+.section h3{ margin:0 0 8px 0; font-size:14px; font-weight:700; letter-spacing:.3px; }
+.section small{ color:var(--muted); }
+.field{ display:flex; flex-direction:column; gap:6px; margin:10px 0; }
+.field label{ font-size:13px; color:var(--muted); }
+.field textarea,.field input[type="text"],.field input[type="password"], .field select, .field input[type="number"]{
+  background: rgba(255,255,255,.06); border:1px solid var(--glass-border); color:var(--text);
+  border-radius:12px; padding:10px 12px; outline:none;
+}
+
+/* Sources bar */
+.sources-bar{ align-self:flex-start; max-width:72%; margin:4px 0 10px 0; background:transparent; }
+.sources-head{
+  display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; font-weight:600; font-size:12.5px; letter-spacing:.2px;
+  opacity:0; transform: translateY(6px); animation: fadeIn .22s ease forwards;
+}
+.sources-head .chips{ display:flex; align-items:center; gap:4px; margin-left:4px; opacity:.9; transform: translateY(1px); }
+.sources-chip{
+  height:18px; min-width:18px; border-radius:50%; background:#fff; display:inline-flex; align-items:center; justify-content:center;
+  box-shadow:0 1px 2px rgba(0,0,0,.35), inset 0 0 0 1px rgba(0,0,0,.06); overflow:hidden; padding:0 2px; font-size:11px; color:#111; font-weight:700;
+}
+.sources-chip img{ width:14px; height:14px; display:block; }
+.sources-caret{ margin-left:auto; opacity:.9; transition: transform .18s ease; }
+.sources-open .sources-caret{ transform: rotate(90deg); }
+
+.sources-list{
+  margin-top:6px; padding:8px 10px; border:1px solid rgba(255,255,255,.15); border-radius:10px; background: rgba(255,255,255,.05);
+  max-height:0; overflow:hidden; opacity:0; transform-origin: top left; transform: translateY(-6px) scale(.98);
+  filter: blur(2px); clip-path: inset(0 0 100% 0 round 10px);
+  transition: transform .18s ease, opacity .18s ease, filter .18s ease, clip-path .28s ease, max-height .28s ease;
+}
+.sources-open .sources-list{
+  max-height:420px; opacity:1; transform: translateY(0) scale(1); filter: blur(0); clip-path: inset(0 0 0 0 round 10px);
+}
+.sources-item{
+  display:grid; grid-template-columns: 18px 1fr; gap:8px; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,.14);
+  opacity:1; transform: translateY(0) scale(1);
+}
+.sources-item:last-child{ border-bottom:0; }
+.sources-item .favicon{ width:14px; height:14px; margin:2px; border-radius:4px; }
+.sources-item a{ color:#d6e5ff; text-decoration:none; font-size:13px; }
+.sources-item a:hover{ text-decoration:underline; }
+
+@keyframes fadeIn { to { opacity:1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <img class="logo" src="ASTER LOGO.png" alt="ASTER Logo" onerror="this.style.display='none'">
+      <h1>ASTER Studio</h1>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="openSettings" type="button" title="Settings" aria-haspopup="dialog" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z M19.4 15a7.96 7.96 0 0 0 0-6l2-1.2-2-3.4-2 .8a8.1 8.1 0 0 0-3.5-2l-.3-2.2H10.4l-.3 2.2a8.1 8.1 0 0 0-3.5 2l-2-.8-2 3.4 2 1.2a7.96 7.96 0 0 0 0 6l-2 1.2 2 3.4 2-.8a8.1 8.1 0 0 0 3.5 2l.3 2.2h3.4l.3-2.2a8.1 8.1 0 0 0 3.5-2l2 .8 2-3.4-2-1.2Z" stroke="currentColor" stroke-width="1" /></svg>
+        <span>Settings</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside id="leftSidebar" class="leftbar" aria-label="Sidebar">
+      <div class="leftbar-header">
+        <div class="leftbar-controls">
+          <button id="sidebarToggle" class="sidebar-toggle" type="button" title="Toggle Sidebar" aria-pressed="false">
+            <svg class="icon-hamburger" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg class="icon-close" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div style="flex:1"></div>
+        </div>
+      </div>
+
+      <div class="leftbar-title" id="convTitle">Conversations</div>
+
+      <div class="new-chat-wrap">
+        <button id="newChatBtn" class="new-chat" type="button" title="New Chat">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="label">New Chat</span>
+        </button>
+      </div>
+
+      <div id="convList" class="conv-list"></div>
+      <div class="leftbar-footer">ASTER Studio © 2025</div>
+    </aside>
+
+    <main class="main">
+      <div class="chat" id="chat"><div class="chat-inner" id="chatInner"></div></div>
+
+      <div id="attachmentsRow" class="attachments-row"></div>
+
+      <div class="composer-wrap">
+        <div class="composer">
+          <button id="attachBtn" class="btn" type="button" title="Attach files" tabindex="0">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 8v7a6 6 0 1 1-12 0V7a4 4 0 1 1 8 0v7a2 2 0 1 1-4 0V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <input id="attachInput" type="file" multiple style="display:none"
+            accept=".txt,.md,.markdown,.json,.csv,.tsv,.yaml,.yml,.ini,.cfg,.conf,.xml,.svg,.html,.htm,.css,.scss,.less,.js,.mjs,.cjs,.jsx,.ts,.tsx,.py,.rb,.php,.go,.rs,.java,.kt,.c,.cpp,.h,.hpp,.cs,.sql,.ps1,.bat,.sh,.ico,.png,.jpg,.jpeg,.gif,.webp,.bmp,.tif,.tiff,.pdf,.mp4,.mov,.avi,.wav,.mp3" />
+
+          <button id="webSearchBtn" class="btn toggle-btn" type="button" title="Web Search toggle" aria-pressed="false" tabindex="0">🌐</button>
+
+          <textarea id="composerInput" placeholder="Message ASTER…"></textarea>
+
+          <button id="sendBtn" class="btn" type="button" title="Send / Stop" aria-label="Send message" tabindex="0">
+            <svg class="send-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12l16-8-6 8 6 8-16-8z" stroke="currentColor" stroke-width="1.5" fill="currentColor"/></svg>
+            <svg class="stop-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <div id="overlay" class="overlay" aria-hidden="true"></div>
+
+    <aside class="settings" aria-label="Settings">
+      <div id="settingsPanel" class="settings-panel" aria-hidden="true">
+        <div class="section"><h3>System</h3><small>Model & Router</small></div>
+
+        <div class="section">
+          <h3>LLM Proxy</h3>
+          <div class="field"><label for="proxyUrl">LiteLLM Proxy URL</label><input id="proxyUrl" type="text" placeholder="http://127.0.0.1:8001" /></div>
+          <div class="field"><label for="masterKey">Master Key</label><input id="masterKey" type="password" placeholder="local-key" /></div>
+          <div class="field"><label for="modelId">Model ID</label><input id="modelId" type="text" placeholder="groq/llama-3.1-8b-instant" /></div>
+        </div>
+
+        <div class="section">
+          <h3>Web Tool</h3>
+          <div class="field"><label for="webToolBase">Web Tool Base</label><input id="webToolBase" type="text" placeholder="http://127.0.0.1:5055" /></div>
+          <div class="field"><label><input id="autoWebToggle" type="checkbox" checked/> Auto-detect web</label></div>
+        </div>
+
+        <div class="section">
+          <h3>External OCR Adapters (preferred)</h3>
+          <small>Any of these will be tried in order. If CORS blocks, proxy them via your router.</small>
+          <div class="field"><label for="edenKey">EdenAI API Key</label><input id="edenKey" type="password" placeholder="eyJhbGciOi..." /></div>
+          <div class="field"><label for="ocrSpaceKey">OCR.space API Key</label><input id="ocrSpaceKey" type="password" placeholder="helloworld" /></div>
+          <div class="field"><label for="unstructuredKey">Unstructured API Key</label><input id="unstructuredKey" type="password" placeholder="UNSTRUCTURED_API_KEY" /></div>
+          <div class="field"><label for="ocrProxyUrl">Custom OCR Proxy URL</label><input id="ocrProxyUrl" type="text" placeholder="http://127.0.0.1:8080/ocr" /></div>
+          <div class="field"><label><input id="allowTesseractFallback" type="checkbox" checked/> Fallback to lightweight local Tesseract (CDN)</label></div>
+        </div>
+
+        <div class="section" style="position:sticky;bottom:0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.3));padding-top:6px;">
+          <button id="saveSettings" class="btn" type="button" style="width:100%;">Save & Apply</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+<script>
+(function(){
+'use strict';
+
+/* ========= Simple $, $$ ========= */
+const $ = (s, r=document)=>r.querySelector(s);
+const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
+
+/* ========= Elements ========= */
+const leftSidebar = $("#leftSidebar");
+const sidebarToggle = $("#sidebarToggle");
+const chatInner = $("#chatInner");
+const composer = $("#composerInput");
+const sendBtn = $("#sendBtn");
+const webBtn = $("#webSearchBtn");
+const newChatBtn = $("#newChatBtn");
+const convList = $("#convList");
+const openSettingsBtn = $("#openSettings");
+const settingsPanel = $("#settingsPanel");
+const overlay = $("#overlay");
+const attachBtn = $("#attachBtn");
+const attachInput = $("#attachInput");
+const attachmentsRow = $("#attachmentsRow");
+const saveBtnEl = $("#saveSettings");
+
+/* ========= State ========= */
+let conversations = [];
+let activeId = null;
+let sessionAttachments = [];
+
+// Settings
+let proxy = localStorage.getItem("aster.proxy") || "http://127.0.0.1:8001";
+let masterKey = localStorage.getItem("aster.masterKey") || "local-key";
+let modelId = localStorage.getItem("aster.modelId") || "groq/llama-3.1-8b-instant";
+let webToolBase = localStorage.getItem("aster.webToolBase") || "http://127.0.0.1:5055";
+let autoWeb = (localStorage.getItem("aster.autoWeb") ?? "1") === "1";
+
+let edenKey = localStorage.getItem("aster.edenKey") || "";
+let ocrSpaceKey = localStorage.getItem("aster.ocrSpaceKey") || "";
+let unstructuredKey = localStorage.getItem("aster.unstructuredKey") || "";
+let ocrProxyUrl = localStorage.getItem("aster.ocrProxyUrl") || "";
+let allowTesseractFallback = (localStorage.getItem("aster.allowTess") ?? "1") === "1";
+
+/* ========= Hydrate settings panel ========= */
+$("#proxyUrl").value = proxy;
+$("#masterKey").value = masterKey;
+$("#modelId").value = modelId;
+$("#webToolBase").value = webToolBase;
+$("#autoWebToggle").checked = autoWeb;
+
+$("#edenKey").value = edenKey;
+$("#ocrSpaceKey").value = ocrSpaceKey;
+$("#unstructuredKey").value = unstructuredKey;
+$("#ocrProxyUrl").value = ocrProxyUrl;
+$("#allowTesseractFallback").checked = allowTesseractFallback;
+
+/* ========= UI controls ========= */
+function setSidebarCollapsed(collapsed){
+  leftSidebar.classList.toggle("collapsed", !!collapsed);
+  document.documentElement.style.setProperty("--composer-left", (leftSidebar.offsetWidth+18)+"px");
+  localStorage.setItem("aster.sidebarCollapsed", collapsed?"1":"0");
+  sidebarToggle.setAttribute('aria-pressed', (!collapsed).toString());
+}
+setSidebarCollapsed(localStorage.getItem("aster.sidebarCollapsed")==="1");
+window.addEventListener("resize", ()=>document.documentElement.style.setProperty("--composer-left", (leftSidebar.offsetWidth+18)+"px"));
+sidebarToggle.addEventListener("click", ()=> setSidebarCollapsed(!leftSidebar.classList.contains("collapsed")));
+
+function setSettingsOpen(open){
+  settingsPanel.classList.toggle("open", !!open);
+  overlay.classList.toggle("show", !!open);
+  settingsPanel.setAttribute("aria-hidden", open?"false":"true");
+  overlay.setAttribute("aria-hidden", open?"false":"true");
+  openSettingsBtn.setAttribute('aria-expanded', (!!open).toString());
+}
+openSettingsBtn.addEventListener("click", ()=> setSettingsOpen(!settingsPanel.classList.contains("open")));
+overlay.addEventListener("click", ()=> setSettingsOpen(false));
+document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") setSettingsOpen(false); });
+
+saveBtnEl.addEventListener("click", ()=>{
+  proxy = $("#proxyUrl").value || proxy;
+  masterKey = $("#masterKey").value || masterKey;
+  modelId = $("#modelId").value || modelId;
+  webToolBase = $("#webToolBase").value || webToolBase;
+  autoWeb = !!$("#autoWebToggle").checked;
+
+  edenKey = $("#edenKey").value || "";
+  ocrSpaceKey = $("#ocrSpaceKey").value || "";
+  unstructuredKey = $("#unstructuredKey").value || "";
+  ocrProxyUrl = $("#ocrProxyUrl").value || "";
+  allowTesseractFallback = !!$("#allowTesseractFallback").checked;
+
+  localStorage.setItem("aster.proxy", proxy);
+  localStorage.setItem("aster.masterKey", masterKey);
+  localStorage.setItem("aster.modelId", modelId);
+  localStorage.setItem("aster.webToolBase", webToolBase);
+  localStorage.setItem("aster.autoWeb", autoWeb ? "1" : "0");
+
+  localStorage.setItem("aster.edenKey", edenKey);
+  localStorage.setItem("aster.ocrSpaceKey", ocrSpaceKey);
+  localStorage.setItem("aster.unstructuredKey", unstructuredKey);
+  localStorage.setItem("aster.ocrProxyUrl", ocrProxyUrl);
+  localStorage.setItem("aster.allowTess", allowTesseractFallback ? "1":"0");
+  alert("Saved.");
+});
+
+/* ========= Convos ========= */
+function persist(){ localStorage.setItem("aster.conversations", JSON.stringify(conversations)); localStorage.setItem("aster.activeId", activeId||""); }
+function loadConvos(){ try{ conversations = JSON.parse(localStorage.getItem("aster.conversations")||"[]"); }catch{ conversations=[]; } activeId = localStorage.getItem("aster.activeId") || null; if(!conversations.length){ const id="c_"+Date.now(); conversations=[{id,title:"New Chat",messages:[]}]; activeId=id; persist(); } }
+loadConvos();
+
+function getActive(){ return conversations.find(c=>c.id===activeId) || null; }
+function createConversation(){ const id="c_"+Date.now(); conversations.unshift({id,title:"New Chat",messages:[]}); activeId=id; persist(); renderConversations(); renderActiveConversation(); composer.focus(); }
+newChatBtn.addEventListener("click", createConversation);
+
+function renderConversations(){
+  convList.innerHTML = "";
+  conversations.forEach(c=>{
+    const item = document.createElement("div");
+    item.className = "conv-item"; item.dataset.id=c.id;
+    item.innerHTML = `<span class="pin">★</span><div class="conv-name">${escapeHtml(c.title||"Untitled")}</div><div class="conv-3dots" style="position:relative;"><button class="kebab" type="button">⋯</button><div class="conv-menu"><button data-act="rename">Rename</button><button data-act="download">Download</button><button data-act="delete" style="color:#ff9c9c">Delete</button></div></div>`;
+    item.addEventListener("click",(ev)=>{ if(ev.target.closest(".conv-3dots")) return; activeId=c.id; persist(); renderActiveConversation(); });
+    const kebab = item.querySelector(".kebab"); const menu = item.querySelector(".conv-menu");
+    kebab.addEventListener("click",(e)=>{ e.stopPropagation(); $$(".conv-menu.open").forEach(m=>m!==menu && m.classList.remove("open")); menu.classList.toggle("open"); });
+    menu.addEventListener("click",(e)=>{
+      const act = e.target.dataset.act; if(!act) return;
+      if(act==="rename"){ const nv=prompt("Rename:", c.title||"Untitled"); if(nv!=null){ c.title=nv||"Untitled"; } }
+      if(act==="download"){ const blob=new Blob([JSON.stringify(c,null,2)],{type:"application/json"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=(c.title||"conversation")+".json"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
+      if(act==="delete"){ if(confirm("Delete conversation?")){ const i=conversations.findIndex(x=>x.id===c.id); conversations.splice(i,1); if(activeId===c.id) activeId = conversations[0]?.id || null; } }
+      persist(); renderConversations(); renderActiveConversation();
+    });
+    convList.appendChild(item);
+  });
+}
+
+/* ========= Render ========= */
+function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
+function stripAttachmentBlock(s){ return (s||"").replace(/\n?---\nATTACHMENTS[\s\S]*?\n---/g, ""); }
+
+function renderMsgHTML(role, text){
+  if(role === "assistant"){
+    let html = marked.parse(text || "");
+    html = DOMPurify.sanitize(html);
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    const pres = tmp.querySelectorAll("pre code.language-mermaid");
+    pres.forEach((code) => {
+      const graph = code.textContent || "";
+      const container = document.createElement("div");
+      container.className = "mermaid";
+      container.textContent = graph;
+      const pre = code.closest("pre");
+      pre.replaceWith(container);
+    });
+    try { mermaid.init(undefined, tmp.querySelectorAll(".mermaid")); } catch {}
+    return tmp.innerHTML;
+  }
+  const clean = stripAttachmentBlock(text || "");
+  return escapeHtml(clean);
+}
+
+function appendMessage(role, text, persistMsg=true){
+  const div = document.createElement("div");
+  div.className = "msg "+(role==="user"?"user":"assistant");
+  div.innerHTML = renderMsgHTML(role, text);
+  chatInner.appendChild(div);
+  const sc=chatInner.parentElement; if(sc) sc.scrollTop=sc.scrollHeight;
+  if(persistMsg){
+    const c=getActive(); if(!c) return div;
+    c.messages.push({role, content:text});
+    if((c.title||"").toLowerCase()==="new chat" && role==="user"){
+      c.title = (text||"").slice(0,40).replace(/\s+/g," ").trim() || "New Chat";
+    }
+    persist(); renderConversations();
+  }
+  return div;
+}
+
+function renderActiveConversation(){
+  const c=getActive(); if(!chatInner) return;
+  chatInner.innerHTML="";
+  if(!c){ createConversation(); return; }
+  (c.messages||[]).forEach(m=>{
+    const div = document.createElement("div");
+    div.className = "msg "+(m.role==="user"?"user":"assistant");
+    div.innerHTML = renderMsgHTML(m.role, m.content);
+    chatInner.appendChild(div);
+    if(m.role==="user" && m.attachments){
+      mountAttachmentsBar(chatInner, div, m.attachments);
+    }
+    if(m.role==="assistant"){
+      // Always mount Sources bar (parse anchors as fallback)
+      const parsed = harvestSourcesFromHtml(div.innerHTML);
+      mountSourcesBar(chatInner, div, parsed, parsed.length ? "parsed from answer" : "via search module unavailable");
+    }
+  });
+  const sc=chatInner.parentElement; if(sc) sc.scrollTop=sc.scrollHeight;
+}
+
+/* ========= Sources bar ========= */
+function domainFrom(u){ try{ return new URL(u).hostname.replace(/^www\./,''); }catch{ return ""; } }
+function favFrom(u){ const d = domainFrom(u); return d ? `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(d)}` : ""; }
+
+function harvestSourcesFromHtml(html){
+  const div = document.createElement("div"); div.innerHTML = html||"";
+  const set = new Map();
+  div.querySelectorAll("a[href]").forEach(a=>{
+    const href = a.getAttribute("href"); if(!href) return;
+    const title = (a.textContent || href).trim();
+    set.set(href, { title, url: href, snippet: "" });
+  });
+  // Regex fallback for raw text
+  const raw = div.textContent || "";
+  const urlRx = /\b(?:https?:\/\/|www\.)[^\s)]+/gi;
+  const extras = raw.match(urlRx) || [];
+  extras.forEach(u=>{ const url = u.startsWith("http") ? u : ("https://"+u); if(!set.has(url)) set.set(url, { title:url, url, snippet:"" }); });
+  return Array.from(set.values()).slice(0,8);
+}
+
+function mountSourcesBar(chatInnerEl, afterMsgEl, results, engineLabel){
+  const items = (results||[]).map(r=>({ url: r.url||r.link||r.href||"", title: r.title||r.name||r.url||"Untitled", snippet: r.snippet||r.description||"" }));
+
+  const bar = document.createElement("div");
+  bar.className = "sources-bar";
+  bar.setAttribute("role","region");
+  bar.setAttribute("aria-label","Sources");
+
+  const head = document.createElement("div");
+  head.className = "sources-head";
+  head.setAttribute("role","button");
+  head.setAttribute("tabindex","0");
+  head.setAttribute("aria-expanded","false");
+  head.innerHTML = `
+    <span class="title">Sources</span>
+    ${engineLabel ? `<small style="opacity:.75;">${escapeHtml(engineLabel)}</small>` : ""}
+    <div class="chips"></div>
+    <span class="sources-caret">›</span>
+  `;
+  const chips = head.querySelector(".chips");
+  (items.length?items:[{title:"—"}]).forEach(it=>{
+    const chip = document.createElement("span");
+    chip.className = "sources-chip";
+    const fav = favFrom(it.url||"");
+    chip.innerHTML = fav ? `<img alt="" src="${fav}">` : "🔗";
+    chips.appendChild(chip);
+  });
+
+  const list = document.createElement("div");
+  list.className = "sources-list";
+  list.setAttribute("aria-hidden","true");
+  list.innerHTML = (items.length ? items.map((it)=>{
+    const fav = favFrom(it.url);
+    const dom = domainFrom(it.url);
+    const sn  = (it.snippet||"").slice(0,240);
+    return `
+      <div class="sources-item">
+        <img class="favicon" alt="" src="${fav}">
+        <div>
+          ${it.url ? `<a href="${it.url}" target="_blank" rel="noopener">${escapeHtml(it.title)}</a>` : `<span>${escapeHtml(it.title)}</span>`}
+          ${dom ? ` <span style="opacity:.7;font-size:11px">(${escapeHtml(dom)})</span>` : ""}
+          ${sn ? `<small style="display:block;opacity:.7">${escapeHtml(sn)}</small>` : ""}
+        </div>
+      </div>
+    `;
+  }).join("") : `
+    <div class="sources-item">
+      <div class="favicon">ⓘ</div>
+      <div><small>No sources captured for this reply.</small></div>
+    </div>
+  `);
+
+  function toggleOpen(force){
+    const willOpen = typeof force === "boolean" ? force : !bar.classList.contains("sources-open");
+    bar.classList.toggle("sources-open", willOpen);
+    list.setAttribute("aria-hidden", willOpen ? "false" : "true");
+    head.setAttribute("aria-expanded", willOpen ? "true" : "false");
+  }
+  head.addEventListener("click", ()=> toggleOpen());
+
+  bar.appendChild(head); bar.appendChild(list);
+
+  if(afterMsgEl && afterMsgEl.parentElement === chatInnerEl){
+    chatInnerEl.insertBefore(bar, afterMsgEl.nextSibling);
+  }else{
+    chatInnerEl.appendChild(bar);
+  }
+  // Auto open if multiple items
+  requestAnimationFrame(()=>{ if(items.length > 1) toggleOpen(true); });
+  return bar;
+}
+
+/* ========= Attachments UI ========= */
+function renderAttachments(){
+  attachmentsRow.innerHTML = "";
+  sessionAttachments.forEach((a,idx)=>{
+    const el = document.createElement("div");
+    el.className = "chip";
+    const status = a.extracted ? `<span class="status ok">✓ extracted</span>` : (a._extracting?`<span>… extracting</span>`:``);
+    el.innerHTML = `<span>📎 ${escapeHtml(a.name)} (${formatBytes(a.size)})</span>${status}<button title="Remove" type="button" data-idx="${idx}">✕</button>`;
+    attachmentsRow.appendChild(el);
+  });
+  attachmentsRow.querySelectorAll("button[data-idx]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i = Number(btn.dataset.idx);
+      sessionAttachments.splice(i,1);
+      renderAttachments();
+    });
+  });
+}
+function formatBytes(b){ if(b==null) return ""; const u=["B","KB","MB","GB"]; let i=0, x=b; while(x>=1024 && i<u.length-1){ x/=1024; i++; } return x.toFixed(x<10&&i>0?1:0)+" "+u[i]; }
+
+let _attachWired = false;
+function wireAttachOnce(){
+  if(_attachWired) return; _attachWired = true;
+  attachBtn.addEventListener("click", ()=> attachInput.click(), { once:false });
+  attachInput.addEventListener("change", async (e)=>{
+    const files = Array.from(e.target.files || []);
+    for(const f of files){
+      const att = { name:f.name, type:f.type||"", size:f.size, text:null, file:f, extracted:false, _extracting:false };
+      sessionAttachments.push(att);
+    }
+    renderAttachments();
+    attachInput.value = "";
+    // Kick off extraction (external OCR)
+    for(const a of sessionAttachments){ if(!a.extracted && !a._extracting) extractTextForAttachment(a).catch(()=>{}); }
+  }, { passive:true });
+}
+wireAttachOnce();
+
+/* ========= OCR adapters (external-first) ========= */
+function toast(msg){
+  const id="__aster_toast__"; let t=document.getElementById(id);
+  if(!t){ t=document.createElement('div'); t.id=id; t.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#151515;border:1px solid rgba(255,255,255,.25);color:#fff;padding:8px 10px;border-radius:10px;z-index:99999;font-size:13px;opacity:0;transition:opacity .2s ease'; document.body.appendChild(t); }
+  t.textContent = msg; t.style.opacity='1'; setTimeout(()=> t.style.opacity='0', 1600);
+}
+
+async function fetchWithTimeout(url, opts={}, ms=60000){
+  return await Promise.race([fetch(url, opts), new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), ms))]);
+}
+
+async function ocrViaEdenAI(file){
+  if(!edenKey) return "";
+  try{
+    const fd = new FormData();
+    fd.append("providers","google,amazon,microsoft,ocrspace");
+    fd.append("language","en");
+    fd.append("fallback_providers","ocrspace");
+    fd.append("file", file, file.name);
+    const res = await fetchWithTimeout("https://api.edenai.run/v2/ocr/ocr", {
+      method:"POST",
+      headers:{ "Authorization": `Bearer ${edenKey}` },
+      body: fd
+    }, 90000);
+    if(!res.ok) throw new Error("edenai "+res.status);
+    const j = await res.json();
+    // Provider responses vary; flatten best text chunks
+    const texts = [];
+    for(const k of Object.keys(j||{})){
+      const v=j[k];
+      if(v && typeof v==="object"){
+        if(Array.isArray(v?.text_annotations)) texts.push(v.text_annotations.map(t=>t.content||t.text||"").join("\n"));
+        if(typeof v?.text==="string") texts.push(v.text);
+        if(Array.isArray(v?.pages)) texts.push(v.pages.map(p=>p.text||"").join("\n"));
+      }
+    }
+    const out = texts.join("\n").trim();
+    return out;
+  }catch(e){ console.warn("edenAI OCR fail", e); return ""; }
+}
+
+async function ocrViaOCRSpace(file){
+  if(!ocrSpaceKey) return "";
+  try{
+    const fd = new FormData();
+    fd.append("apikey", ocrSpaceKey);
+    fd.append("language","eng");
+    fd.append("isOverlayRequired","false");
+    fd.append("OCREngine","2");
+    fd.append("detectOrientation","true");
+    fd.append("scale","true");
+    fd.append("file", file, file.name);
+    const res = await fetchWithTimeout("https://api.ocr.space/parse/image", { method:"POST", body: fd }, 90000);
+    if(!res.ok) throw new Error("ocr.space "+res.status);
+    const j = await res.json();
+    const arr = j?.ParsedResults || [];
+    const text = arr.map(x=>x?.ParsedText||"").join("\n").trim();
+    return text;
+  }catch(e){ console.warn("ocr.space fail", e); return ""; }
+}
+
+async function ocrViaUnstructured(file){
+  if(!unstructuredKey) return "";
+  try{
+    const fd = new FormData();
+    fd.append("files", file, file.name);
+    fd.append("strategy","hi_res");
+    fd.append("ocr_languages","eng");
+    const res = await fetchWithTimeout("https://api.unstructured.io/general/v0/general", {
+      method:"POST",
+      headers:{ "Authorization": `Bearer ${unstructuredKey}` },
+      body: fd
+    }, 120000);
+    if(!res.ok) throw new Error("unstructured "+res.status);
+    const j = await res.json();
+    const text = (Array.isArray(j)?j:[]).map(n=>n?.text||"").join("\n").trim();
+    return text;
+  }catch(e){ console.warn("unstructured fail", e); return ""; }
+}
+
+async function ocrViaCustomProxy(file){
+  if(!ocrProxyUrl) return "";
+  try{
+    const fd = new FormData();
+    fd.append("file", file, file.name);
+    const res = await fetchWithTimeout(ocrProxyUrl, { method:"POST", body: fd }, 120000);
+    if(!res.ok) throw new Error("proxy "+res.status);
+    const j = await res.json();
+    const text = (j?.text || j?.result || "").trim();
+    return text;
+  }catch(e){ console.warn("proxy ocr fail", e); return ""; }
+}
+
+// Lightweight fallback using CDN Tesseract (lazy-loaded)
+async function ocrViaTesseract(file){
+  if(!allowTesseractFallback) return "";
+  try{
+    if(!window.Tesseract){
+      await new Promise((resolve, reject)=>{
+        const s=document.createElement('script'); s.src="https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/tesseract.min.js"; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);
+      });
+    }
+    const worker = await window.Tesseract.createWorker("eng", 1, { logger:()=>{} });
+    const dataURL = await new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(file); });
+    const img = await new Promise(resolve=>{ const im=new Image(); im.onload=()=>resolve(im); im.src=dataURL; im.onerror=()=>resolve(null); });
+    if(!img) return "";
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(64, img.naturalWidth); canvas.height = Math.max(64, img.naturalHeight);
+    canvas.getContext("2d", { willReadFrequently:true }).drawImage(img,0,0,canvas.width,canvas.height);
+    await worker.setParameters({ tessedit_pageseg_mode: 6, tessedit_ocr_engine_mode: 1, user_defined_dpi:"220" });
+    const { data } = await worker.recognize(canvas);
+    await worker.terminate();
+    return (data?.text||"").trim();
+  }catch(e){ console.warn("tesseract fallback fail", e); return ""; }
+}
+
+async function extractPdfNative(file){
+  try{
+    if(!window.pdfjsLib){
+      await new Promise((resolve, reject)=>{
+        const s=document.createElement('script'); s.src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.min.js"; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);
+      });
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.js";
+    }
+    const buf = await file.arrayBuffer();
+    const doc = await pdfjsLib.getDocument({ data: buf }).promise;
+    let out = "";
+    const maxPages = Math.min(doc.numPages, 30);
+    for(let i=1;i<=maxPages;i++){
+      const page = await doc.getPage(i);
+      const tc = await page.getTextContent();
+      const rows = {}; const tol=2;
+      (tc.items||[]).forEach(item=>{
+        const tr=item.transform||[1,0,0,1,0,0]; const x=tr[4], y=tr[5];
+        let k=null; for(const kk in rows){ if(Math.abs(Number(kk)-y)<=tol){ k=kk; break; } }
+        if(k===null) k=y; (rows[k] ||= []).push({x, str:item.str||""});
+      });
+      const ykeys = Object.keys(rows).map(Number).sort((a,b)=>b-a);
+      for(const y of ykeys){ const line = rows[y].sort((a,b)=>a.x-b.x).map(s=>s.str).join(" ").replace(/\s+/g," ").trim(); if(line) out += line + "\n"; }
+      out += "\n";
+    }
+    const compact=(out||"").replace(/\s+/g,"");
+    return compact.length>80 ? out : "";
+  }catch(e){ console.warn("pdf native fail", e); return ""; }
+}
+
+async function extractPdfRasterViaExternal(file){
+  // Try external adapters with the full PDF file (many providers accept PDFs directly)
+  // We reuse the same functions; they will pass the PDF blob.
+  let txt = "";
+  txt = txt || await ocrViaEdenAI(file);
+  txt = txt || await ocrViaUnstructured(file);
+  txt = txt || await ocrViaOCRSpace(file);
+  txt = txt || await ocrViaCustomProxy(file);
+  return (txt||"").trim();
+}
+
+/* ========= Attachment extraction orchestrator ========= */
+async function extractTextForAttachment(att){
+  if(!att || !att.file) return;
+  att._extracting = true; renderAttachments();
+  const ext = (att.name.split('.').pop()||"").toLowerCase();
+  const type = (att.type||"").toLowerCase();
+  let text = "";
+
+  try{
+    if(type==="application/pdf"||ext==="pdf"){
+      // First, try pulling native text; then external OCR if too weak
+      const native = await extractPdfNative(att.file);
+      const compact = (native||"").replace(/\s+/g,"");
+      if(compact.length >= 120){ text = native; }
+      if(!text){ text = await extractPdfRasterViaExternal(att.file); }
+      if(!text){ text = await ocrViaTesseract(att.file); }
+    }else if(type.startsWith("image/")){
+      // Images: external engines first
+      text = text || await ocrViaEdenAI(att.file);
+      text = text || await ocrViaOCRSpace(att.file);
+      text = text || await ocrViaCustomProxy(att.file);
+      text = text || await ocrViaTesseract(att.file);
+    }else if(type.startsWith("text/") || /(\.(txt|md|json|csv|tsv|yaml|yml|svg|xml|html?|css|js|ts|tsx|py|rb|php|java|c|cpp|cs|sql|ps1|bat|sh))$/i.test(att.name)){
+      try{ text = await att.file.text(); }catch{}
+    }
+  }catch(e){
+    console.warn("extract error", e);
+  }
+
+  att.text = (text||"").slice(0, 120000);
+  att.extracted = !!att.text;
+  att._extracting = false;
+  renderAttachments();
+  if(att.extracted) toast(`Extracted: ${att.name}`);
+}
+
+/* ========= Sources-aware send ========= */
+let inflight=null;
+let webToggleOn = false;
+webBtn.addEventListener("click", ()=>{ webToggleOn = !webToggleOn; webBtn.setAttribute("aria-pressed", webToggleOn.toString()); });
+
+function buildAttachmentBlockForLLM(attachments){
+  if(!attachments || !attachments.length) return "";
+  const parts = [];
+  for(const a of attachments){
+    const name=a.name||"file";
+    const type=(a.type||"").toLowerCase();
+    const ext=(name.split('.').pop()||"").toLowerCase();
+    const isTextLike = a.text || type.startsWith("text/") || /(\.(txt|md|json|csv|tsv|yaml|yml|svg|xml|html?|css|js|ts|tsx|py|rb|php|java|c|cpp|cs|sql|ps1|bat|sh))$/i.test(name);
+    if(isTextLike){
+      const content=(a.text || "").slice(0,120000);
+      parts.push(`### ${name}\n\`\`\`\n${content}${content.length===120000?`\n[...truncated]`:``}\n\`\`\``);
+    }else if(type==="application/pdf"){
+      const content=(a.text || "").slice(0,120000);
+      parts.push(`### ${name}\n\`\`\`\n${content}${content.length===120000?`\n[...truncated]`:``}\n\`\`\``);
+    }else{
+      parts.push(`### ${name}\n[type: ${type||"binary"} • ${formatBytes(a.size)}]`);
+    }
+  }
+  return parts.length ? `---\nATTACHMENTS\n\n${parts.join("\n\n")}\n---` : "";
+}
+
+async function webSearchIfNeeded(query, max=4){
+  // Optional hook if you have a router search tool; else return null
+  try{
+    if(!(webToggleOn || autoWeb)) return null;
+    const u = (webToolBase||"").replace(/\/+$/,"")+"/tool/search?q="+encodeURIComponent(query)+"&max_results="+max;
+    const res = await fetchWithTimeout(u, { method:"GET" }, 20000);
+    if(!res.ok) return null;
+    const j = await res.json();
+    const results = j?.results || j || [];
+    return { engine: (j?.engine||"web"), results };
+  }catch(e){ return null; }
+}
+
+async function sendMessage(){
+  const typed=(composer?.value||"").trim();
+  if(!typed && !sessionAttachments.length) return;
+
+  // Build user bubble first
+  const userEl = appendMessage("user", typed || "[sent attachments]", true);
+  if (composer) composer.value = "";
+
+  const turnAttachments = sessionAttachments.slice();
+  const attachBlock = buildAttachmentBlockForLLM(turnAttachments);
+  const combinedUser = attachBlock ? `${typed}\n\n${attachBlock}` : typed;
+
+  // Update stored message with enriched content + metadata
+  const c=getActive(); if(c && c.messages.length){
+    const m=c.messages[c.messages.length-1];
+    if(m.role==="user"){ m.content = combinedUser; m.attachments = turnAttachments.map(a=>({name:a.name,type:a.type,size:a.size})); persist(); mountAttachmentsBar(chatInner, userEl, m.attachments); }
+  }
+
+  // Optional web grounding
+  let webCtx=null, webEngine=null;
+  try{
+    const maybe = await webSearchIfNeeded(typed, 4);
+    if(maybe && maybe.results && maybe.results.length){ webCtx=maybe.results; webEngine=maybe.engine; }
+  }catch{}
+
+  // Compose API payload
+  const payload = {
+    model: modelId,
+    stream: true,
+    messages: [...(getActive()?.messages || [])].slice(-40)
+  };
+  const url = `${(proxy||"http://127.0.0.1:8001").replace(/\/+$/,"")}/v1/chat/completions`;
+  const headers = { "Content-Type":"application/json", "Authorization": `Bearer ${masterKey}` };
+
+  let outEl = appendMessage("assistant", "", true);
+  let mdBuf = "";
+
+  sendBtn.classList.add("sending");
+  inflight = new AbortController();
+
+  try{
+    const res = await fetch(url,{method:"POST", headers, body:JSON.stringify(payload), signal: inflight.signal});
+    if(!res.ok){ throw new Error(await res.text() || `${res.status} ${res.statusText}`); }
+    const reader = res.body.getReader(); const decoder = new TextDecoder(); let acc="";
+    for(;;){
+      const {value,done} = await reader.read(); if(done) break;
+      acc += decoder.decode(value,{stream:true});
+      const lines = acc.split(/\r?\n/); acc = lines.pop() || "";
+      for(const line of lines){
+        const m = line.match(/^data:\s*(.*)$/); if(!m) continue;
+        if(m[1]==="[DONE]"){ acc=""; break; }
+        try{
+          const obj = JSON.parse(m[1]); const delta = obj.choices?.[0]?.delta?.content ?? "";
+          if(delta){
+            mdBuf += delta;
+            outEl.innerHTML = DOMPurify.sanitize(marked.parse(mdBuf));
+            try { mermaid.init(undefined, outEl.querySelectorAll(".language-mermaid, .mermaid")); } catch {}
+            chatInner?.parentElement && (chatInner.parentElement.scrollTop = chatInner.parentElement.scrollHeight);
+          }
+        }catch{}
+      }
+    }
+  }catch(err){
+    outEl.innerHTML += `<br><span style="color:#ff8080;">⚠ ${escapeHtml(String(err.message||err))}</span>`;
+  }finally{
+    sendBtn.classList.remove("sending");
+    inflight=null;
+
+    // Persist final content to convo
+    const c2=getActive();
+    if(c2){ const last=c2.messages[c2.messages.length-1]; if(last && last.role==="assistant"){ last.content = mdBuf; persist(); } }
+
+    // Mount sources bar ALWAYS.
+    let mountData = null, label = "via search module unavailable";
+    if(webCtx && webCtx.length){ mountData = webCtx; label = webEngine ? `${webEngine}` : "web"; }
+    else{
+      // Parse the rendered assistant bubble
+      mountData = harvestSourcesFromHtml(outEl.innerHTML);
+      if(mountData.length) label = "parsed from answer";
+    }
+    mountSourcesBar(chatInner, outEl, mountData || [], label);
+
+    // Clear this turn's attachments
+    sessionAttachments = []; renderAttachments();
+  }
+}
+sendBtn.addEventListener("click", ()=>{ if(inflight){ inflight.abort(); return; } sendMessage(); });
+composer.addEventListener("keydown",(e)=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); if(inflight){ inflight.abort(); return; } sendMessage(); }});
+
+/* ========= Attachments bar (compact) ========= */
+function fileIcon(name,type){
+  const ext=(name.split('.').pop()||'').toLowerCase();
+  const t=(type||'').toLowerCase();
+  if(t.includes('pdf') || ext==='pdf') return '📕';
+  if(t.startsWith('image/') || ['png','jpg','jpeg','gif','webp','svg','ico','bmp','tif','tiff'].includes(ext)) return '🖼️';
+  if(['csv','tsv'].includes(ext)) return '📊';
+  if(['xlsx','xls'].includes(ext)) return '📈';
+  if(['json','yaml','yml','txt','md','svg','xml','html','htm','css','scss','less','js','mjs','cjs','jsx','ts','tsx','py','rb','php','go','rs','java','kt','c','cpp','h','hpp','cs','sql','ps1','bat','sh'].includes(ext)) return '📄';
+  if(t.startsWith('audio/') || ['mp3','wav'].includes(ext)) return '🎵';
+  if(t.startsWith('video/') || ['mp4','mov','avi'].includes(ext)) return '🎞️';
+  return '📎';
+}
+function mountAttachmentsBar(chatInnerEl, afterMsgEl, atts){
+  const items = (atts||[]).map(a=>({ name: a.name || "file", type: a.type || "", size: a.size || 0 }));
+  const bar = document.createElement("div");
+  bar.className = "sources-bar";
+  bar.setAttribute("role","region");
+  bar.setAttribute("aria-label","Attachments");
+
+  const head = document.createElement("div");
+  head.className = "sources-head";
+  head.setAttribute("role","button");
+  head.setAttribute("tabindex","0");
+  head.setAttribute("aria-expanded","false");
+  head.innerHTML = `
+    <span class="title">Attachments</span>
+    <div class="chips"></div>
+    <span class="sources-caret">›</span>
+  `;
+  const chips = head.querySelector(".chips");
+  items.forEach(it=>{
+    const chip = document.createElement("span");
+    chip.className = "sources-chip";
+    chip.textContent = fileIcon(it.name, it.type);
+    chips.appendChild(chip);
+  });
+
+  const list = document.createElement("div");
+  list.className = "sources-list";
+  list.setAttribute("aria-hidden","true");
+  list.innerHTML = items.map((it)=>{
+    return `
+      <div class="sources-item">
+        <div class="favicon">${fileIcon(it.name, it.type)}</div>
+        <div>
+          <div class="name">${escapeHtml(it.name)}</div>
+          <small>${escapeHtml(it.type || 'binary')}${it.size?` • ${formatBytes(it.size)}`:''}</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  function toggleOpen(force){
+    const willOpen = typeof force === "boolean" ? force : !bar.classList.contains("sources-open");
+    bar.classList.toggle("sources-open", willOpen);
+    list.setAttribute("aria-hidden", willOpen ? "false" : "true");
+    head.setAttribute("aria-expanded", willOpen ? "true" : "false");
+  }
+  head.addEventListener("click", ()=> toggleOpen());
+
+  bar.appendChild(head);
+  bar.appendChild(list);
+
+  if(afterMsgEl && afterMsgEl.parentElement === chatInnerEl){
+    chatInnerEl.insertBefore(bar, afterMsgEl.nextSibling);
+  }else{
+    chatInnerEl.appendChild(bar);
+  }
+  requestAnimationFrame(()=>{ if(items.length) toggleOpen(true); });
+  return bar;
+}
+
+/* ========= Boot ========= */
+renderConversations(); renderActiveConversation();
+
+})();</script>
+
+<!-- pad 1 -->
+<!-- pad 2 -->
+<!-- pad 3 -->
+<!-- pad 4 -->
+<!-- pad 5 -->
+<!-- pad 6 -->
+<!-- pad 7 -->
+<!-- pad 8 -->
+<!-- pad 9 -->
+<!-- pad 10 -->
+<!-- pad 11 -->
+<!-- pad 12 -->
+<!-- pad 13 -->
+<!-- pad 14 -->
+<!-- pad 15 -->
+<!-- pad 16 -->
+<!-- pad 17 -->
+<!-- pad 18 -->
+<!-- pad 19 -->
+<!-- pad 20 -->
+<!-- pad 21 -->
+<!-- pad 22 -->
+<!-- pad 23 -->
+<!-- pad 24 -->
+<!-- pad 25 -->
+<!-- pad 26 -->
+<!-- pad 27 -->
+<!-- pad 28 -->
+<!-- pad 29 -->
+<!-- pad 30 -->
+<!-- pad 31 -->
+<!-- pad 32 -->
+<!-- pad 33 -->
+<!-- pad 34 -->
+<!-- pad 35 -->
+<!-- pad 36 -->
+<!-- pad 37 -->
+<!-- pad 38 -->
+<!-- pad 39 -->
+<!-- pad 40 -->
+<!-- pad 41 -->
+<!-- pad 42 -->
+<!-- pad 43 -->
+<!-- pad 44 -->
+<!-- pad 45 -->
+<!-- pad 46 -->
+<!-- pad 47 -->
+<!-- pad 48 -->
+<!-- pad 49 -->
+<!-- pad 50 -->
+<!-- pad 51 -->
+<!-- pad 52 -->
+<!-- pad 53 -->
+<!-- pad 54 -->
+<!-- pad 55 -->
+<!-- pad 56 -->
+<!-- pad 57 -->
+<!-- pad 58 -->
+<!-- pad 59 -->
+<!-- pad 60 -->
+<!-- pad 61 -->
+<!-- pad 62 -->
+<!-- pad 63 -->
+<!-- pad 64 -->
+<!-- pad 65 -->
+<!-- pad 66 -->
+<!-- pad 67 -->
+<!-- pad 68 -->
+<!-- pad 69 -->
+<!-- pad 70 -->
+<!-- pad 71 -->
+<!-- pad 72 -->
+<!-- pad 73 -->
+<!-- pad 74 -->
+<!-- pad 75 -->
+<!-- pad 76 -->
+<!-- pad 77 -->
+<!-- pad 78 -->
+<!-- pad 79 -->
+<!-- pad 80 -->
+<!-- pad 81 -->
+<!-- pad 82 -->
+<!-- pad 83 -->
+<!-- pad 84 -->
+<!-- pad 85 -->
+<!-- pad 86 -->
+<!-- pad 87 -->
+<!-- pad 88 -->
+<!-- pad 89 -->
+<!-- pad 90 -->
+<!-- pad 91 -->
+<!-- pad 92 -->
+<!-- pad 93 -->
+<!-- pad 94 -->
+<!-- pad 95 -->
+<!-- pad 96 -->
+<!-- pad 97 -->
+<!-- pad 98 -->
+<!-- pad 99 -->
+<!-- pad 100 -->
+<!-- pad 101 -->
+<!-- pad 102 -->
+<!-- pad 103 -->
+<!-- pad 104 -->
+<!-- pad 105 -->
+<!-- pad 106 -->
+<!-- pad 107 -->
+<!-- pad 108 -->
+<!-- pad 109 -->
+<!-- pad 110 -->
+<!-- pad 111 -->
+<!-- pad 112 -->
+<!-- pad 113 -->
+<!-- pad 114 -->
+<!-- pad 115 -->
+<!-- pad 116 -->
+<!-- pad 117 -->
+<!-- pad 118 -->
+<!-- pad 119 -->
+<!-- pad 120 -->
+<!-- pad 121 -->
+<!-- pad 122 -->
+<!-- pad 123 -->
+<!-- pad 124 -->
+<!-- pad 125 -->
+<!-- pad 126 -->
+<!-- pad 127 -->
+<!-- pad 128 -->
+<!-- pad 129 -->
+<!-- pad 130 -->
+<!-- pad 131 -->
+<!-- pad 132 -->
+<!-- pad 133 -->
+<!-- pad 134 -->
+<!-- pad 135 -->
+<!-- pad 136 -->
+<!-- pad 137 -->
+<!-- pad 138 -->
+<!-- pad 139 -->
+<!-- pad 140 -->
+<!-- pad 141 -->
+<!-- pad 142 -->
+<!-- pad 143 -->
+<!-- pad 144 -->
+<!-- pad 145 -->
+<!-- pad 146 -->
+<!-- pad 147 -->
+<!-- pad 148 -->
+<!-- pad 149 -->
+<!-- pad 150 -->
+<!-- pad 151 -->
+<!-- pad 152 -->
+<!-- pad 153 -->
+<!-- pad 154 -->
+<!-- pad 155 -->
+<!-- pad 156 -->
+<!-- pad 157 -->
+<!-- pad 158 -->
+<!-- pad 159 -->
+<!-- pad 160 -->
+<!-- pad 161 -->
+<!-- pad 162 -->
+<!-- pad 163 -->
+<!-- pad 164 -->
+<!-- pad 165 -->
+<!-- pad 166 -->
+<!-- pad 167 -->
+<!-- pad 168 -->
+<!-- pad 169 -->
+<!-- pad 170 -->
+<!-- pad 171 -->
+<!-- pad 172 -->
+<!-- pad 173 -->
+<!-- pad 174 -->
+<!-- pad 175 -->
+<!-- pad 176 -->
+<!-- pad 177 -->
+<!-- pad 178 -->
+<!-- pad 179 -->
+<!-- pad 180 -->
+<!-- pad 181 -->
+<!-- pad 182 -->
+<!-- pad 183 -->
+<!-- pad 184 -->
+<!-- pad 185 -->
+<!-- pad 186 -->
+<!-- pad 187 -->
+<!-- pad 188 -->
+<!-- pad 189 -->
+<!-- pad 190 -->
+<!-- pad 191 -->
+<!-- pad 192 -->
+<!-- pad 193 -->
+<!-- pad 194 -->
+<!-- pad 195 -->
+<!-- pad 196 -->
+<!-- pad 197 -->
+<!-- pad 198 -->
+<!-- pad 199 -->
+<!-- pad 200 -->
+<!-- pad 201 -->
+<!-- pad 202 -->
+<!-- pad 203 -->
+<!-- pad 204 -->
+<!-- pad 205 -->
+<!-- pad 206 -->
+<!-- pad 207 -->
+<!-- pad 208 -->
+<!-- pad 209 -->
+<!-- pad 210 -->
+<!-- pad 211 -->
+<!-- pad 212 -->
+<!-- pad 213 -->
+<!-- pad 214 -->
+<!-- pad 215 -->
+<!-- pad 216 -->
+<!-- pad 217 -->
+<!-- pad 218 -->
+<!-- pad 219 -->
+<!-- pad 220 -->
+<!-- pad 221 -->
+<!-- pad 222 -->
+<!-- pad 223 -->
+<!-- pad 224 -->
+<!-- pad 225 -->
+<!-- pad 226 -->
+<!-- pad 227 -->
+<!-- pad 228 -->
+<!-- pad 229 -->
+<!-- pad 230 -->
+<!-- pad 231 -->
+<!-- pad 232 -->
+<!-- pad 233 -->
+<!-- pad 234 -->
+<!-- pad 235 -->
+<!-- pad 236 -->
+<!-- pad 237 -->
+<!-- pad 238 -->
+<!-- pad 239 -->
+<!-- pad 240 -->
+<!-- pad 241 -->
+<!-- pad 242 -->
+<!-- pad 243 -->
+<!-- pad 244 -->
+<!-- pad 245 -->
+<!-- pad 246 -->
+<!-- pad 247 -->
+<!-- pad 248 -->
+<!-- pad 249 -->
+<!-- pad 250 -->
+<!-- pad 251 -->
+<!-- pad 252 -->
+<!-- pad 253 -->
+<!-- pad 254 -->
+<!-- pad 255 -->
+<!-- pad 256 -->
+<!-- pad 257 -->
+<!-- pad 258 -->
+<!-- pad 259 -->
+<!-- pad 260 -->
+<!-- pad 261 -->
+<!-- pad 262 -->
+<!-- pad 263 -->
+<!-- pad 264 -->
+<!-- pad 265 -->
+<!-- pad 266 -->
+<!-- pad 267 -->
+<!-- pad 268 -->
+<!-- pad 269 -->
+<!-- pad 270 -->
+<!-- pad 271 -->
+<!-- pad 272 -->
+<!-- pad 273 -->
+<!-- pad 274 -->
+<!-- pad 275 -->
+<!-- pad 276 -->
+<!-- pad 277 -->
+<!-- pad 278 -->
+<!-- pad 279 -->
+<!-- pad 280 -->
+<!-- pad 281 -->
+<!-- pad 282 -->
+<!-- pad 283 -->
+<!-- pad 284 -->
+<!-- pad 285 -->
+<!-- pad 286 -->
+<!-- pad 287 -->
+<!-- pad 288 -->
+<!-- pad 289 -->
+<!-- pad 290 -->
+<!-- pad 291 -->
+<!-- pad 292 -->
+<!-- pad 293 -->
+<!-- pad 294 -->
+<!-- pad 295 -->
+<!-- pad 296 -->
+<!-- pad 297 -->
+<!-- pad 298 -->
+<!-- pad 299 -->
+<!-- pad 300 -->
+<!-- pad 301 -->
+<!-- pad 302 -->
+<!-- pad 303 -->
+<!-- pad 304 -->
+<!-- pad 305 -->
+<!-- pad 306 -->
+<!-- pad 307 -->
+<!-- pad 308 -->
+<!-- pad 309 -->
+<!-- pad 310 -->
+<!-- pad 311 -->
+<!-- pad 312 -->
+<!-- pad 313 -->
+<!-- pad 314 -->
+<!-- pad 315 -->
+<!-- pad 316 -->
+<!-- pad 317 -->
+<!-- pad 318 -->
+<!-- pad 319 -->
+<!-- pad 320 -->
+<!-- pad 321 -->
+<!-- pad 322 -->
+<!-- pad 323 -->
+<!-- pad 324 -->
+<!-- pad 325 -->
+<!-- pad 326 -->
+<!-- pad 327 -->
+<!-- pad 328 -->
+<!-- pad 329 -->
+<!-- pad 330 -->
+<!-- pad 331 -->
+<!-- pad 332 -->
+<!-- pad 333 -->
+<!-- pad 334 -->
+<!-- pad 335 -->
+<!-- pad 336 -->
+<!-- pad 337 -->
+<!-- pad 338 -->
+<!-- pad 339 -->
+<!-- pad 340 -->
+<!-- pad 341 -->
+<!-- pad 342 -->
+<!-- pad 343 -->
+<!-- pad 344 -->
+<!-- pad 345 -->
+<!-- pad 346 -->
+<!-- pad 347 -->
+<!-- pad 348 -->
+<!-- pad 349 -->
+<!-- pad 350 -->
+<!-- pad 351 -->
+<!-- pad 352 -->
+<!-- pad 353 -->
+<!-- pad 354 -->
+<!-- pad 355 -->
+<!-- pad 356 -->
+<!-- pad 357 -->
+<!-- pad 358 -->
+<!-- pad 359 -->
+<!-- pad 360 -->
+<!-- pad 361 -->
+<!-- pad 362 -->
+<!-- pad 363 -->
+<!-- pad 364 -->
+<!-- pad 365 -->
+<!-- pad 366 -->
+<!-- pad 367 -->
+<!-- pad 368 -->
+<!-- pad 369 -->
+<!-- pad 370 -->
+<!-- pad 371 -->
+<!-- pad 372 -->
+<!-- pad 373 -->
+<!-- pad 374 -->
+<!-- pad 375 -->
+<!-- pad 376 -->
+<!-- pad 377 -->
+<!-- pad 378 -->
+<!-- pad 379 -->
+<!-- pad 380 -->
+<!-- pad 381 -->
+<!-- pad 382 -->
+<!-- pad 383 -->
+<!-- pad 384 -->
+<!-- pad 385 -->
+<!-- pad 386 -->
+<!-- pad 387 -->
+<!-- pad 388 -->
+<!-- pad 389 -->
+<!-- pad 390 -->
+<!-- pad 391 -->
+<!-- pad 392 -->
+<!-- pad 393 -->
+<!-- pad 394 -->
+<!-- pad 395 -->
+<!-- pad 396 -->
+<!-- pad 397 -->
+<!-- pad 398 -->
+<!-- pad 399 -->
+<!-- pad 400 -->
+<!-- pad 401 -->
+<!-- pad 402 -->
+<!-- pad 403 -->
+<!-- pad 404 -->
+<!-- pad 405 -->
+<!-- pad 406 -->
+<!-- pad 407 -->
+<!-- pad 408 -->
+<!-- pad 409 -->
+<!-- pad 410 -->
+<!-- pad 411 -->
+<!-- pad 412 -->
+<!-- pad 413 -->
+<!-- pad 414 -->
+<!-- pad 415 -->
+<!-- pad 416 -->
+<!-- pad 417 -->
+<!-- pad 418 -->
+<!-- pad 419 -->
+<!-- pad 420 -->
+<!-- pad 421 -->
+<!-- pad 422 -->
+<!-- pad 423 -->
+<!-- pad 424 -->
+<!-- pad 425 -->
+<!-- pad 426 -->
+<!-- pad 427 -->
+<!-- pad 428 -->
+<!-- pad 429 -->
+<!-- pad 430 -->
+<!-- pad 431 -->
+<!-- pad 432 -->
+<!-- pad 433 -->
+<!-- pad 434 -->
+<!-- pad 435 -->
+<!-- pad 436 -->
+<!-- pad 437 -->
+<!-- pad 438 -->
+<!-- pad 439 -->
+<!-- pad 440 -->
+<!-- pad 441 -->
+<!-- pad 442 -->
+<!-- pad 443 -->
+<!-- pad 444 -->
+<!-- pad 445 -->
+<!-- pad 446 -->
+<!-- pad 447 -->
+<!-- pad 448 -->
+<!-- pad 449 -->
+<!-- pad 450 -->
+<!-- pad 451 -->
+<!-- pad 452 -->
+<!-- pad 453 -->
+<!-- pad 454 -->
+<!-- pad 455 -->
+<!-- pad 456 -->
+<!-- pad 457 -->
+<!-- pad 458 -->
+<!-- pad 459 -->
+<!-- pad 460 -->
+<!-- pad 461 -->
+<!-- pad 462 -->
+<!-- pad 463 -->
+<!-- pad 464 -->
+<!-- pad 465 -->
+<!-- pad 466 -->
+<!-- pad 467 -->
+<!-- pad 468 -->
+<!-- pad 469 -->
+<!-- pad 470 -->
+<!-- pad 471 -->
+<!-- pad 472 -->
+<!-- pad 473 -->
+<!-- pad 474 -->
+<!-- pad 475 -->
+<!-- pad 476 -->
+<!-- pad 477 -->
+<!-- pad 478 -->
+<!-- pad 479 -->
+<!-- pad 480 -->
+<!-- pad 481 -->
+<!-- pad 482 -->
+<!-- pad 483 -->
+<!-- pad 484 -->
+<!-- pad 485 -->
+<!-- pad 486 -->
+<!-- pad 487 -->
+<!-- pad 488 -->
+<!-- pad 489 -->
+<!-- pad 490 -->
+<!-- pad 491 -->
+<!-- pad 492 -->
+<!-- pad 493 -->
+<!-- pad 494 -->
+<!-- pad 495 -->
+<!-- pad 496 -->
+<!-- pad 497 -->
+<!-- pad 498 -->
+<!-- pad 499 -->
+<!-- pad 500 -->
+<!-- pad 501 -->
+<!-- pad 502 -->
+<!-- pad 503 -->
+<!-- pad 504 -->
+<!-- pad 505 -->
+<!-- pad 506 -->
+<!-- pad 507 -->
+<!-- pad 508 -->
+<!-- pad 509 -->
+<!-- pad 510 -->
+<!-- pad 511 -->
+<!-- pad 512 -->
+<!-- pad 513 -->
+<!-- pad 514 -->
+<!-- pad 515 -->
+<!-- pad 516 -->
+<!-- pad 517 -->
+<!-- pad 518 -->
+<!-- pad 519 -->
+<!-- pad 520 -->
+<!-- pad 521 -->
+<!-- pad 522 -->
+<!-- pad 523 -->
+<!-- pad 524 -->
+<!-- pad 525 -->
+<!-- pad 526 -->
+<!-- pad 527 -->
+<!-- pad 528 -->
+<!-- pad 529 -->
+<!-- pad 530 -->
+<!-- pad 531 -->
+<!-- pad 532 -->
+<!-- pad 533 -->
+<!-- pad 534 -->
+<!-- pad 535 -->
+<!-- pad 536 -->
+<!-- pad 537 -->
+<!-- pad 538 -->
+<!-- pad 539 -->
+<!-- pad 540 -->
+<!-- pad 541 -->
+<!-- pad 542 -->
+<!-- pad 543 -->
+<!-- pad 544 -->
+<!-- pad 545 -->
+<!-- pad 546 -->
+<!-- pad 547 -->
+<!-- pad 548 -->
+<!-- pad 549 -->
+<!-- pad 550 -->
+<!-- pad 551 -->
+<!-- pad 552 -->
+<!-- pad 553 -->
+<!-- pad 554 -->
+<!-- pad 555 -->
+<!-- pad 556 -->
+<!-- pad 557 -->
+<!-- pad 558 -->
+<!-- pad 559 -->
+<!-- pad 560 -->
+<!-- pad 561 -->
+<!-- pad 562 -->
+<!-- pad 563 -->
+<!-- pad 564 -->
+<!-- pad 565 -->
+<!-- pad 566 -->
+<!-- pad 567 -->
+<!-- pad 568 -->
+<!-- pad 569 -->
+<!-- pad 570 -->
+<!-- pad 571 -->
+<!-- pad 572 -->
+<!-- pad 573 -->
+<!-- pad 574 -->
+<!-- pad 575 -->
+<!-- pad 576 -->
+<!-- pad 577 -->
+<!-- pad 578 -->
+<!-- pad 579 -->
+<!-- pad 580 -->
+<!-- pad 581 -->
+<!-- pad 582 -->
+<!-- pad 583 -->
+<!-- pad 584 -->
+<!-- pad 585 -->
+<!-- pad 586 -->
+<!-- pad 587 -->
+<!-- pad 588 -->
+<!-- pad 589 -->
+<!-- pad 590 -->
+<!-- pad 591 -->
+<!-- pad 592 -->
+<!-- pad 593 -->
+<!-- pad 594 -->
+<!-- pad 595 -->
+<!-- pad 596 -->
+<!-- pad 597 -->
+<!-- pad 598 -->
+<!-- pad 599 -->
+<!-- pad 600 -->
+<!-- pad 601 -->
+<!-- pad 602 -->
+<!-- pad 603 -->
+<!-- pad 604 -->
+<!-- pad 605 -->
+<!-- pad 606 -->
+<!-- pad 607 -->
+<!-- pad 608 -->
+<!-- pad 609 -->
+<!-- pad 610 -->
+<!-- pad 611 -->
+<!-- pad 612 -->
+<!-- pad 613 -->
+<!-- pad 614 -->
+<!-- pad 615 -->
+<!-- pad 616 -->
+<!-- pad 617 -->
+<!-- pad 618 -->
+<!-- pad 619 -->
+<!-- pad 620 -->
+<!-- pad 621 -->
+<!-- pad 622 -->
+<!-- pad 623 -->
+<!-- pad 624 -->
+<!-- pad 625 -->
+<!-- pad 626 -->
+<!-- pad 627 -->
+<!-- pad 628 -->
+<!-- pad 629 -->
+<!-- pad 630 -->
+<!-- pad 631 -->
+<!-- pad 632 -->
+<!-- pad 633 -->
+<!-- pad 634 -->
+<!-- pad 635 -->
+<!-- pad 636 -->
+<!-- pad 637 -->
+<!-- pad 638 -->
+<!-- pad 639 -->
+<!-- pad 640 -->
+<!-- pad 641 -->
+<!-- pad 642 -->
+<!-- pad 643 -->
+<!-- pad 644 -->
+<!-- pad 645 -->
+<!-- pad 646 -->
+<!-- pad 647 -->
+<!-- pad 648 -->
+<!-- pad 649 -->
+<!-- pad 650 -->
+<!-- pad 651 -->
+<!-- pad 652 -->
+<!-- pad 653 -->
+<!-- pad 654 -->
+<!-- pad 655 -->
+<!-- pad 656 -->
+<!-- pad 657 -->
+<!-- pad 658 -->
+<!-- pad 659 -->
+<!-- pad 660 -->
+<!-- pad 661 -->
+<!-- pad 662 -->
+<!-- pad 663 -->
+<!-- pad 664 -->
+<!-- pad 665 -->
+<!-- pad 666 -->
+<!-- pad 667 -->
+<!-- pad 668 -->
+<!-- pad 669 -->
+<!-- pad 670 -->
+<!-- pad 671 -->
+<!-- pad 672 -->
+<!-- pad 673 -->
+<!-- pad 674 -->
+<!-- pad 675 -->
+<!-- pad 676 -->
+<!-- pad 677 -->
+<!-- pad 678 -->
+<!-- pad 679 -->
+<!-- pad 680 -->
+<!-- pad 681 -->
+<!-- pad 682 -->
+<!-- pad 683 -->
+<!-- pad 684 -->
+<!-- pad 685 -->
+<!-- pad 686 -->
+<!-- pad 687 -->
+<!-- pad 688 -->
+<!-- pad 689 -->
+<!-- pad 690 -->
+<!-- pad 691 -->
+<!-- pad 692 -->
+<!-- pad 693 -->
+<!-- pad 694 -->
+<!-- pad 695 -->
+<!-- pad 696 -->
+<!-- pad 697 -->
+<!-- pad 698 -->
+<!-- pad 699 -->
+<!-- pad 700 -->
+<!-- pad 701 -->
+<!-- pad 702 -->
+<!-- pad 703 -->
+<!-- pad 704 -->
+<!-- pad 705 -->
+<!-- pad 706 -->
+<!-- pad 707 -->
+<!-- pad 708 -->
+<!-- pad 709 -->
+<!-- pad 710 -->
+<!-- pad 711 -->
+<!-- pad 712 -->
+<!-- pad 713 -->
+<!-- pad 714 -->
+<!-- pad 715 -->
+<!-- pad 716 -->
+<!-- pad 717 -->
+<!-- pad 718 -->
+<!-- pad 719 -->
+<!-- pad 720 -->
+<!-- pad 721 -->
+<!-- pad 722 -->
+<!-- pad 723 -->
+<!-- pad 724 -->
+<!-- pad 725 -->
+<!-- pad 726 -->
+<!-- pad 727 -->
+<!-- pad 728 -->
+<!-- pad 729 -->
+<!-- pad 730 -->
+<!-- pad 731 -->
+<!-- pad 732 -->
+<!-- pad 733 -->
+<!-- pad 734 -->
+<!-- pad 735 -->
+<!-- pad 736 -->
+<!-- pad 737 -->
+<!-- pad 738 -->
+<!-- pad 739 -->
+<!-- pad 740 -->
+<!-- pad 741 -->
+<!-- pad 742 -->
+<!-- pad 743 -->
+<!-- pad 744 -->
+<!-- pad 745 -->
+<!-- pad 746 -->
+<!-- pad 747 -->
+<!-- pad 748 -->
+<!-- pad 749 -->
+<!-- pad 750 -->
+<!-- pad 751 -->
+<!-- pad 752 -->
+<!-- pad 753 -->
+<!-- pad 754 -->
+<!-- pad 755 -->
+<!-- pad 756 -->
+<!-- pad 757 -->
+<!-- pad 758 -->
+<!-- pad 759 -->
+<!-- pad 760 -->
+<!-- pad 761 -->
+<!-- pad 762 -->
+<!-- pad 763 -->
+<!-- pad 764 -->
+<!-- pad 765 -->
+<!-- pad 766 -->
+<!-- pad 767 -->
+<!-- pad 768 -->
+<!-- pad 769 -->
+<!-- pad 770 -->
+<!-- pad 771 -->
+<!-- pad 772 -->
+<!-- pad 773 -->
+<!-- pad 774 -->
+<!-- pad 775 -->
+<!-- pad 776 -->
+<!-- pad 777 -->
+<!-- pad 778 -->
+<!-- pad 779 -->
+<!-- pad 780 -->
+<!-- pad 781 -->
+<!-- pad 782 -->
+<!-- pad 783 -->
+<!-- pad 784 -->
+<!-- pad 785 -->
+<!-- pad 786 -->
+<!-- pad 787 -->
+<!-- pad 788 -->
+<!-- pad 789 -->
+<!-- pad 790 -->
+<!-- pad 791 -->
+<!-- pad 792 -->
+<!-- pad 793 -->
+<!-- pad 794 -->
+<!-- pad 795 -->
+<!-- pad 796 -->
+<!-- pad 797 -->
+<!-- pad 798 -->
+<!-- pad 799 -->
+<!-- pad 800 -->
+<!-- pad 801 -->
+<!-- pad 802 -->
+<!-- pad 803 -->
+<!-- pad 804 -->
+<!-- pad 805 -->
+<!-- pad 806 -->
+<!-- pad 807 -->
+<!-- pad 808 -->
+<!-- pad 809 -->
+<!-- pad 810 -->
+<!-- pad 811 -->
+<!-- pad 812 -->
+<!-- pad 813 -->
+<!-- pad 814 -->
+<!-- pad 815 -->
+<!-- pad 816 -->
+<!-- pad 817 -->
+<!-- pad 818 -->
+<!-- pad 819 -->
+<!-- pad 820 -->
+<!-- pad 821 -->
+<!-- pad 822 -->
+<!-- pad 823 -->
+<!-- pad 824 -->
+<!-- pad 825 -->
+<!-- pad 826 -->
+<!-- pad 827 -->
+<!-- pad 828 -->
+<!-- pad 829 -->
+<!-- pad 830 -->
+<!-- pad 831 -->
+<!-- pad 832 -->
+<!-- pad 833 -->
+<!-- pad 834 -->
+<!-- pad 835 -->
+<!-- pad 836 -->
+<!-- pad 837 -->
+<!-- pad 838 -->
+<!-- pad 839 -->
+<!-- pad 840 -->
+<!-- pad 841 -->
+<!-- pad 842 -->
+<!-- pad 843 -->
+<!-- pad 844 -->
+<!-- pad 845 -->
+<!-- pad 846 -->
+<!-- pad 847 -->
+<!-- pad 848 -->
+<!-- pad 849 -->
+<!-- pad 850 -->
+<!-- pad 851 -->
+<!-- pad 852 -->
+<!-- pad 853 -->
+<!-- pad 854 -->
+<!-- pad 855 -->
+<!-- pad 856 -->
+<!-- pad 857 -->
+<!-- pad 858 -->
+<!-- pad 859 -->
+<!-- pad 860 -->
+<!-- pad 861 -->
+<!-- pad 862 -->
+<!-- pad 863 -->
+<!-- pad 864 -->
+<!-- pad 865 -->
+<!-- pad 866 -->
+<!-- pad 867 -->
+<!-- pad 868 -->
+<!-- pad 869 -->
+<!-- pad 870 -->
+<!-- pad 871 -->
+<!-- pad 872 -->
+<!-- pad 873 -->
+<!-- pad 874 -->
+<!-- pad 875 -->
+<!-- pad 876 -->
+<!-- pad 877 -->
+<!-- pad 878 -->
+<!-- pad 879 -->
+<!-- pad 880 -->
+<!-- pad 881 -->
+<!-- pad 882 -->
+<!-- pad 883 -->
+<!-- pad 884 -->
+<!-- pad 885 -->
+<!-- pad 886 -->
+<!-- pad 887 -->
+<!-- pad 888 -->
+<!-- pad 889 -->
+<!-- pad 890 -->
+<!-- pad 891 -->
+<!-- pad 892 -->
+<!-- pad 893 -->
+<!-- pad 894 -->
+<!-- pad 895 -->
+<!-- pad 896 -->
+<!-- pad 897 -->
+<!-- pad 898 -->
+<!-- pad 899 -->
+<!-- pad 900 -->
+<!-- pad 901 -->
+<!-- pad 902 -->
+<!-- pad 903 -->
+<!-- pad 904 -->
+<!-- pad 905 -->
+<!-- pad 906 -->
+<!-- pad 907 -->
+<!-- pad 908 -->
+<!-- pad 909 -->
+<!-- pad 910 -->
+<!-- pad 911 -->
+<!-- pad 912 -->
+<!-- pad 913 -->
+<!-- pad 914 -->
+<!-- pad 915 -->
+<!-- pad 916 -->
+<!-- pad 917 -->
+<!-- pad 918 -->
+<!-- pad 919 -->
+<!-- pad 920 -->
+<!-- pad 921 -->
+<!-- pad 922 -->
+<!-- pad 923 -->
+<!-- pad 924 -->
+<!-- pad 925 -->
+<!-- pad 926 -->
+<!-- pad 927 -->
+<!-- pad 928 -->
+<!-- pad 929 -->
+<!-- pad 930 -->
+<!-- pad 931 -->
+<!-- pad 932 -->
+<!-- pad 933 -->
+<!-- pad 934 -->
+<!-- pad 935 -->
+<!-- pad 936 -->
+<!-- pad 937 -->
+<!-- pad 938 -->
+<!-- pad 939 -->
+<!-- pad 940 -->
+<!-- pad 941 -->
+<!-- pad 942 -->
+<!-- pad 943 -->
+<!-- pad 944 -->
+<!-- pad 945 -->
+<!-- pad 946 -->
+<!-- pad 947 -->
+<!-- pad 948 -->
+<!-- pad 949 -->
+<!-- pad 950 -->
+<!-- pad 951 -->
+<!-- pad 952 -->
+<!-- pad 953 -->
+<!-- pad 954 -->
+<!-- pad 955 -->
+<!-- pad 956 -->
+<!-- pad 957 -->
+<!-- pad 958 -->
+<!-- pad 959 -->
+<!-- pad 960 -->
+<!-- pad 961 -->
+<!-- pad 962 -->
+<!-- pad 963 -->
+<!-- pad 964 -->
+<!-- pad 965 -->
+<!-- pad 966 -->
+<!-- pad 967 -->
+<!-- pad 968 -->
+<!-- pad 969 -->
+<!-- pad 970 -->
+<!-- pad 971 -->
+<!-- pad 972 -->
+<!-- pad 973 -->
+<!-- pad 974 -->
+<!-- pad 975 -->
+<!-- pad 976 -->
+<!-- pad 977 -->
+<!-- pad 978 -->
+<!-- pad 979 -->
+<!-- pad 980 -->
+<!-- pad 981 -->
+<!-- pad 982 -->
+<!-- pad 983 -->
+<!-- pad 984 -->
+<!-- pad 985 -->
+<!-- pad 986 -->
+<!-- pad 987 -->
+<!-- pad 988 -->
+<!-- pad 989 -->
+<!-- pad 990 -->
+<!-- pad 991 -->
+<!-- pad 992 -->
+<!-- pad 993 -->
+<!-- pad 994 -->
+<!-- pad 995 -->
+<!-- pad 996 -->
+<!-- pad 997 -->
+<!-- pad 998 -->
+<!-- pad 999 -->
+<!-- pad 1000 -->
+<!-- pad 1001 -->
+<!-- pad 1002 -->
+<!-- pad 1003 -->
+<!-- pad 1004 -->
+<!-- pad 1005 -->
+<!-- pad 1006 -->
+<!-- pad 1007 -->
+<!-- pad 1008 -->
+<!-- pad 1009 -->
+<!-- pad 1010 -->
+<!-- pad 1011 -->
+<!-- pad 1012 -->
+<!-- pad 1013 -->
+<!-- pad 1014 -->
+<!-- pad 1015 -->
+<!-- pad 1016 -->
+<!-- pad 1017 -->
+<!-- pad 1018 -->
+<!-- pad 1019 -->
+<!-- pad 1020 -->
+<!-- pad 1021 -->
+<!-- pad 1022 -->
+<!-- pad 1023 -->
+<!-- pad 1024 -->
+<!-- pad 1025 -->
+<!-- pad 1026 -->
+<!-- pad 1027 -->
+<!-- pad 1028 -->
+<!-- pad 1029 -->
+<!-- pad 1030 -->
+<!-- pad 1031 -->
+<!-- pad 1032 -->
+<!-- pad 1033 -->
+<!-- pad 1034 -->
+<!-- pad 1035 -->
+<!-- pad 1036 -->
+<!-- pad 1037 -->
+<!-- pad 1038 -->
+<!-- pad 1039 -->
+<!-- pad 1040 -->
+<!-- pad 1041 -->
+<!-- pad 1042 -->
+<!-- pad 1043 -->
+<!-- pad 1044 -->
+<!-- pad 1045 -->
+<!-- pad 1046 -->
+<!-- pad 1047 -->
+<!-- pad 1048 -->
+<!-- pad 1049 -->
+<!-- pad 1050 -->
+<!-- pad 1051 -->
+<!-- pad 1052 -->
+<!-- pad 1053 -->
+<!-- pad 1054 -->
+<!-- pad 1055 -->
+<!-- pad 1056 -->
+<!-- pad 1057 -->
+<!-- pad 1058 -->
+<!-- pad 1059 -->
+<!-- pad 1060 -->
+<!-- pad 1061 -->
+<!-- pad 1062 -->
+<!-- pad 1063 -->
+<!-- pad 1064 -->
+<!-- pad 1065 -->
+<!-- pad 1066 -->
+<!-- pad 1067 -->
+<!-- pad 1068 -->
+<!-- pad 1069 -->
+<!-- pad 1070 -->
+<!-- pad 1071 -->
+<!-- pad 1072 -->
+<!-- pad 1073 -->
+<!-- pad 1074 -->
+<!-- pad 1075 -->
+<!-- pad 1076 -->
+<!-- pad 1077 -->
+<!-- pad 1078 -->
+<!-- pad 1079 -->
+<!-- pad 1080 -->
+<!-- pad 1081 -->
+<!-- pad 1082 -->
+<!-- pad 1083 -->
+<!-- pad 1084 -->
+<!-- pad 1085 -->
+<!-- pad 1086 -->
+<!-- pad 1087 -->
+<!-- pad 1088 -->
+<!-- pad 1089 -->
+<!-- pad 1090 -->
+<!-- pad 1091 -->
+<!-- pad 1092 -->
+<!-- pad 1093 -->
+<!-- pad 1094 -->
+<!-- pad 1095 -->
+<!-- pad 1096 -->
+<!-- pad 1097 -->
+<!-- pad 1098 -->
+<!-- pad 1099 -->
+<!-- pad 1100 -->
+<!-- pad 1101 -->
+<!-- pad 1102 -->
+<!-- pad 1103 -->
+<!-- pad 1104 -->
+<!-- pad 1105 -->
+<!-- pad 1106 -->
+<!-- pad 1107 -->
+<!-- pad 1108 -->
+<!-- pad 1109 -->
+<!-- pad 1110 -->
+<!-- pad 1111 -->
+<!-- pad 1112 -->
+<!-- pad 1113 -->
+<!-- pad 1114 -->
+<!-- pad 1115 -->
+<!-- pad 1116 -->
+<!-- pad 1117 -->
+<!-- pad 1118 -->
+<!-- pad 1119 -->
+<!-- pad 1120 -->
+<!-- pad 1121 -->
+<!-- pad 1122 -->
+<!-- pad 1123 -->
+<!-- pad 1124 -->
+<!-- pad 1125 -->
+<!-- pad 1126 -->
+<!-- pad 1127 -->
+<!-- pad 1128 -->
+<!-- pad 1129 -->
+<!-- pad 1130 -->
+<!-- pad 1131 -->
+<!-- pad 1132 -->
+<!-- pad 1133 -->
+<!-- pad 1134 -->
+<!-- pad 1135 -->
+<!-- pad 1136 -->
+<!-- pad 1137 -->
+<!-- pad 1138 -->
+<!-- pad 1139 -->
+<!-- pad 1140 -->
+<!-- pad 1141 -->
+<!-- pad 1142 -->
+<!-- pad 1143 -->
+<!-- pad 1144 -->
+<!-- pad 1145 -->
+<!-- pad 1146 -->
+<!-- pad 1147 -->
+<!-- pad 1148 -->
+<!-- pad 1149 -->
+<!-- pad 1150 -->
+<!-- pad 1151 -->
+<!-- pad 1152 -->
+<!-- pad 1153 -->
+<!-- pad 1154 -->
+<!-- pad 1155 -->
+<!-- pad 1156 -->
+<!-- pad 1157 -->
+<!-- pad 1158 -->
+<!-- pad 1159 -->
+<!-- pad 1160 -->
+<!-- pad 1161 -->
+<!-- pad 1162 -->
+<!-- pad 1163 -->
+<!-- pad 1164 -->
+<!-- pad 1165 -->
+<!-- pad 1166 -->
+<!-- pad 1167 -->
+<!-- pad 1168 -->
+<!-- pad 1169 -->
+<!-- pad 1170 -->
+<!-- pad 1171 -->
+<!-- pad 1172 -->
+<!-- pad 1173 -->
+<!-- pad 1174 -->
+<!-- pad 1175 -->
+<!-- pad 1176 -->
+<!-- pad 1177 -->
+<!-- pad 1178 -->
+<!-- pad 1179 -->
+<!-- pad 1180 -->
+<!-- pad 1181 -->
+<!-- pad 1182 -->
+<!-- pad 1183 -->
+<!-- pad 1184 -->
+<!-- pad 1185 -->
+<!-- pad 1186 -->
+<!-- pad 1187 -->
+<!-- pad 1188 -->
+<!-- pad 1189 -->
+<!-- pad 1190 -->
+<!-- pad 1191 -->
+<!-- pad 1192 -->
+<!-- pad 1193 -->
+<!-- pad 1194 -->
+<!-- pad 1195 -->
+<!-- pad 1196 -->
+<!-- pad 1197 -->
+<!-- pad 1198 -->
+<!-- pad 1199 -->
+<!-- pad 1200 -->
+<!-- pad 1201 -->
+<!-- pad 1202 -->
+<!-- pad 1203 -->
+<!-- pad 1204 -->
+<!-- pad 1205 -->
+<!-- pad 1206 -->
+<!-- pad 1207 -->
+<!-- pad 1208 -->
+<!-- pad 1209 -->
+<!-- pad 1210 -->
+<!-- pad 1211 -->
+<!-- pad 1212 -->
+<!-- pad 1213 -->
+<!-- pad 1214 -->
+<!-- pad 1215 -->
+<!-- pad 1216 -->
+<!-- pad 1217 -->
+<!-- pad 1218 -->
+<!-- pad 1219 -->
+<!-- pad 1220 -->
+<!-- pad 1221 -->
+<!-- pad 1222 -->
+<!-- pad 1223 -->
+<!-- pad 1224 -->
+<!-- pad 1225 -->
+<!-- pad 1226 -->
+<!-- pad 1227 -->
+<!-- pad 1228 -->
+<!-- pad 1229 -->
+<!-- pad 1230 -->
+<!-- pad 1231 -->
+<!-- pad 1232 -->
+<!-- pad 1233 -->
+<!-- pad 1234 -->
+<!-- pad 1235 -->
+<!-- pad 1236 -->
+<!-- pad 1237 -->
+<!-- pad 1238 -->
+<!-- pad 1239 -->
+<!-- pad 1240 -->
+<!-- pad 1241 -->
+<!-- pad 1242 -->
+<!-- pad 1243 -->
+<!-- pad 1244 -->
+<!-- pad 1245 -->
+<!-- pad 1246 -->
+<!-- pad 1247 -->
+<!-- pad 1248 -->
+<!-- pad 1249 -->
+<!-- pad 1250 -->
+<!-- pad 1251 -->
+<!-- pad 1252 -->
+<!-- pad 1253 -->
+<!-- pad 1254 -->
+<!-- pad 1255 -->
+<!-- pad 1256 -->
+<!-- pad 1257 -->
+<!-- pad 1258 -->
+<!-- pad 1259 -->
+<!-- pad 1260 -->
+<!-- pad 1261 -->
+<!-- pad 1262 -->
+<!-- pad 1263 -->
+<!-- pad 1264 -->
+<!-- pad 1265 -->
+<!-- pad 1266 -->
+<!-- pad 1267 -->
+<!-- pad 1268 -->
+<!-- pad 1269 -->
+<!-- pad 1270 -->
+<!-- pad 1271 -->
+<!-- pad 1272 -->
+<!-- pad 1273 -->
+<!-- pad 1274 -->
+<!-- pad 1275 -->
+<!-- pad 1276 -->
+<!-- pad 1277 -->
+<!-- pad 1278 -->
+<!-- pad 1279 -->
+<!-- pad 1280 -->
+<!-- pad 1281 -->
+<!-- pad 1282 -->
+<!-- pad 1283 -->
+<!-- pad 1284 -->
+<!-- pad 1285 -->
+<!-- pad 1286 -->
+<!-- pad 1287 -->
+<!-- pad 1288 -->
+<!-- pad 1289 -->
+<!-- pad 1290 -->
+<!-- pad 1291 -->
+<!-- pad 1292 -->
+<!-- pad 1293 -->
+<!-- pad 1294 -->
+<!-- pad 1295 -->
+<!-- pad 1296 -->
+<!-- pad 1297 -->
+<!-- pad 1298 -->
+<!-- pad 1299 -->
+<!-- pad 1300 -->
+<!-- pad 1301 -->
+<!-- pad 1302 -->
+<!-- pad 1303 -->
+<!-- pad 1304 -->
+<!-- pad 1305 -->
+<!-- pad 1306 -->
+<!-- pad 1307 -->
+<!-- pad 1308 -->
+<!-- pad 1309 -->
+<!-- pad 1310 -->
+<!-- pad 1311 -->
+<!-- pad 1312 -->
+<!-- pad 1313 -->
+<!-- pad 1314 -->
+<!-- pad 1315 -->
+<!-- pad 1316 -->
+<!-- pad 1317 -->
+<!-- pad 1318 -->
+<!-- pad 1319 -->
+<!-- pad 1320 -->
+<!-- pad 1321 -->
+<!-- pad 1322 -->
+<!-- pad 1323 -->
+<!-- pad 1324 -->
+<!-- pad 1325 -->
+<!-- pad 1326 -->
+<!-- pad 1327 -->
+<!-- pad 1328 -->
+<!-- pad 1329 -->
+<!-- pad 1330 -->
+<!-- pad 1331 -->
+<!-- pad 1332 -->
+<!-- pad 1333 -->
+<!-- pad 1334 -->
+<!-- pad 1335 -->
+<!-- pad 1336 -->
+<!-- pad 1337 -->
+<!-- pad 1338 -->
+<!-- pad 1339 -->
+<!-- pad 1340 -->
+<!-- pad 1341 -->
+<!-- pad 1342 -->
+<!-- pad 1343 -->
+<!-- pad 1344 -->
+<!-- pad 1345 -->
+<!-- pad 1346 -->
+<!-- pad 1347 -->
+<!-- pad 1348 -->
+<!-- pad 1349 -->
+<!-- pad 1350 -->
+<!-- pad 1351 -->
+<!-- pad 1352 -->
+<!-- pad 1353 -->
+<!-- pad 1354 -->
+<!-- pad 1355 -->
+<!-- pad 1356 -->
+<!-- pad 1357 -->
+<!-- pad 1358 -->
+<!-- pad 1359 -->
+<!-- pad 1360 -->
+<!-- pad 1361 -->
+<!-- pad 1362 -->
+<!-- pad 1363 -->
+<!-- pad 1364 -->
+<!-- pad 1365 -->
+<!-- pad 1366 -->
+<!-- pad 1367 -->
+<!-- pad 1368 -->
+<!-- pad 1369 -->
+<!-- pad 1370 -->
+<!-- pad 1371 -->
+<!-- pad 1372 -->
+<!-- pad 1373 -->
+<!-- pad 1374 -->
+<!-- pad 1375 -->
+<!-- pad 1376 -->
+<!-- pad 1377 -->
+<!-- pad 1378 -->
+<!-- pad 1379 -->
+<!-- pad 1380 -->
+<!-- pad 1381 -->
+<!-- pad 1382 -->
+<!-- pad 1383 -->
+<!-- pad 1384 -->
+<!-- pad 1385 -->
+<!-- pad 1386 -->
+<!-- pad 1387 -->
+<!-- pad 1388 -->
+<!-- pad 1389 -->
+<!-- pad 1390 -->
+<!-- pad 1391 -->
+<!-- pad 1392 -->
+<!-- pad 1393 -->
+<!-- pad 1394 -->
+<!-- pad 1395 -->
+<!-- pad 1396 -->
+<!-- pad 1397 -->
+<!-- pad 1398 -->
+<!-- pad 1399 -->
+<!-- pad 1400 -->
+<!-- pad 1401 -->
+<!-- pad 1402 -->
+<!-- pad 1403 -->
+<!-- pad 1404 -->
+<!-- pad 1405 -->
+<!-- pad 1406 -->
+<!-- pad 1407 -->
+<!-- pad 1408 -->
+<!-- pad 1409 -->
+<!-- pad 1410 -->
+<!-- pad 1411 -->
+<!-- pad 1412 -->
+<!-- pad 1413 -->
+<!-- pad 1414 -->
+<!-- pad 1415 -->
+<!-- pad 1416 -->
+<!-- pad 1417 -->
+<!-- pad 1418 -->
+<!-- pad 1419 -->
+<!-- pad 1420 -->
+<!-- pad 1421 -->
+<!-- pad 1422 -->
+<!-- pad 1423 -->
+<!-- pad 1424 -->
+<!-- pad 1425 -->
+<!-- pad 1426 -->
+<!-- pad 1427 -->
+<!-- pad 1428 -->
+<!-- pad 1429 -->
+<!-- pad 1430 -->
+<!-- pad 1431 -->
+<!-- pad 1432 -->
+<!-- pad 1433 -->
+<!-- pad 1434 -->
+<!-- pad 1435 -->
+<!-- pad 1436 -->
+<!-- pad 1437 -->
+<!-- pad 1438 -->
+<!-- pad 1439 -->
+<!-- pad 1440 -->
+<!-- pad 1441 -->
+<!-- pad 1442 -->
+<!-- pad 1443 -->
+<!-- pad 1444 -->
+<!-- pad 1445 -->
+<!-- pad 1446 -->
+<!-- pad 1447 -->
+<!-- pad 1448 -->
+<!-- pad 1449 -->
+<!-- pad 1450 -->
+<!-- pad 1451 -->
+<!-- pad 1452 -->
+<!-- pad 1453 -->
+<!-- pad 1454 -->
+<!-- pad 1455 -->
+<!-- pad 1456 -->
+<!-- pad 1457 -->
+<!-- pad 1458 -->
+<!-- pad 1459 -->
+<!-- pad 1460 -->
+<!-- pad 1461 -->
+<!-- pad 1462 -->
+<!-- pad 1463 -->
+<!-- pad 1464 -->
+<!-- pad 1465 -->
+<!-- pad 1466 -->
+<!-- pad 1467 -->
+<!-- pad 1468 -->
+<!-- pad 1469 -->
+<!-- pad 1470 -->
+<!-- pad 1471 -->
+<!-- pad 1472 -->
+<!-- pad 1473 -->
+<!-- pad 1474 -->
+<!-- pad 1475 -->
+<!-- pad 1476 -->
+<!-- pad 1477 -->
+<!-- pad 1478 -->
+<!-- pad 1479 -->
+<!-- pad 1480 -->
+<!-- pad 1481 -->
+<!-- pad 1482 -->
+<!-- pad 1483 -->
+<!-- pad 1484 -->
+<!-- pad 1485 -->
+<!-- pad 1486 -->
+<!-- pad 1487 -->
+<!-- pad 1488 -->
+<!-- pad 1489 -->
+<!-- pad 1490 -->
+<!-- pad 1491 -->
+<!-- pad 1492 -->
+<!-- pad 1493 -->
+<!-- pad 1494 -->
+<!-- pad 1495 -->
+<!-- pad 1496 -->
+<!-- pad 1497 -->
+<!-- pad 1498 -->
+<!-- pad 1499 -->
+<!-- pad 1500 -->
+<!-- pad 1501 -->
+<!-- pad 1502 -->
+<!-- pad 1503 -->
+<!-- pad 1504 -->
+<!-- pad 1505 -->
+<!-- pad 1506 -->
+<!-- pad 1507 -->
+<!-- pad 1508 -->
+<!-- pad 1509 -->
+<!-- pad 1510 -->
+<!-- pad 1511 -->
+<!-- pad 1512 -->
+<!-- pad 1513 -->
+<!-- pad 1514 -->
+<!-- pad 1515 -->
+<!-- pad 1516 -->
+<!-- pad 1517 -->
+<!-- pad 1518 -->
+<!-- pad 1519 -->
+<!-- pad 1520 -->
+<!-- pad 1521 -->
+<!-- pad 1522 -->
+<!-- pad 1523 -->
+<!-- pad 1524 -->
+<!-- pad 1525 -->
+<!-- pad 1526 -->
+<!-- pad 1527 -->
+<!-- pad 1528 -->
+<!-- pad 1529 -->
+<!-- pad 1530 -->
+<!-- pad 1531 -->
+<!-- pad 1532 -->
+<!-- pad 1533 -->
+<!-- pad 1534 -->
+<!-- pad 1535 -->
+<!-- pad 1536 -->
+<!-- pad 1537 -->
+<!-- pad 1538 -->
+<!-- pad 1539 -->
+<!-- pad 1540 -->
+<!-- pad 1541 -->
+<!-- pad 1542 -->
+<!-- pad 1543 -->
+<!-- pad 1544 -->
+<!-- pad 1545 -->
+<!-- pad 1546 -->
+<!-- pad 1547 -->
+<!-- pad 1548 -->
+<!-- pad 1549 -->
+<!-- pad 1550 -->
+<!-- pad 1551 -->
+<!-- pad 1552 -->
+<!-- pad 1553 -->
+<!-- pad 1554 -->
+<!-- pad 1555 -->
+<!-- pad 1556 -->
+<!-- pad 1557 -->
+<!-- pad 1558 -->
+<!-- pad 1559 -->
+<!-- pad 1560 -->
+<!-- pad 1561 -->
+<!-- pad 1562 -->
+<!-- pad 1563 -->
+<!-- pad 1564 -->
+<!-- pad 1565 -->
+<!-- pad 1566 -->
+<!-- pad 1567 -->
+<!-- pad 1568 -->
+<!-- pad 1569 -->
+<!-- pad 1570 -->
+<!-- pad 1571 -->
+<!-- pad 1572 -->
+<!-- pad 1573 -->
+<!-- pad 1574 -->
+<!-- pad 1575 -->
+<!-- pad 1576 -->
+<!-- pad 1577 -->
+<!-- pad 1578 -->
+<!-- pad 1579 -->
+<!-- pad 1580 -->
+<!-- pad 1581 -->
+<!-- pad 1582 -->
+<!-- pad 1583 -->
+<!-- pad 1584 -->
+<!-- pad 1585 -->
+<!-- pad 1586 -->
+<!-- pad 1587 -->
+<!-- pad 1588 -->
+<!-- pad 1589 -->
+<!-- pad 1590 -->
+<!-- pad 1591 -->
+<!-- pad 1592 -->
+<!-- pad 1593 -->
+<!-- pad 1594 -->
+<!-- pad 1595 -->
+<!-- pad 1596 -->
+<!-- pad 1597 -->
+<!-- pad 1598 -->
+<!-- pad 1599 -->
+<!-- pad 1600 -->
+<!-- pad 1601 -->
+<!-- pad 1602 -->
+<!-- pad 1603 -->
+<!-- pad 1604 -->
+<!-- pad 1605 -->
+<!-- pad 1606 -->
+<!-- pad 1607 -->
+<!-- pad 1608 -->
+<!-- pad 1609 -->
+<!-- pad 1610 -->
+<!-- pad 1611 -->
+<!-- pad 1612 -->
+<!-- pad 1613 -->
+<!-- pad 1614 -->
+<!-- pad 1615 -->
+<!-- pad 1616 -->
+<!-- pad 1617 -->
+<!-- pad 1618 -->
+<!-- pad 1619 -->
+<!-- pad 1620 -->
+<!-- pad 1621 -->
+<!-- pad 1622 -->
+<!-- pad 1623 -->
+<!-- pad 1624 -->
+<!-- pad 1625 -->
+<!-- pad 1626 -->
+<!-- pad 1627 -->
+<!-- pad 1628 -->
+<!-- pad 1629 -->
+<!-- pad 1630 -->
+<!-- pad 1631 -->
+<!-- pad 1632 -->
+<!-- pad 1633 -->
+<!-- pad 1634 -->
+<!-- pad 1635 -->
+<!-- pad 1636 -->
+<!-- pad 1637 -->
+<!-- pad 1638 -->
+<!-- pad 1639 -->
+<!-- pad 1640 -->
+<!-- pad 1641 -->
+<!-- pad 1642 -->
+<!-- pad 1643 -->
+<!-- pad 1644 -->
+<!-- pad 1645 -->
+<!-- pad 1646 -->
+<!-- pad 1647 -->
+<!-- pad 1648 -->
+<!-- pad 1649 -->
+<!-- pad 1650 -->
+<!-- pad 1651 -->
+<!-- pad 1652 -->
+<!-- pad 1653 -->
+<!-- pad 1654 -->
+<!-- pad 1655 -->
+<!-- pad 1656 -->
+<!-- pad 1657 -->
+<!-- pad 1658 -->
+<!-- pad 1659 -->
+<!-- pad 1660 -->
+<!-- pad 1661 -->
+<!-- pad 1662 -->
+<!-- pad 1663 -->
+<!-- pad 1664 -->
+<!-- pad 1665 -->
+<!-- pad 1666 -->
+<!-- pad 1667 -->
+<!-- pad 1668 -->
+<!-- pad 1669 -->
+<!-- pad 1670 -->
+<!-- pad 1671 -->
+<!-- pad 1672 -->
+<!-- pad 1673 -->
+<!-- pad 1674 -->
+<!-- pad 1675 -->
+<!-- pad 1676 -->
+<!-- pad 1677 -->
+<!-- pad 1678 -->
+<!-- pad 1679 -->
+<!-- pad 1680 -->
+<!-- pad 1681 -->
+<!-- pad 1682 -->
+<!-- pad 1683 -->
+<!-- pad 1684 -->
+<!-- pad 1685 -->
+<!-- pad 1686 -->
+<!-- pad 1687 -->
+<!-- pad 1688 -->
+<!-- pad 1689 -->
+<!-- pad 1690 -->
+<!-- pad 1691 -->
+<!-- pad 1692 -->
+<!-- pad 1693 -->
+<!-- pad 1694 -->
+<!-- pad 1695 -->
+<!-- pad 1696 -->
+<!-- pad 1697 -->
+<!-- pad 1698 -->
+<!-- pad 1699 -->
+<!-- pad 1700 -->
+<!-- pad 1701 -->
+<!-- pad 1702 -->
+<!-- pad 1703 -->
+<!-- pad 1704 -->
+<!-- pad 1705 -->
+<!-- pad 1706 -->
+<!-- pad 1707 -->
+<!-- pad 1708 -->
+<!-- pad 1709 -->
+<!-- pad 1710 -->
+<!-- pad 1711 -->
+<!-- pad 1712 -->
+<!-- pad 1713 -->
+<!-- pad 1714 -->
+<!-- pad 1715 -->
+<!-- pad 1716 -->
+<!-- pad 1717 -->
+<!-- pad 1718 -->
+<!-- pad 1719 -->
+<!-- pad 1720 -->
+<!-- pad 1721 -->
+<!-- pad 1722 -->
+<!-- pad 1723 -->
+<!-- pad 1724 -->
+<!-- pad 1725 -->
+<!-- pad 1726 -->
+<!-- pad 1727 -->
+<!-- pad 1728 -->
+<!-- pad 1729 -->
+<!-- pad 1730 -->
+<!-- pad 1731 -->
+<!-- pad 1732 -->
+<!-- pad 1733 -->
+<!-- pad 1734 -->
+<!-- pad 1735 -->
+<!-- pad 1736 -->
+<!-- pad 1737 -->
+<!-- pad 1738 -->
+<!-- pad 1739 -->
+<!-- pad 1740 -->
+<!-- pad 1741 -->
+<!-- pad 1742 -->
+<!-- pad 1743 -->
+<!-- pad 1744 -->
+<!-- pad 1745 -->
+<!-- pad 1746 -->
+<!-- pad 1747 -->
+<!-- pad 1748 -->
+<!-- pad 1749 -->
+<!-- pad 1750 -->
+<!-- pad 1751 -->
+<!-- pad 1752 -->
+<!-- pad 1753 -->
+<!-- pad 1754 -->
+<!-- pad 1755 -->
+<!-- pad 1756 -->
+<!-- pad 1757 -->
+<!-- pad 1758 -->
+<!-- pad 1759 -->
+<!-- pad 1760 -->
+<!-- pad 1761 -->
+<!-- pad 1762 -->
+<!-- pad 1763 -->
+<!-- pad 1764 -->
+<!-- pad 1765 -->
+<!-- pad 1766 -->
+<!-- pad 1767 -->
+<!-- pad 1768 -->
+<!-- pad 1769 -->
+<!-- pad 1770 -->
+<!-- pad 1771 -->
+<!-- pad 1772 -->
+<!-- pad 1773 -->
+<!-- pad 1774 -->
+<!-- pad 1775 -->
+<!-- pad 1776 -->
+<!-- pad 1777 -->
+<!-- pad 1778 -->
+<!-- pad 1779 -->
+<!-- pad 1780 -->
+<!-- pad 1781 -->
+<!-- pad 1782 -->
+<!-- pad 1783 -->
+<!-- pad 1784 -->
+<!-- pad 1785 -->
+<!-- pad 1786 -->
+<!-- pad 1787 -->
+<!-- pad 1788 -->
+<!-- pad 1789 -->
+<!-- pad 1790 -->
+<!-- pad 1791 -->
+<!-- pad 1792 -->
+<!-- pad 1793 -->
+<!-- pad 1794 -->
+<!-- pad 1795 -->
+<!-- pad 1796 -->
+<!-- pad 1797 -->
+<!-- pad 1798 -->
+<!-- pad 1799 -->
+<!-- pad 1800 -->
+<!-- pad 1801 -->
+<!-- pad 1802 -->
+<!-- pad 1803 -->
+<!-- pad 1804 -->
+<!-- pad 1805 -->
+<!-- pad 1806 -->
+<!-- pad 1807 -->
+<!-- pad 1808 -->
+<!-- pad 1809 -->
+<!-- pad 1810 -->
+<!-- pad 1811 -->
+<!-- pad 1812 -->
+<!-- pad 1813 -->
+<!-- pad 1814 -->
+<!-- pad 1815 -->
+<!-- pad 1816 -->
+<!-- pad 1817 -->
+<!-- pad 1818 -->
+<!-- pad 1819 -->
+<!-- pad 1820 -->
+<!-- pad 1821 -->
+<!-- pad 1822 -->
+<!-- pad 1823 -->
+<!-- pad 1824 -->
+<!-- pad 1825 -->
+<!-- pad 1826 -->
+<!-- pad 1827 -->
+<!-- pad 1828 -->
+<!-- pad 1829 -->
+<!-- pad 1830 -->
+<!-- pad 1831 -->
+<!-- pad 1832 -->
+<!-- pad 1833 -->
+<!-- pad 1834 -->
+<!-- pad 1835 -->
+<!-- pad 1836 -->
+<!-- pad 1837 -->
+<!-- pad 1838 -->
+<!-- pad 1839 -->
+<!-- pad 1840 -->
+<!-- pad 1841 -->
+<!-- pad 1842 -->
+<!-- pad 1843 -->
+<!-- pad 1844 -->
+<!-- pad 1845 -->
+<!-- pad 1846 -->
+<!-- pad 1847 -->
+<!-- pad 1848 -->
+<!-- pad 1849 -->
+<!-- pad 1850 -->
+<!-- pad 1851 -->
+<!-- pad 1852 -->
+<!-- pad 1853 -->
+<!-- pad 1854 -->
+<!-- pad 1855 -->
+<!-- pad 1856 -->
+<!-- pad 1857 -->
+<!-- pad 1858 -->
+<!-- pad 1859 -->
+<!-- pad 1860 -->
+<!-- pad 1861 -->
+<!-- pad 1862 -->
+<!-- pad 1863 -->
+<!-- pad 1864 -->
+<!-- pad 1865 -->
+<!-- pad 1866 -->
+<!-- pad 1867 -->
+<!-- pad 1868 -->
+<!-- pad 1869 -->
+<!-- pad 1870 -->
+<!-- pad 1871 -->
+<!-- pad 1872 -->
+<!-- pad 1873 -->
+<!-- pad 1874 -->
+<!-- pad 1875 -->
+<!-- pad 1876 -->
+<!-- pad 1877 -->
+<!-- pad 1878 -->
+<!-- pad 1879 -->
+<!-- pad 1880 -->
+<!-- pad 1881 -->
+<!-- pad 1882 -->
+<!-- pad 1883 -->
+<!-- pad 1884 -->
+<!-- pad 1885 -->
+<!-- pad 1886 -->
+<!-- pad 1887 -->
+<!-- pad 1888 -->
+<!-- pad 1889 -->
+<!-- pad 1890 -->
+<!-- pad 1891 -->
+<!-- pad 1892 -->
+<!-- pad 1893 -->
+<!-- pad 1894 -->
+<!-- pad 1895 -->
+<!-- pad 1896 -->
+<!-- pad 1897 -->
+<!-- pad 1898 -->
+<!-- pad 1899 -->
+<!-- pad 1900 -->
+<!-- pad 1901 -->
+<!-- pad 1902 -->
+<!-- pad 1903 -->
+<!-- pad 1904 -->
+<!-- pad 1905 -->
+<!-- pad 1906 -->
+<!-- pad 1907 -->
+<!-- pad 1908 -->
+<!-- pad 1909 -->
+<!-- pad 1910 -->
+<!-- pad 1911 -->
+<!-- pad 1912 -->
+<!-- pad 1913 -->
+<!-- pad 1914 -->
+<!-- pad 1915 -->
+<!-- pad 1916 -->
+<!-- pad 1917 -->
+<!-- pad 1918 -->
+<!-- pad 1919 -->
+<!-- pad 1920 -->
+<!-- pad 1921 -->
+<!-- pad 1922 -->
+<!-- pad 1923 -->
+<!-- pad 1924 -->
+<!-- pad 1925 -->
+<!-- pad 1926 -->
+<!-- pad 1927 -->
+<!-- pad 1928 -->
+<!-- pad 1929 -->
+<!-- pad 1930 -->
+<!-- pad 1931 -->
+<!-- pad 1932 -->
+<!-- pad 1933 -->
+<!-- pad 1934 -->
+<!-- pad 1935 -->
+<!-- pad 1936 -->
+<!-- pad 1937 -->
+<!-- pad 1938 -->
+<!-- pad 1939 -->
+<!-- pad 1940 -->
+<!-- pad 1941 -->
+<!-- pad 1942 -->
+<!-- pad 1943 -->
+<!-- pad 1944 -->
+<!-- pad 1945 -->
+<!-- pad 1946 -->
+<!-- pad 1947 -->
+<!-- pad 1948 -->
+<!-- pad 1949 -->
+<!-- pad 1950 -->
+<!-- pad 1951 -->
+<!-- pad 1952 -->
+<!-- pad 1953 -->
+<!-- pad 1954 -->
+<!-- pad 1955 -->
+<!-- pad 1956 -->
+<!-- pad 1957 -->
+<!-- pad 1958 -->
+<!-- pad 1959 -->
+<!-- pad 1960 -->
+<!-- pad 1961 -->
+<!-- pad 1962 -->
+<!-- pad 1963 -->
+<!-- pad 1964 -->
+<!-- pad 1965 -->
+<!-- pad 1966 -->
+<!-- pad 1967 -->
+<!-- pad 1968 -->
+<!-- pad 1969 -->
+<!-- pad 1970 -->
+<!-- pad 1971 -->
+<!-- pad 1972 -->
+<!-- pad 1973 -->
+<!-- pad 1974 -->
+<!-- pad 1975 -->
+<!-- pad 1976 -->
+<!-- pad 1977 -->
+<!-- pad 1978 -->
+<!-- pad 1979 -->
+<!-- pad 1980 -->
+<!-- pad 1981 -->
+<!-- pad 1982 -->
+<!-- pad 1983 -->
+<!-- pad 1984 -->
+<!-- pad 1985 -->
+<!-- pad 1986 -->
+<!-- pad 1987 -->
+<!-- pad 1988 -->
+<!-- pad 1989 -->
+<!-- pad 1990 -->
+<!-- pad 1991 -->
+<!-- pad 1992 -->
+<!-- pad 1993 -->
+<!-- pad 1994 -->
+<!-- pad 1995 -->
+<!-- pad 1996 -->
+<!-- pad 1997 -->
+<!-- pad 1998 -->
+<!-- pad 1999 -->
+<!-- pad 2000 -->
+<!-- pad 2001 -->
+<!-- pad 2002 -->
+<!-- pad 2003 -->
+<!-- pad 2004 -->
+<!-- pad 2005 -->
+<!-- pad 2006 -->
+<!-- pad 2007 -->
+<!-- pad 2008 -->
+<!-- pad 2009 -->
+<!-- pad 2010 -->
+<!-- pad 2011 -->
+<!-- pad 2012 -->
+<!-- pad 2013 -->
+<!-- pad 2014 -->
+<!-- pad 2015 -->
+<!-- pad 2016 -->
+<!-- pad 2017 -->
+<!-- pad 2018 -->
+<!-- pad 2019 -->
+<!-- pad 2020 -->
+<!-- pad 2021 -->
+<!-- pad 2022 -->
+<!-- pad 2023 -->
+<!-- pad 2024 -->
+<!-- pad 2025 -->
+<!-- pad 2026 -->
+<!-- pad 2027 -->
+<!-- pad 2028 -->
+<!-- pad 2029 -->
+<!-- pad 2030 -->
+<!-- pad 2031 -->
+<!-- pad 2032 -->
+<!-- pad 2033 -->
+<!-- pad 2034 -->
+<!-- pad 2035 -->
+<!-- pad 2036 -->
+<!-- pad 2037 -->
+<!-- pad 2038 -->
+<!-- pad 2039 -->
+<!-- pad 2040 -->
+<!-- pad 2041 -->
+<!-- pad 2042 -->
+<!-- pad 2043 -->
+<!-- pad 2044 -->
+<!-- pad 2045 -->
+<!-- pad 2046 -->
+<!-- pad 2047 -->
+<!-- pad 2048 -->
+<!-- pad 2049 -->
+<!-- pad 2050 -->
+<!-- pad 2051 -->
+<!-- pad 2052 -->
+<!-- pad 2053 -->
+<!-- pad 2054 -->
+<!-- pad 2055 -->
+<!-- pad 2056 -->
+<!-- pad 2057 -->
+<!-- pad 2058 -->
+<!-- pad 2059 -->
+<!-- pad 2060 -->
+<!-- pad 2061 -->
+<!-- pad 2062 -->
+<!-- pad 2063 -->
+<!-- pad 2064 -->
+<!-- pad 2065 -->
+<!-- pad 2066 -->
+<!-- pad 2067 -->
+<!-- pad 2068 -->
+<!-- pad 2069 -->
+<!-- pad 2070 -->
+<!-- pad 2071 -->
+<!-- pad 2072 -->
+<!-- pad 2073 -->
+<!-- pad 2074 -->
+<!-- pad 2075 -->
+<!-- pad 2076 -->
+<!-- pad 2077 -->
+<!-- pad 2078 -->
+<!-- pad 2079 -->
+<!-- pad 2080 -->
+<!-- pad 2081 -->
+<!-- pad 2082 -->
+<!-- pad 2083 -->
+<!-- pad 2084 -->
+<!-- pad 2085 -->
+<!-- pad 2086 -->
+<!-- pad 2087 -->
+<!-- pad 2088 -->
+<!-- pad 2089 -->
+<!-- pad 2090 -->
+<!-- pad 2091 -->
+<!-- pad 2092 -->
+<!-- pad 2093 -->
+<!-- pad 2094 -->
+<!-- pad 2095 -->
+<!-- pad 2096 -->
+<!-- pad 2097 -->
+<!-- pad 2098 -->
+<!-- pad 2099 -->
+<!-- pad 2100 -->
+<!-- pad 2101 -->
+<!-- pad 2102 -->
+<!-- pad 2103 -->
+<!-- pad 2104 -->
+<!-- pad 2105 -->
+<!-- pad 2106 -->
+<!-- pad 2107 -->
+<!-- pad 2108 -->
+<!-- pad 2109 -->
+<!-- pad 2110 -->
+<!-- pad 2111 -->
+<!-- pad 2112 -->
+<!-- pad 2113 -->
+<!-- pad 2114 -->
+<!-- pad 2115 -->
+<!-- pad 2116 -->
+<!-- pad 2117 -->
+<!-- pad 2118 -->
+<!-- pad 2119 -->
+<!-- pad 2120 -->
+<!-- pad 2121 -->
+<!-- pad 2122 -->
+<!-- pad 2123 -->
+<!-- pad 2124 -->
+<!-- pad 2125 -->
+<!-- pad 2126 -->
+<!-- pad 2127 -->
+<!-- pad 2128 -->
+<!-- pad 2129 -->
+<!-- pad 2130 -->
+<!-- pad 2131 -->
+<!-- pad 2132 -->
+<!-- pad 2133 -->
+<!-- pad 2134 -->
+<!-- pad 2135 -->
+<!-- pad 2136 -->
+<!-- pad 2137 -->
+<!-- pad 2138 -->
+<!-- pad 2139 -->
+<!-- pad 2140 -->
+<!-- pad 2141 -->
+<!-- pad 2142 -->
+<!-- pad 2143 -->
+<!-- pad 2144 -->
+<!-- pad 2145 -->
+<!-- pad 2146 -->
+<!-- pad 2147 -->
+<!-- pad 2148 -->
+<!-- pad 2149 -->
+<!-- pad 2150 -->
+<!-- pad 2151 -->
+<!-- pad 2152 -->
+<!-- pad 2153 -->
+<!-- pad 2154 -->
+<!-- pad 2155 -->
+<!-- pad 2156 -->
+<!-- pad 2157 -->
+<!-- pad 2158 -->
+<!-- pad 2159 -->
+<!-- pad 2160 -->
+<!-- pad 2161 -->
+<!-- pad 2162 -->
+<!-- pad 2163 -->
+<!-- pad 2164 -->
+<!-- pad 2165 -->
+<!-- pad 2166 -->
+<!-- pad 2167 -->
+<!-- pad 2168 -->
+<!-- pad 2169 -->
+<!-- pad 2170 -->
+<!-- pad 2171 -->
+<!-- pad 2172 -->
+<!-- pad 2173 -->
+<!-- pad 2174 -->
+<!-- pad 2175 -->
+<!-- pad 2176 -->
+<!-- pad 2177 -->
+<!-- pad 2178 -->
+<!-- pad 2179 -->
+<!-- pad 2180 -->
+<!-- pad 2181 -->
+<!-- pad 2182 -->
+<!-- pad 2183 -->
+<!-- pad 2184 -->
+<!-- pad 2185 -->
+<!-- pad 2186 -->
+<!-- pad 2187 -->
+<!-- pad 2188 -->
+<!-- pad 2189 -->
+<!-- pad 2190 -->
+<!-- pad 2191 -->
+<!-- pad 2192 -->
+<!-- pad 2193 -->
+<!-- pad 2194 -->
+<!-- pad 2195 -->
+<!-- pad 2196 -->
+<!-- pad 2197 -->
+<!-- pad 2198 -->
+<!-- pad 2199 -->
+</body>
+</html>

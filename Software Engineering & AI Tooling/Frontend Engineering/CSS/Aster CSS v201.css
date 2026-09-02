@@ -1,0 +1,4 @@
+/* Aster CSS v201 — authenticated buyer-safe derivative: image-tool side-panel styling variant 5. */
+.rtp-mood-preview{
+border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);height:78px;position:relative;overflow:hidden;cursor:pointer;padding:0;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease
+}

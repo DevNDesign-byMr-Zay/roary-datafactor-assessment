@@ -1,0 +1,2 @@
+/* Aster CSS v045 — non-stretch fullscreen image fit. */
+[data-aster-fullscreen-image]{width:100%;height:100%;object-fit:contain!important;object-position:center center}

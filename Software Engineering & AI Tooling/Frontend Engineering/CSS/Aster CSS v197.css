@@ -1,0 +1,15 @@
+/* Aster CSS v197 — authenticated buyer-safe derivative: generated-media download-control styling. */
+.generated-image-frame .image-download-btn{
+position:absolute; top:10px; right:10px;
+  width:34px; height:34px; border-radius:12px;
+  border:none !important;
+  background:transparent !important;
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  padding:0;
+  opacity:1 !important;
+  transform:none !important;
+  cursor:pointer;
+  transition:none !important;
+  box-shadow:none !important;
+}

@@ -1,0 +1,6 @@
+/* Aster CSS v067 — authenticated buyer-safe derivative: Legacy attachmentsRow sits ABOVE the composer with padding even when empty -> blocks chip hover/click. */
+.attachments-row:empty{ display:none !important; padding:0 !important; margin:0 !important; height:0 !important; }
+
+  /* Make sure chip rows sit ABOVE any glass overlays */
+  #toolsWrap, #activeToolsChips, #asterComposerAttachmentsStrip{ position:relative; z-index: 50 !important; }
+  #activeToolsChips{ pointer-events:auto !important; }

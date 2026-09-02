@@ -1,0 +1,36 @@
+/* Aster CSS v091 — authenticated buyer-safe derivative: Make composer multi-row only when attachments exist. */
+.composer.composer--has-attachments{
+    display:grid !important;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap:10px;
+    row-gap:6px;
+    align-items:center;
+  }
+
+  /* Strip sits above the input line */
+  .composer.composer--has-attachments #asterComposerAttachmentsStrip,
+  .composer.composer--has-attachments .aster-composer-attach-strip{
+    display:flex !important;
+    grid-column: 2 / 4;
+    grid-row: 1;
+  }
+
+  /* Keep the main input line aligned */
+  .composer.composer--has-attachments #toolsWrap,
+  .composer.composer--has-attachments .tools-wrap{
+    grid-column:1;
+    grid-row:2;
+    align-self:center;
+  }
+  .composer.composer--has-attachments #composerInput,
+  .composer.composer--has-attachments textarea{
+    grid-column:2;
+    grid-row:2;
+    align-self:center;
+  }
+  .composer.composer--has-attachments #sendBtn{
+    grid-column:3;
+    grid-row:2;
+    align-self:center;
+  }

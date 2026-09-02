@@ -1,0 +1,65 @@
+/* Aster CSS v117 — authenticated buyer-safe derivative: v109: Relight — ensure Intensity slider sits fully above Execute button. */
+/* tighten overall top stack a bit more */
+#rtSidePanel[data-tool=relight] .rtp-heroicon{
+  margin:0 auto 0 !important;
+  width:48px !important;
+  height:48px !important;
+}
+#rtSidePanel[data-tool=relight] .rtp-heroicon svg{
+  width:24px !important;
+  height:24px !important;
+}
+#rtSidePanel[data-tool=relight] .rtp-title{
+  margin-top:2px !important;
+  font-size:20px !important;
+}
+#rtSidePanel[data-tool=relight] .rtp-chip{
+  margin:5px auto 6px !important;
+  padding:5px 12px !important;
+}
+#rtSidePanel[data-tool=relight] .rtp-desc{
+  margin:0 8px 8px !important;
+}
+
+/* compact the controls area */
+#rtSidePanel[data-tool=relight] .rtp-controls{
+  margin:0 4px 8px !important;
+  padding:10px 12px 8px !important;
+}
+#rtSidePanel[data-tool=relight] .rtp-control{
+  margin-bottom:8px !important;
+}
+
+/* nudge the final intensity block upward slightly */
+#rtSidePanel[data-tool=relight] .rtp-controls > .rtp-control:last-child{
+  margin-top:-2px !important;
+}
+#rtSidePanel[data-tool=relight] .rtp-control label{
+  margin-bottom:5px !important;
+}
+
+/* mood previews: keep look, shave height */
+#rtSidePanel[data-tool=relight] .rtp-mood-grid{
+  margin-top:6px !important;
+  gap:7px !important;
+}
+#rtSidePanel[data-tool=relight] .rtp-mood-preview{
+  height:70px !important;
+}
+#rtSidePanel[data-tool=relight] .rtp-mood-preview span{
+  bottom:6px !important;
+  padding:3px 8px !important;
+}
+
+/* make the intensity block read tighter */
+#rtSidePanel[data-tool=relight] #asterRelightIntensity{
+  margin-top:2px !important;
+}
+
+/* reduce sticky footer height a touch */
+#rtSidePanel[data-tool=relight] .rtp-actions{
+  padding-top:6px !important;
+}
+#rtSidePanel[data-tool=relight] .rtp-exec{
+  padding:11px 16px !important;
+}

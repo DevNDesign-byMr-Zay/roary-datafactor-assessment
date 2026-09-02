@@ -1,0 +1,16 @@
+.leftbar{
+      width:var(--sidebar-expanded-w);
+      min-width:var(--sidebar-expanded-w);
+      max-width:var(--sidebar-expanded-w);
+      flex:0 0 var(--sidebar-expanded-w);
+      backdrop-filter:blur(16px);
+      background:var(--glass-bg);
+      border-right:1px solid var(--glass-border);
+      box-shadow:var(--panel-glow) inset;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      z-index:1;
+      contain:inline-size;
+      transition:width .28s ease,min-width .28s ease,max-width .28s ease;
+    }

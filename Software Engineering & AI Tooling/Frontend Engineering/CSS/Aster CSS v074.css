@@ -1,0 +1,19 @@
+/* Aster CSS v074 — authenticated buyer-safe derivative: Don’t let any glass/gradient overlays steal hover. */
+.composer::before, .composer::after,
+  #imageChatComposerShell::before, #imageChatComposerShell::after {
+    pointer-events: none !important;
+  }
+
+  /* Make sure the chip rows sit ABOVE the textarea hitbox */
+  #attachmentRow,
+  #asterComposerAttachmentsStrip,
+  .aster-composer-attach-strip,
+  #toolsWrap,
+  #activeToolsChips,
+  #imageChatAttachmentsRow,
+  #imageChatComposerShell #toolsWrap,
+  #imageChatComposerShell #activeToolsChips {
+    position: relative !important;
+    z-index: 60 !important;
+    pointer-events: auto !important;
+  }

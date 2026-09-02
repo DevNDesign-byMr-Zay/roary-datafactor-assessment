@@ -1,0 +1,28 @@
+/* Aster CSS v031
+Authenticated historical derivative: final sticky hover runway and isolated stacking.
+Provider/model identities and product-specific selectors removed.
+*/
+[data-aster-model-wrap]{
+  position:relative !important;
+  isolation:isolate !important;
+  z-index:25000 !important;
+}
+[data-aster-model-wrap]::before{
+  content:"";
+  position:absolute;
+  right:0;
+  bottom:100%;
+  width:360px;
+  height:32px;
+  background:transparent;
+  pointer-events:auto;
+  display:block;
+}
+[data-aster-model-drawer]{
+  z-index:25001 !important;
+  pointer-events:auto !important;
+}
+[data-aster-model-drawer] [data-model]{
+  cursor:pointer !important;
+  pointer-events:auto !important;
+}

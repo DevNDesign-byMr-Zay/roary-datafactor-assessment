@@ -1,0 +1,8 @@
+.modalHeader .x{
+      width:38px;height:38px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      cursor:pointer;
+      color:var(--text);
+      display:flex; align-items:center; justify-content:center;
+    }

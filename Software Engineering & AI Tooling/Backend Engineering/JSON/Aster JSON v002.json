@@ -1,0 +1,12 @@
+{
+  "models": [
+    {
+      "model": "/home/developer/models/phi3-mini/model-00001-of-00002.safetensors",
+      "alias": "phi"
+    },
+    {
+      "model": "/home/developer/models/dolphin-2.6-mistral-7b/dolphin-2.6-mistral-7b-dpo-laser.Q2_K.gguf",
+      "alias": "dolphin"
+    }
+  ]
+}

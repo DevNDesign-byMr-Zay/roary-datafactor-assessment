@@ -1,0 +1,2 @@
+/* Aster CSS v143 — authenticated buyer-safe derivative: image-variation image normalization. */
+.image-variation-imgwrap img{display:block;width:100%;height:auto;object-fit:cover;transform:scale(1.01);transition:transform .25s ease}

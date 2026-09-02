@@ -1,0 +1,4 @@
+/* Aster CSS v061 — authenticated buyer-safe derivative: Mode switching: models vs media libraries. */
+body[data-rt-topbar-mode="media"] #rtTopbarModelMenu .rt-model-opt:not(.rt-media-opt){display:none !important;}
+  body[data-rt-topbar-mode="models"] #rtTopbarModelMenu .rt-media-opt{display:none !important;}
+  body[data-rt-topbar-mode="media"] #rtTopbarModelMenu .rt-media-opt{display:flex !important;}

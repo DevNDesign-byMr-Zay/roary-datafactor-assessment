@@ -1,0 +1,17 @@
+:root{
+      --bg:#070712;
+      --panel:#0e0e1b;
+      --panel2:#111124;
+      --text:#e9e9ff;
+      --muted:#a7a7c9;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(168,85,247,.22);
+      --purple:#a855f7;
+      --purple2:#7c3aed;
+      --danger:#ff4d6d;
+      --ok:#43ffb4;
+      --shadow: 0 12px 40px rgba(0,0,0,.5);
+      --radius:18px;
+      --radius2:26px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }

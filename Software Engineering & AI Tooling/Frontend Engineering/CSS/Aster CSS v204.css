@@ -1,0 +1,4 @@
+/* Aster CSS v204 — authenticated buyer-safe derivative: image-tool side-panel styling variant 8. */
+.rtp-mood-preview.mood-neon::before{
+filter:saturate(calc(1.18 + (var(--relight-i) * .7))) contrast(calc(1.08 + (var(--relight-i) * .22))) hue-rotate(calc(-12deg - (var(--relight-i) * 10deg))) brightness(calc(1 + (var(--relight-i) * .08)))
+}

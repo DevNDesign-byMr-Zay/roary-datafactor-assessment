@@ -1,0 +1,4 @@
+.btn.primary{
+      border-color: rgba(168,85,247,.45);
+      background:linear-gradient(135deg, rgba(168,85,247,.22), rgba(124,58,237,.12));
+    }

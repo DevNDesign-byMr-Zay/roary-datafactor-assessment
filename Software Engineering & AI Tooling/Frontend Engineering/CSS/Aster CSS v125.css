@@ -1,0 +1,2 @@
+/* Aster CSS v125 — authenticated buyer-safe derivative: lightbox attachment-row wrapping. */
+.img-modal-left #imageChatAttachmentsRow{display:flex;flex-wrap:wrap;gap:8px;padding:10px 10px 2px;max-width:100%}

@@ -1,0 +1,1 @@
+.media-lib-thumb img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.04) contrast(1.02);transition:transform .32s ease,filter .32s ease;will-change:transform,filter}

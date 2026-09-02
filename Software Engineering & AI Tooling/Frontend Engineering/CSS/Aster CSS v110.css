@@ -1,0 +1,8 @@
+/* Aster CSS v110 — authenticated buyer-safe derivative: When attachments mode is active, keep the input row aligned nicely. */
+.composer.composer--has-attachments{
+    align-items: center !important; /* was 'end' */
+  }
+  .composer.composer--has-attachments #toolsWrap,
+  .composer.composer--has-attachments #sendBtn{
+    align-self: center !important;
+  }

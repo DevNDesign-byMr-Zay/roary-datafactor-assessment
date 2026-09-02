@@ -1,0 +1,7 @@
+/* Aster CSS v082 — authenticated buyer-safe derivative: Ensure tools area doesn't steal clicks from the send button. */
+.composer .tools-wrap {
+    position: relative !important;
+    z-index: 5 !important;
+    display: flex !important;
+    align-items: center !important;
+  }

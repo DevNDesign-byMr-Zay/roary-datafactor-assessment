@@ -1,0 +1,21 @@
+/* Aster CSS v024
+Authenticated historical derivative: explicit open/closed drawer states for hover-lock control.
+*/
+[data-aster-model-wrap]{position:relative!important}
+[data-aster-model-drawer]{
+  display:block!important;
+  z-index:999999!important;
+}
+[data-aster-model-wrap]:not(.open) [data-aster-model-drawer]{
+  opacity:0!important;
+  transform:translateY(10px) scale(.97)!important;
+  pointer-events:none!important;
+  visibility:hidden!important;
+}
+[data-aster-model-wrap].open [data-aster-model-drawer],
+[data-aster-model-drawer].open{
+  opacity:1!important;
+  transform:translateY(0) scale(1)!important;
+  pointer-events:auto!important;
+  visibility:visible!important;
+}

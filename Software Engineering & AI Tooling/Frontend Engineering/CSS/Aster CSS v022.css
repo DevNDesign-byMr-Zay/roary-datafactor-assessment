@@ -1,0 +1,40 @@
+/* Aster CSS v022
+Authenticated historical derivative: surgical drawer open/closed state, hover fallback, selected-state styling, and bridge geometry.
+*/
+[data-aster-model-wrap]{
+  position:relative;
+}
+[data-aster-model-drawer]{
+  display:block !important;
+  z-index:999999 !important;
+  will-change:opacity,transform;
+}
+[data-aster-model-drawer]:not(.open){
+  opacity:0 !important;
+  visibility:hidden !important;
+  transform:translateY(10px) scale(.98) !important;
+  pointer-events:none !important;
+}
+[data-aster-model-drawer].open,
+[data-aster-model-wrap]:hover [data-aster-model-drawer],
+[data-aster-model-drawer]:hover{
+  opacity:1 !important;
+  visibility:visible !important;
+  transform:translateY(0) scale(1) !important;
+  pointer-events:auto !important;
+}
+[data-aster-model-drawer] [data-model].is-selected{
+  background:rgba(177,132,255,.15) !important;
+  border:1px solid rgba(177,132,255,.30) !important;
+}
+[data-aster-model-drawer] [data-model]:hover{
+  background:rgba(255,255,255,.08) !important;
+}
+[data-aster-model-bridge]{
+  position:absolute;
+  right:0;
+  bottom:100%;
+  background:transparent;
+  pointer-events:auto;
+  z-index:999998;
+}

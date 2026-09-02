@@ -1,0 +1,12 @@
+{
+  "name": "Express Gemini Backend Foundation",
+  "category": "Software Engineering & AI Tooling / Early Backend Foundations",
+  "source_window": "2025-09",
+  "license_scope": "deidentified buyer payload only",
+  "code_files": [
+    "server_snapshot.mjs",
+    "cors_policy.mjs",
+    "health_and_auth.mjs"
+  ],
+  "provenance": "Gmail-backed"
+}

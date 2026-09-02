@@ -1,0 +1,4 @@
+/* Aster CSS v207 — authenticated buyer-safe derivative: image-tool side-panel styling variant 11. */
+.rtp-mood-preview.mood-studio::before{
+filter:brightness(calc(1.02 + (var(--relight-i) * .1))) contrast(calc(1.06 + (var(--relight-i) * .18))) saturate(calc(1.05 + (var(--relight-i) * .16)))
+}

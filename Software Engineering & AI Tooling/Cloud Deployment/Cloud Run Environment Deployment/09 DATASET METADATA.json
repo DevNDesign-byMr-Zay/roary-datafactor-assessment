@@ -1,0 +1,12 @@
+{
+  "name": "Cloud Run Environment Deployment",
+  "category": "Software Engineering & AI Tooling / Early Backend Foundations",
+  "source_window": "2025-09",
+  "license_scope": "deidentified buyer payload only",
+  "code_files": [
+    "deployment_failure.sh",
+    "deployment_environment.example.yaml",
+    "deployment_smoke_test.sh"
+  ],
+  "provenance": "Gmail-backed"
+}

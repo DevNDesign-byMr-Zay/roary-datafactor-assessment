@@ -1,0 +1,1 @@
+body.rt-panel-open:not([data-rt-orbtool=erase]):not([data-rt-orbtool=remove]):not([data-rt-orbtool=expand]) #rtOrbToolScrim{opacity:1!important;pointer-events:auto!important}

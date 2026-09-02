@@ -1,0 +1,21 @@
+/* Aster CSS v025
+Authenticated historical derivative: capture-safe drawer stacking, option hit targets, and measured bridge runway.
+*/
+[data-aster-model-wrap]{position:relative}
+[data-aster-model-drawer]{
+  z-index:999999!important;
+  pointer-events:none;
+}
+[data-aster-model-drawer].open{pointer-events:auto!important}
+[data-aster-model-drawer] [data-slot]{
+  pointer-events:auto!important;
+  cursor:pointer;
+}
+[data-aster-hover-bridge]{
+  position:absolute;
+  right:0;
+  bottom:100%;
+  height:44px;
+  background:transparent;
+  pointer-events:auto;
+}

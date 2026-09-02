@@ -1,0 +1,59 @@
+/* Aster CSS v115 — authenticated buyer-safe derivative: v108: Lift Expand + Relight panel content so all controls fit above the Execute button. */
+/* tighten top spacing */
+#rtSidePanel[data-tool=expand] .rtp-top,
+#rtSidePanel[data-tool=relight] .rtp-top{
+  margin-bottom:6px !important;
+}
+
+#rtSidePanel[data-tool=expand] .rtp-heroicon,
+#rtSidePanel[data-tool=relight] .rtp-heroicon{
+  margin:2px auto 0 !important;
+  width:52px !important;
+  height:52px !important;
+}
+#rtSidePanel[data-tool=expand] .rtp-heroicon svg,
+#rtSidePanel[data-tool=relight] .rtp-heroicon svg{
+  width:26px !important;
+  height:26px !important;
+}
+
+#rtSidePanel[data-tool=expand] .rtp-title,
+#rtSidePanel[data-tool=relight] .rtp-title{
+  margin-top:4px !important;
+  margin-bottom:0 !important;
+  font-size:21px !important;
+}
+
+#rtSidePanel[data-tool=expand] .rtp-chip,
+#rtSidePanel[data-tool=relight] .rtp-chip{
+  margin:6px auto 8px !important;
+  padding:6px 12px !important;
+}
+
+#rtSidePanel[data-tool=expand] .rtp-desc,
+#rtSidePanel[data-tool=relight] .rtp-desc{
+  margin:0 8px 10px !important;
+}
+
+#rtSidePanel[data-tool=expand] .rtp-instr,
+#rtSidePanel[data-tool=relight] .rtp-instr{
+  margin:0 4px 12px !important;
+  padding:12px 12px !important;
+}
+
+#rtSidePanel[data-tool=expand] .rtp-section,
+#rtSidePanel[data-tool=relight] .rtp-section{
+  margin:0 4px 12px !important;
+  padding:12px 12px 10px !important;
+}
+
+#rtSidePanel[data-tool=expand] .rtp-controls,
+#rtSidePanel[data-tool=relight] .rtp-controls{
+  margin:0 4px 12px !important;
+  padding:12px 12px 10px !important;
+}
+
+/* Expand: reduce textarea height so the whole panel fits */
+#rtSidePanel[data-tool=expand] .rtp-textarea{
+  min-height:74px !important;
+}

@@ -1,0 +1,12 @@
+.composer-wrap{
+      position:absolute;
+      left:var(--composer-left);
+      right:20px;
+      bottom:16px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      z-index:1200;
+      padding-bottom:calc(env(safe-area-inset-bottom,0px));
+      transition:left .28s ease;
+    }

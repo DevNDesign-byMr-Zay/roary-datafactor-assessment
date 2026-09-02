@@ -1,0 +1,31 @@
+/* Aster CSS v026
+Authenticated historical derivative: hard-lock bridge geometry, deterministic drawer visibility, and selected-option feedback.
+*/
+[data-aster-model-wrap]{position:relative}
+[data-aster-hover-bridge]{
+  position:absolute;
+  right:0;
+  bottom:100%;
+  width:330px;
+  height:28px;
+  background:transparent;
+  pointer-events:auto;
+  z-index:24999;
+}
+[data-aster-model-drawer]{
+  display:block!important;
+  z-index:25000!important;
+}
+[data-aster-model-wrap].open [data-aster-model-drawer],
+[data-aster-model-drawer].open{
+  opacity:1!important;
+  transform:translateY(0) scale(1)!important;
+  pointer-events:auto!important;
+  visibility:visible!important;
+}
+[data-aster-model-wrap]:not(.open) [data-aster-model-drawer]{pointer-events:none}
+[data-aster-model-drawer] [data-slot].is-selected{
+  background:rgba(177,132,255,.14)!important;
+  outline:1px solid rgba(177,132,255,.32)!important;
+}
+[data-aster-model-drawer] [data-slot]{cursor:pointer!important}

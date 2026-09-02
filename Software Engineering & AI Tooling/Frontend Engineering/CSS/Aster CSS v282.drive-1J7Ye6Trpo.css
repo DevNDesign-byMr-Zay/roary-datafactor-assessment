@@ -1,0 +1,18 @@
+.fs-menu{
+      position:absolute;
+      top:calc(100% + 8px);
+      left:0;
+      min-width:260px;
+      background:rgba(12,12,12,.96);
+      backdrop-filter:blur(14px);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:14px;
+      padding:6px;
+      z-index:5000;
+      box-shadow:0 10px 40px rgba(0,0,0,.55);
+      transform-origin:top left;
+      transform:scale(.98) translateY(-6px);
+      opacity:0;
+      pointer-events:none;
+      transition:transform .18s ease,opacity .18s ease;
+    }

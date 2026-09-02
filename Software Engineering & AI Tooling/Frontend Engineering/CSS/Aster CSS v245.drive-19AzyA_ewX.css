@@ -1,0 +1,13 @@
+.tab{
+      flex:1;
+      text-align:center;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid var(--stroke);
+      cursor:pointer;
+      background:rgba(255,255,255,.02);
+      color:var(--muted);
+      font-weight:650;
+      font-size:12px;
+      letter-spacing:.03em;
+    }

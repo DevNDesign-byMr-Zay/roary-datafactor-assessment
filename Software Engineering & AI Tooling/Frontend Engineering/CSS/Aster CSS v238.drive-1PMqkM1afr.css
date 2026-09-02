@@ -1,0 +1,11 @@
+.btn{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:9px 12px;
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }

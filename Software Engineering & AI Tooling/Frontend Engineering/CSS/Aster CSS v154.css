@@ -1,0 +1,2 @@
+/* Aster CSS v154 — authenticated buyer-safe derivative: image-tool orbit badge styling. */
+.img-nexus-badge{width:26px;height:26px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--c1),var(--c2));color:rgba(248,250,252,.96);box-shadow:0 10px 22px rgba(0,0,0,.35);transition:transform 520ms var(--easeCine),filter 520ms var(--easeSoft);flex:0 0 auto;font-size:0;line-height:0}

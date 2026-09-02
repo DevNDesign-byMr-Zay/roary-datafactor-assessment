@@ -1,0 +1,5 @@
+.tab.active{
+      color:var(--text);
+      border-color: rgba(168,85,247,.4);
+      background:linear-gradient(135deg, rgba(168,85,247,.18), rgba(124,58,237,.06));
+    }

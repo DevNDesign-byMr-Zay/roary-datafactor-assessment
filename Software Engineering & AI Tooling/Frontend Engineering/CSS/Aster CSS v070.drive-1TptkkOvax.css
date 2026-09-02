@@ -1,0 +1,13 @@
+/* Aster CSS v070 — authenticated buyer-safe derivative: 2) Ensure chip containers can actually receive hover/click. */
+#activeToolsChips, #activeToolsChips *{
+    pointer-events:auto !important;
+  }
+  #imageChatAttachmentsRow, #imageChatAttachmentsRow *{
+    pointer-events:auto !important;
+  }
+
+  /* 3) Make sure decorative overlays never intercept pointer events */
+  #composer::before, #composer::after,
+  #imageChatComposerShell::before, #imageChatComposerShell::after{
+    pointer-events:none !important;
+  }

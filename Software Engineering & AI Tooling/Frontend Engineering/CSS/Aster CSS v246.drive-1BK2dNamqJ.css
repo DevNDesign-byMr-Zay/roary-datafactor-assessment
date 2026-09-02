@@ -1,0 +1,12 @@
+.composer{
+      max-width: 980px;
+      margin:0 auto;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      border-radius: 22px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      padding:10px;
+      box-shadow: var(--shadow);
+    }

@@ -1,0 +1,4 @@
+/* Aster CSS v050 — fill-preview layer behind the active image. */
+[data-aster-expand-fill]{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;opacity:.9}
+[data-aster-expand-frame]{z-index:3}
+[data-aster-image-shell] img{position:relative;z-index:2}

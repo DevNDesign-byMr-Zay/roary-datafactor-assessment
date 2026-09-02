@@ -1,0 +1,7 @@
+/* Aster CSS v065 — authenticated buyer-safe derivative: purple hover on the X itself (both chip types). */
+.tool-chip .aster-attach-x:hover,
+  .aster-attach-chip .aster-attach-x:hover{
+    background: rgba(177,132,255,.14) !important;
+    color: var(--accent, rgba(177,132,255,1)) !important;
+    filter: drop-shadow(0 0 10px rgba(177,132,255,.35)) !important;
+  }

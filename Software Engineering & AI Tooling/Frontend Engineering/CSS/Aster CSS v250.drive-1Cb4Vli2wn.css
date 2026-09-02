@@ -1,0 +1,1 @@
+.img-modal-inner{display:flex;flex-direction:column;position:relative;width:94vw;height:90vh;max-width:1400px;max-height:1000px;margin:auto;border-radius:16px;background:var(--glass-bg);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 0 0 1px rgba(255,255,255,.05),0 24px 60px rgba(0,0,0,.95);overflow:hidden}

@@ -1,0 +1,30 @@
+/* Aster CSS v084 — authenticated buyer-safe derivative: Drawer Items. */
+#toolsDrawer .tools-drawer-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  #toolsDrawer button {
+    width: 100% !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    padding: 10px 12px !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 10px !important;
+    text-align: left !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    color: rgba(255,255,255,.78) !important;
+  }
+
+  #toolsDrawer button:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
+  }
+
+  #toolsDrawer button[aria-pressed="true"] .rt-tool-name{
+    color: var(--rtPurple, #cbb6ff) !important;
+  }

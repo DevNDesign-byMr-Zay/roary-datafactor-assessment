@@ -1,0 +1,2 @@
+/* Aster CSS v121 — authenticated buyer-safe derivative: reference-media caption truncation. */
+.ref-media-strip .cap{padding:8px 8px 9px 8px;font-size:11px;color:rgba(225,225,225,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

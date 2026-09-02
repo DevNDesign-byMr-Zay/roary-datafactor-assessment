@@ -1,0 +1,4 @@
+/* Aster CSS v048 — eight-point expansion handles without a duplicate legacy frame. */
+[data-aster-expand-frame]{position:absolute;border:1px dashed currentColor;box-sizing:border-box;touch-action:none}
+[data-aster-expand-frame] [data-aster-expand-handle]{position:absolute;width:14px;height:14px;border-radius:50%;border:1px solid currentColor;background:Canvas;transform:translate(-50%,-50%);padding:0}
+[data-aster-expand-handle="n"]{left:50%;top:0}[data-aster-expand-handle="ne"]{left:100%;top:0}[data-aster-expand-handle="e"]{left:100%;top:50%}[data-aster-expand-handle="se"]{left:100%;top:100%}[data-aster-expand-handle="s"]{left:50%;top:100%}[data-aster-expand-handle="sw"]{left:0;top:100%}[data-aster-expand-handle="w"]{left:0;top:50%}[data-aster-expand-handle="nw"]{left:0;top:0}

@@ -1,0 +1,33 @@
+/* Aster CSS v092 — authenticated buyer-safe derivative: Attachment chips: clean white (no bg/border) until hover. */
+#asterComposerAttachmentsStrip .tool-chip.rt-attach-chip,
+  .aster-composer-attach-strip .tool-chip.rt-attach-chip{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:6px !important;
+    padding:2px 6px !important;
+    border-radius:8px !important;
+
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: rgba(255,255,255,.92) !important;
+
+    opacity: 1 !important;
+    cursor: default !important;
+    user-select:none !important;
+    position:relative !important;
+    overflow:visible !important;
+
+    transform: none !important;
+    filter: none !important;
+    transition: background .16s ease, border-color .16s ease, box-shadow .16s ease, color .16s ease !important;
+  }
+
+  #asterComposerAttachmentsStrip .tool-chip.rt-attach-chip:hover,
+  #asterComposerAttachmentsStrip .tool-chip.rt-attach-chip:focus-within,
+  .aster-composer-attach-strip .tool-chip.rt-attach-chip:hover,
+  .aster-composer-attach-strip .tool-chip.rt-attach-chip:focus-within{
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: rgba(168,85,247,.98) !important;
+    box-shadow: none !important;
+  }

@@ -1,0 +1,12 @@
+{
+  "name": "Gemini File Aware Chat Pipeline",
+  "category": "Software Engineering & AI Tooling / Early Backend Foundations",
+  "source_window": "2025-09",
+  "license_scope": "deidentified buyer payload only",
+  "code_files": [
+    "chat_route.mjs",
+    "generate_reply.mjs",
+    "chat_client.sh"
+  ],
+  "provenance": "Gmail-backed"
+}

@@ -1,0 +1,9 @@
+.conv-menu button{
+      width:100%;
+      text-align:center;
+      padding:10px 12px;
+      background:transparent;
+      border:0;
+      color:var(--text);
+      cursor:pointer;
+    }

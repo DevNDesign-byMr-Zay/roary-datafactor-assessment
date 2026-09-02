@@ -1,0 +1,8 @@
+/* Aster CSS v101 — authenticated buyer-safe derivative: If strip is used (newer builds), let it wrap and grow the composer instead of scrolling. */
+#asterComposerAttachmentsStrip {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-content: flex-start !important;
+    gap: 8px !important;
+    padding-right: 10px !important;
+  }

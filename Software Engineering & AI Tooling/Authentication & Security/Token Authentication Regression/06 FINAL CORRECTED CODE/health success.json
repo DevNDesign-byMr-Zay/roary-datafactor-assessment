@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "project": "example-project",
+  "location": "us-central1",
+  "model": "gemini-2.5-flash",
+  "bucket": "example-app-files",
+  "corsAllowed": ["http://localhost:5173", "http://localhost:3000"]
+}

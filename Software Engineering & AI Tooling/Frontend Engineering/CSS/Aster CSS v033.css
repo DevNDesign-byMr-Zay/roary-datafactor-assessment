@@ -1,0 +1,7 @@
+/* Aster CSS v033
+Authenticated historical derivative: smooth live relight preview transitions.
+Product-specific selectors removed.
+*/
+[data-aster-relight-image][data-aster-relight-preview="1"]{
+  transition:filter 90ms linear;
+}

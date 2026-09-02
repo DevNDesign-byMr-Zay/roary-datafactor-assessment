@@ -1,0 +1,6 @@
+/* Aster CSS v059 — authenticated buyer-safe derivative: Active model stays purple. */
+#rtTopbarModelMenu .rt-model-opt.is-selected .rt-model-opt-title,
+#rtTopbarModelMenu .rt-model-opt.is-selected .rt-model-opt-sub,
+#rtTopbarModelMenu .rt-model-opt.is-selected .rt-model-opt-ico{
+  color:var(--rtPurple) !important;
+}

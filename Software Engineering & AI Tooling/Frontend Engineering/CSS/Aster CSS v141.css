@@ -1,0 +1,2 @@
+/* Aster CSS v141 — authenticated buyer-safe derivative: image-variation card framing. */
+.image-variation-card{position:relative;border-radius:16px;overflow:hidden;background:radial-gradient(circle at top left,rgba(255,255,255,.12),rgba(10,10,10,.95));border:1px solid rgba(255,255,255,.22);box-shadow:0 10px 24px rgba(0,0,0,.8),inset 0 0 0 .5px rgba(255,255,255,.06);padding:8px 8px 10px 8px;display:flex;flex-direction:column;gap:6px}

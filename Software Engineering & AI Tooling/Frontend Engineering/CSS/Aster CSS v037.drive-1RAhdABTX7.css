@@ -1,0 +1,4 @@
+[data-aster-media-variations]{display:flex;flex-wrap:nowrap;gap:12px;overflow-x:auto;overflow-y:hidden;padding-bottom:6px;scrollbar-width:none}
+[data-aster-media-variations]::-webkit-scrollbar{height:0}
+[data-aster-media-variation]{flex:0 0 auto;position:relative}
+[data-aster-media-variation] img{display:block;max-width:100%;height:auto}

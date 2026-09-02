@@ -1,0 +1,4 @@
+[data-aster-tool-panel]{scrollbar-width:thin;overscroll-behavior:contain}
+.aster-relight-no-scroll [data-aster-mood-grid]{overflow:hidden!important}
+.aster-relight-compact [data-aster-control-card]{margin-block:6px;padding:8px 12px}
+[data-aster-sticky-execute]{position:sticky;bottom:var(--aster-sticky-offset,0);z-index:5;width:var(--aster-sticky-width,100%)}

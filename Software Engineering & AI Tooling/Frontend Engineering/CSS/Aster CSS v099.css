@@ -1,0 +1,12 @@
+/* Aster CSS v099 — authenticated buyer-safe derivative: Attachment X: no bg/border, ever (scoped). */
+#asterComposerAttachmentsStrip .aster-attach-x{
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+  }
+  #asterComposerAttachmentsStrip .aster-attach-x:hover{
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    text-shadow:0 0 10px rgba(168,85,247,.25) !important;
+  }

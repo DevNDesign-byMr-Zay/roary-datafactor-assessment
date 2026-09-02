@@ -1,0 +1,3 @@
+/* Aster CSS v087 — authenticated buyer-safe derivative: If the tools scrim ever gets stuck, it must NEVER sit above the composer. */
+#rtToolsScrim{ z-index: 2147482000 !important; }
+  #toolsDrawer{ z-index: 2147483000 !important; }

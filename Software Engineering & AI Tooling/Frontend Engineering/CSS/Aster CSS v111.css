@@ -1,0 +1,5 @@
+/* Aster CSS v111 — authenticated buyer-safe derivative: v82: Lift placeholder/text slightly so it sits optically centered. */
+.composer:not(.composer--has-attachments) #composerInput{
+    padding-top: 6px !important;  /* was 9 */
+    padding-bottom: 16px !important; /* was 13 */
+  }

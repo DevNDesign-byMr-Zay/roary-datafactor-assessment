@@ -1,0 +1,9 @@
+.row{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 10px;
+      border-radius:14px;
+      margin:6px 6px;
+      border:1px solid transparent;
+      cursor:pointer;
+      transition: background .15s ease, border-color .15s ease;
+    }

@@ -1,0 +1,101 @@
+/* Aster CSS v076 — authenticated buyer-safe derivative: Lightbox: top-right dropdown panel. */
+.rt-modal-dl-wrap{position:relative; display:inline-block}
+.rt-modal-dl-panel{
+  z-index:250000;
+  position:absolute; right:0; top:calc(100% + 10px);
+  width:min(360px, calc(100vw - 24px));
+  padding:10px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(10,10,14,.78);
+  box-shadow:0 20px 60px rgba(0,0,0,.55);
+  border-radius:18px; color:#fff;
+  backdrop-filter:blur(16px);
+  opacity:0; transform:translateY(-10px);
+  pointer-events:none;
+  transition:opacity .16s ease, transform .16s ease;
+  transform-origin:top right;
+}
+#imageModalDownloadWrap:hover .rt-modal-dl-panel,
+#imageModalDownloadWrap.rt-open .rt-modal-dl-panel{
+  opacity:1; transform:translateY(0);
+  pointer-events:auto;
+}
+
+/* Panel layout */
+.rt-dl-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:8px}
+.rt-dl-title{font-weight:900;letter-spacing:.2px;font-size:16px;line-height:1}
+.rt-dl-subtitle{opacity:.70;font-size:12px;margin-top:4px}
+.rt-dl-card{
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(0,0,0,.18);
+  border-radius:16px;
+  padding:10px;
+}
+.rt-dl-row{display:flex;gap:10px}
+.rt-dl-row > *{flex:1}
+.rt-dl-field{margin-bottom:8px}
+.rt-dl-label{font-size:12px;opacity:.72;margin-bottom:6px;padding:0 4px}
+.rt-dl-select, .rt-dl-range, .rt-dl-input{
+  width:100%;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.22);
+  color:#fff;
+  padding:10px 12px;
+  outline:none;
+}
+.rt-dl-select{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  padding-right:36px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='white' stroke-opacity='0.85' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  background-size:16px 16px;
+}
+.rt-modal-dl-panel select option{background:#0b0b10;color:#fff}
+.rt-dl-select:focus, .rt-dl-input:focus{
+  border-color:rgba(178,108,255,.55);
+  box-shadow:0 0 0 3px rgba(178,108,255,.18);
+}
+.rt-dl-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(0,0,0,.18);
+  border-radius:14px;
+  padding:10px 12px;
+  margin:10px 0;
+}
+.rt-dl-toggle small{opacity:.70}
+.rt-dl-toggle input{accent-color:#b26cff}
+
+.rt-dl-actions{display:flex;gap:10px;margin-top:10px}
+.rt-dl-btn{
+  flex:1;
+  border:none;
+  border-radius:14px;
+  padding:10px 12px;
+  font-weight:900;
+  cursor:pointer;
+}
+.rt-dl-btn-primary{
+  background:linear-gradient(135deg, rgba(178,108,255,.95), rgba(122,72,255,.95));
+  color:#0b0016;
+  box-shadow:0 12px 30px rgba(178,108,255,.22);
+}
+.rt-dl-btn-ghost{
+  background:transparent;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.rt-dl-muted{opacity:.62;font-size:12px;margin-top:6px;padding:0 6px;line-height:1.25}
+.rt-dl-disabled{opacity:.45;pointer-events:none}
+
+#imageModalDownloadWrap{position:relative; z-index:250000;}
+
+.rt-dl-row .rt-dl-field{margin-bottom:0}

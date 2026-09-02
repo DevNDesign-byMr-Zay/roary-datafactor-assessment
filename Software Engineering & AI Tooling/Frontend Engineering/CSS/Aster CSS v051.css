@@ -1,0 +1,3 @@
+/* Aster CSS v051 — seamless animated expansion preview canvas. */
+[data-aster-expand-preview]{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;filter:blur(.3px)}
+@media (prefers-reduced-motion:reduce){[data-aster-expand-preview]{filter:none}}

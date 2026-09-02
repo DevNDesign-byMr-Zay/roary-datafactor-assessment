@@ -1,0 +1,4 @@
+/* Aster CSS v041 — keep all media variations visible in a horizontal sidebar strip. */
+[data-aster-media-preview]{display:flex!important;flex-wrap:nowrap!important;gap:12px!important;overflow-x:auto!important;overflow-y:hidden!important;padding-bottom:6px!important;scrollbar-width:none;-ms-overflow-style:none}
+[data-aster-media-preview]::-webkit-scrollbar{height:0}
+[data-aster-media-preview] [data-media-thumb]{flex:0 0 auto!important}

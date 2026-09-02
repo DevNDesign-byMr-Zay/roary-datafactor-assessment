@@ -1,0 +1,10 @@
+.modalCard{
+      width:min(1100px, 96vw);
+      height:min(760px, 92vh);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(18,18,40,.78), rgba(10,10,22,.70));
+      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+      overflow:hidden;
+      display:flex;
+    }

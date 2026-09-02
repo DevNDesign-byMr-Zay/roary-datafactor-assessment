@@ -1,0 +1,12 @@
+.sendBtn{
+      height:40px;
+      padding:0 14px;
+      border-radius:16px;
+      border:1px solid rgba(168,85,247,.45);
+      background:linear-gradient(135deg, rgba(168,85,247,.22), rgba(124,58,237,.12));
+      color:var(--text);
+      font-weight:800;
+      cursor:pointer;
+      transition:.15s ease;
+      flex:0 0 auto;
+    }

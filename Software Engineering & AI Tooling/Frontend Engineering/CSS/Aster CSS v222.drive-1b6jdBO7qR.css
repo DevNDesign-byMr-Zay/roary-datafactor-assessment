@@ -1,0 +1,6 @@
+#rtExpandFrame .rt-expand-handle{
+  position:absolute;width:14px;height:14px;border-radius:999px;
+  background:rgba(160,80,255,.92);border:2px solid rgba(255,255,255,.86);
+  box-shadow:0 0 10px rgba(160,80,255,.35);
+  touch-action:none;cursor:grab;
+}

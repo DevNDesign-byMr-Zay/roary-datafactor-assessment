@@ -1,0 +1,12 @@
+{
+  "name": "Signed URL File Access",
+  "category": "Software Engineering & AI Tooling / Early Backend Foundations",
+  "source_window": "2025-09",
+  "license_scope": "deidentified buyer payload only",
+  "code_files": [
+    "sign_route.mjs",
+    "storage_bootstrap.mjs",
+    "sign_client.sh"
+  ],
+  "provenance": "Gmail-backed"
+}

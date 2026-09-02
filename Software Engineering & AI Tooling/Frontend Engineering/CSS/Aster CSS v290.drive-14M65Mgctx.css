@@ -1,0 +1,12 @@
+.composer textarea{
+      flex:1;
+      resize:none;
+      height:52px;
+      max-height:52px;
+      overflow-y:auto;
+      background:transparent;
+      border:0;
+      outline:0;
+      color:var(--text);
+      font:400 15px/1.4 Roboto,sans-serif;
+    }

@@ -1,0 +1,5 @@
+/* Aster CSS v047 — editor overlay sizing and pointer isolation. */
+[data-aster-image-shell]{position:relative}
+[data-aster-mask-layer]{position:absolute;z-index:4;touch-action:none;cursor:crosshair}
+[data-aster-expand-frame]{z-index:5}
+[data-aster-tool-panel] img{object-fit:contain;max-width:100%;max-height:100%}

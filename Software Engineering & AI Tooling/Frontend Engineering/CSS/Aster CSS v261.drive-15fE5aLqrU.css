@@ -1,0 +1,8 @@
+.thumb{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+      position:relative;
+      background:rgba(0,0,0,.18);
+      cursor:pointer;
+    }

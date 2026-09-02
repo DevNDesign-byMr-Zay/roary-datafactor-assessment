@@ -1,0 +1,1 @@
+body.rt-panel-open[data-rt-orbtool=erase] #rtOrbToolScrim,body.rt-panel-open[data-rt-orbtool=expand] #rtOrbToolScrim,body.rt-panel-open[data-rt-orbtool=remove] #rtOrbToolScrim{opacity:.55!important;pointer-events:none!important}

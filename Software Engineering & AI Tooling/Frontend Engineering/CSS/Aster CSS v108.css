@@ -1,0 +1,7 @@
+/* Aster CSS v108 — authenticated buyer-safe derivative: Default (no attachments) => flex row, centered. */
+.composer:not(.composer--has-attachments){
+    display:flex !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    gap: 10px !important;
+  }

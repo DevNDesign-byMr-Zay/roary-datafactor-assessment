@@ -1,0 +1,2 @@
+[data-aster-hover-primary][data-aster-hover-secondary] img{transition:opacity .18s ease,transform .18s ease,filter .18s ease;will-change:opacity,transform,filter}
+[data-aster-hover-primary][data-aster-hover-secondary].aster-hover-active img{transform:scale(1.015);filter:blur(0)}

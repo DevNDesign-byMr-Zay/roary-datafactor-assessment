@@ -1,0 +1,24 @@
+/* Aster CSS v030
+Authenticated historical derivative: hover-hold runway and clickability hardening.
+Product-specific selectors and identity removed.
+*/
+[data-aster-model-drawer]{
+  z-index:60000 !important;
+}
+[data-aster-model-drawer] [data-model]{
+  pointer-events:auto !important;
+  cursor:pointer !important;
+}
+[data-aster-model-wrap]{
+  position:relative !important;
+}
+[data-aster-model-wrap]::after{
+  content:"";
+  position:absolute;
+  right:0;
+  bottom:100%;
+  width:360px;
+  height:14px;
+  background:transparent;
+  pointer-events:auto;
+}

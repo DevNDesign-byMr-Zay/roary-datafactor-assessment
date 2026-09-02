@@ -1,0 +1,9 @@
+.bubble{
+      flex:1;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      border-radius: var(--radius2);
+      padding: 12px 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      overflow:hidden;
+    }

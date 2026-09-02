@@ -1,0 +1,11 @@
+body{
+      margin:0;
+      font-family:var(--font);
+      background:
+        radial-gradient(1000px 600px at 15% 10%, rgba(124,58,237,.16), transparent 60%),
+        radial-gradient(800px 500px at 80% 30%, rgba(168,85,247,.14), transparent 55%),
+        radial-gradient(1000px 600px at 70% 110%, rgba(99,102,241,.10), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      overflow:hidden;
+    }

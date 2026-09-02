@@ -1,0 +1,6 @@
+/* Aster CSS v095 — authenticated buyer-safe derivative: Safety: strip must be hoverable above overlays. */
+#asterComposerAttachmentsStrip,
+  .aster-composer-attach-strip{
+    position:relative !important;
+    z-index: 2147482000 !important;
+  }

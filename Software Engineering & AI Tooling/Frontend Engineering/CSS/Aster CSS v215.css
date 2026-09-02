@@ -1,0 +1,4 @@
+/* Aster CSS v215 — authenticated buyer-safe derivative: object-removal mask-editor styling variant 3. */
+#rtOrb[data-tool=remove]{
+--rtAccentA:rgba(239,68,68,1);--rtAccentB:rgba(244,63,94,1);--rtAccentRing:rgba(239,68,68,0.28);--rtAccentGlow:rgba(239,68,68,0.60)
+}

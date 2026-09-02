@@ -1,0 +1,9 @@
+/* Aster CSS v027 — transparent hover-gap runway plus clickability hardening. */
+[data-aster-model-wrap]{position:relative!important;}
+[data-aster-model-wrap]::before{
+  content:"";position:absolute;right:0;bottom:100%;
+  width:var(--aster-drawer-bridge-width,360px);height:var(--aster-drawer-bridge-height,28px);
+  background:transparent;pointer-events:auto;z-index:1;
+}
+[data-aster-model-drawer]{z-index:2!important;}
+[data-aster-model-drawer] [data-slot]{cursor:pointer!important;pointer-events:auto!important;}

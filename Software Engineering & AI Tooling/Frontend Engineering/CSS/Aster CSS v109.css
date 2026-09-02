@@ -1,0 +1,23 @@
+/* Aster CSS v109 — authenticated buyer-safe derivative: Tools (+) and Send should be vertically centered. */
+.composer:not(.composer--has-attachments) #toolsWrap,
+  .composer:not(.composer--has-attachments) .tools-wrap{
+    display:flex !important;
+    align-items:center !important;
+    height: var(--aster-ta-h, 44px) !important;
+  }
+  .composer:not(.composer--has-attachments) #attachBtn,
+  .composer:not(.composer--has-attachments) #sendBtn{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    height: var(--aster-ta-h, 44px) !important;
+  }
+
+  /* Textarea baseline: keep it visually centered for single-line state */
+  .composer:not(.composer--has-attachments) #composerInput{
+    align-self:center !important;
+    min-height: var(--aster-ta-h, 44px) !important;
+    line-height: 22px !important;
+    padding-top: 9px !important;
+    padding-bottom: 13px !important;
+  }

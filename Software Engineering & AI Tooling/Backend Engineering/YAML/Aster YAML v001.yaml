@@ -1,0 +1,4 @@
+BUCKET_NAME: "example-bucket"
+ALLOWED_ORIGINS: "http://localhost:5173,http://localhost:3000"
+ASTER_API_TOKEN: "<set-secure-token>"
+GEMINI_API_KEY: "<set-provider-key>"

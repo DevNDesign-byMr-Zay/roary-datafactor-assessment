@@ -1,0 +1,35 @@
+/* Aster CSS v102 — authenticated buyer-safe derivative: 2) Ensure tool-chips container can actually receive hover/click (some builds set pointer-events:none).. */
+#activeToolsChips,
+  #toolsWrap,
+  #imageChatComposerShell #toolsWrap,
+  #imageChatComposerShell #activeToolsChips {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 40 !important;
+    overflow: visible !important;
+  }
+
+  /* 3) Guarantee chip X sits ABOVE text and is not covered. */
+  .tool-chip,
+  .aster-attach-chip {
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  /* Reserve room so the X isn't hidden under the label text */
+  .tool-chip { padding-right: 28px !important; }
+  .aster-attach-chip { padding-right: 30px !important; }
+  .aster-attach-name { padding-right: 18px !important; }
+
+  /* X base (shared) */
+  .tool-chip .aster-attach-x,
+  .aster-attach-chip .aster-attach-x {
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) scale(.98) !important;
+    z-index: 9999 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }

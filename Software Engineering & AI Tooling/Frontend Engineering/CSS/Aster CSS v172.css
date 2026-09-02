@@ -1,0 +1,4 @@
+/* Aster CSS v172 — authenticated buyer-safe derivative: relight mood-control styling variant 5. */
+#rtSidePanel[data-tool=relight] .rtp-mood-preview, #rtSidePanel[data-tool=relight] .rtp-mood-thumb{
+position:relative; overflow:hidden;
+}

@@ -1,0 +1,6 @@
+/* Aster CSS v036
+Authenticated historical derivative: panel execution progress visibility patch.
+*/
+[data-aster-tool-panel] [data-aster-exec-progress]{isolation:isolate;}
+[data-aster-tool-panel].exec-loading [data-aster-exec-progress] [data-aster-progress-bar],
+[data-aster-tool-panel] [data-aster-exec-progress].is-loading [data-aster-progress-bar]{display:block;opacity:1;visibility:visible;}

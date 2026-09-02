@@ -1,0 +1,2 @@
+/* Aster CSS v056 — authenticated buyer-safe derivative: v147: Relight visible in Lightbox panels; hidden only in mini-orb quick tools. */
+.img-nexus-tool[data-ai="relight"], .rt-node[data-ai="relight"]{display:none!important;}

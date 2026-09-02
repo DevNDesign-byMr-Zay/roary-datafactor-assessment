@@ -1,0 +1,5 @@
+/* Aster CSS v106 — authenticated buyer-safe derivative: Attach strip should never scroll; textarea handles scroll when needed. */
+#asterComposerAttachmentsStrip, .aster-composer-attach-strip{
+    overflow: visible !important;
+    max-height: none !important;
+  }

@@ -1,0 +1,7 @@
+{
+  "models": {
+    "phi3-mini": "/home/developer/models/phi3-mini/Phi-3-mini-4k-instruct-q4.gguf",
+    "dolphin-2.6-q2": "/home/developer/models/Mistral/dolphin-2.6-mistral-7b-dpo-Q2_K.gguf",
+    "dolphin-2.6-laser-q2": "/home/developer/models/Mistral/dolphin-2.6-mistral-7b-dpo-laser.Q2_K.gguf"
+  }
+}

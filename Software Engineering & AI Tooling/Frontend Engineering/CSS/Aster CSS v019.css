@@ -1,0 +1,38 @@
+/* Aster CSS v019
+Authenticated historical derivative: portalized composer tools-menu presentation.
+*/
+.aster-tools-scrim{
+  position:fixed;
+  inset:0;
+  z-index:2147483600;
+  background:transparent;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .14s ease;
+}
+.aster-tools-scrim[data-open="1"]{
+  opacity:1;
+  pointer-events:auto;
+}
+[data-aster-tools-drawer][data-aster-tools-portal="1"]{
+  position:fixed !important;
+  z-index:2147483647 !important;
+  margin:0 !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+  transform:translateY(10px) scale(.98) !important;
+  transition:
+    transform .18s cubic-bezier(.16,1,.3,1),
+    opacity .14s ease,
+    visibility .14s ease !important;
+}
+[data-aster-tools-drawer][data-aster-tools-portal="1"][aria-hidden="false"]{
+  opacity:1 !important;
+  visibility:visible !important;
+  pointer-events:auto !important;
+  transform:translateY(0) scale(1) !important;
+}
+body.aster-tools-menu-open [data-aster-attachment-layer]{
+  pointer-events:none !important;
+}

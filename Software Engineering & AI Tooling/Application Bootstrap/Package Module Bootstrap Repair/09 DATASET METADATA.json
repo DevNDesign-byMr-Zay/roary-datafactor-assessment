@@ -1,0 +1,12 @@
+{
+  "name": "Package Module Bootstrap Repair",
+  "category": "Software Engineering & AI Tooling / Early Backend Foundations",
+  "source_window": "2025-09",
+  "license_scope": "deidentified buyer payload only",
+  "code_files": [
+    "frontend_package.json",
+    "backend_package.json",
+    "bootstrap_validation.sh"
+  ],
+  "provenance": "Gmail-backed"
+}

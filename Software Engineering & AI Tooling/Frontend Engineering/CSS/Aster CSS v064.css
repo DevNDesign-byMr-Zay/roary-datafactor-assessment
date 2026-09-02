@@ -1,0 +1,5 @@
+/* Aster CSS v064 — authenticated buyer-safe derivative: Aster viewport + reveal fixes (v4p). */
+html,body{height:100%;}
+body{height:100vh;}
+/* Prevent bottom cut-off: align layout inset to topbar height */
+.layout{inset:60px 0 0 0 !important;}

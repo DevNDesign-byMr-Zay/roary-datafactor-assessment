@@ -1,0 +1,5 @@
+/* Aster CSS v184 — authenticated buyer-safe derivative: relight panel layout styling variant 9. */
+#rtSidePanel[data-tool=relight] .rt-sidepanel-body{
+padding-top:6px !important;
+  padding-bottom:10px !important;
+}

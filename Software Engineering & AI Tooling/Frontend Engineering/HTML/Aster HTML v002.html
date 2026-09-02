@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ASTER Trainer (Web)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    :root {
+      --bg: #0b0b0c;
+      --panel: #151517;
+      --muted: #9aa1aa;
+      --text: #e9eef5;
+      --line: #24262b;
+      --input: #1c1e22;
+      --brand: #4f46e5;
+      --brand-2: #2563eb;
+      --error: #ef4444;
+      --success: #22c55e;
+      --yellow: #eab308;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif; }
+
+    header { display:flex; align-items:center; gap:12px; padding:12px 18px; border-bottom:1px solid var(--line); background:#000; }
+    header img { height: 26px; width:auto; }
+    header h1 { font-size: 16px; font-weight:600; margin:0; letter-spacing:.3px; }
+
+    .layout {
+      display:grid; grid-template-columns: 280px 1fr; height: calc(100vh - 56px);
+    }
+
+    /* Sidebar */
+    aside {
+      border-right:1px solid var(--line); background:#0e0f12; padding:12px;
+      display:flex; flex-direction:column; gap:10px; overflow:auto;
+    }
+    .brand-row { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
+    .settings {
+      background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px;
+    }
+    label { display:block; font-size:11px; color:var(--muted); margin:8px 0 4px; }
+    input[type="text"], input[type="url"], input[type="search"], textarea, select {
+      width:100%; background:var(--input); color:var(--text);
+      border:1px solid var(--line); border-radius:8px; padding:9px 10px; outline:none;
+    }
+    .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .btn { background: var(--brand-2); color:#fff; border:0; border-radius:8px; padding:8px 12px; cursor:pointer; font-weight:500; }
+    .btn.secondary { background:#2a2f36; color:#d7dde6; }
+    .btn.ghost { background:transparent; border:1px solid var(--line); }
+    .btn.small { padding:6px 8px; font-size:12px; }
+    .btn:disabled { opacity:.55; cursor:not-allowed; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#111; border:1px solid var(--line); color:#aab3bd; font-size:10px; }
+
+    .stat { font-size:12px; color:var(--muted); margin-top:6px; }
+    .stat.ok { color: var(--success); }
+    .stat.err { color: var(--error); }
+
+    .sessions {
+      background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .session-search { width:100%; }
+    .session-list { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+    .session-item {
+      display:flex; justify-content:space-between; align-items:center; gap:8px;
+      background:#0f1115; border:1px solid var(--line); border-radius:10px; padding:8px 10px;
+      cursor:pointer;
+    }
+    .session-item.active { border-color: var(--brand-2); background:#0c1222; }
+    .meta { color:#9aa1aa; font-size:11px; }
+
+    /* Main panel */
+    main { overflow:auto; padding:16px; }
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    section { background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
+    h2 { margin:0 0 12px; font-size:15px; font-weight:600; }
+    h3 { margin:16px 0 8px; font-size:13px; font-weight:600; color:var(--muted); }
+
+    .chat-box { background:#000; border:1px solid var(--line); border-radius:10px; height:260px; overflow:auto; padding:10px; font-size:13px; white-space:pre-wrap; }
+    .msg { margin:0 0 6px; }
+    .msg.user { color: var(--yellow); }
+    .msg.aster { color: var(--success); }
+    .msg.error { color: var(--error); }
+    textarea { min-height: 64px; resize:vertical; }
+
+    footer { text-align:center; color:#7b8593; font-size:12px; padding:12px; border-top:1px solid var(--line); }
+    code { background:#0f1115; border:1px solid var(--line); padding:1px 6px; border-radius:6px; font-family:ui-monospace, Menlo, Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="image.png" alt="ASTER Logo" />
+    <h1>ASTER Trainer (Web)</h1>
+  </header>
+
+  <div class="layout">
+    <!-- Sidebar: settings + sessions -->
+    <aside>
+      <div class="settings">
+        <div class="brand-row"><span class="pill">Settings</span></div>
+        <label>API Base URL</label>
+        <input id="apiBase" type="url" value="http://localhost:8080" />
+        <label>ASTER API Token <span class="pill">x-aster-token</span></label>
+        <input id="apiToken" type="text" value="" />
+        <div class="row" style="margin-top:10px;">
+          <button class="btn small" onclick="saveSettings()">Save</button>
+          <button class="btn small secondary" onclick="pingHealth()">Ping /health</button>
+        </div>
+        <div id="healthStatus" class="stat">Not checked</div>
+      </div>
+
+      <div class="sessions">
+        <div class="row" style="justify-content:space-between;">
+          <div class="brand-row"><span class="pill">Sessions</span></div>
+          <button class="btn small" onclick="newSession()">New</button>
+        </div>
+        <input id="sessionSearch" class="session-search" type="search" placeholder="Search…" oninput="renderSessions()" />
+        <div id="sessionList" class="session-list"></div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main>
+      <div class="grid-2">
+        <!-- Chat -->
+        <section>
+          <h2>Chat</h2>
+          <div id="chatBox" class="chat-box" aria-live="polite"></div>
+          <div class="row" style="margin-top:10px;">
+            <textarea id="chatInput" placeholder="Type a message and hit Send (Enter)…"></textarea>
+          </div>
+          <div class="row" style="margin-top:6px;">
+            <button class="btn" onclick="sendMessage()">Send</button>
+            <button class="btn secondary" onclick="loadHistory()">Load History</button>
+          </div>
+
+          <h3>Attach reference files</h3>
+          <div class="row">
+            <input type="file" id="fileInput" />
+            <button class="btn" onclick="uploadFile()">Upload</button>
+          </div>
+          <div id="fileStatus" class="stat"></div>
+        </section>
+
+        <!-- Audio + Vision -->
+        <section>
+          <h2>Audio (record → transcribe)</h2>
+          <div class="row">
+            <button class="btn" onclick="startRecording()">Start</button>
+            <button class="btn secondary" onclick="stopRecording()">Stop</button>
+            <span id="recStatus" class="stat">idle</span>
+          </div>
+          <div class="row" style="margin-top:6px;">
+            <button id="uploadAudioBtn" class="btn" onclick="uploadAudio()" disabled>
+              Upload + Ask “Transcribe this audio.”
+            </button>
+          </div>
+          <div class="stat">Saves as <code>audio/webm</code> and sends via <code>/upload</code> → <code>/chat</code>.</div>
+
+          <h2 style="margin-top:18px;">Vision (image → describe / colors)</h2>
+          <div class="row">
+            <input type="file" id="visionFile" accept="image/*" />
+            <button class="btn" onclick="describeImage()">Describe</button>
+            <button class="btn secondary" onclick="paletteImage()">Color Palette</button>
+          </div>
+          <div id="visionStatus" class="stat"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer>© 2025 aster.example — Trainer Web</footer>
+
+  <script>
+    // ------------------------- State -------------------------
+    let state = {
+      currentSession: 'trainer-dev1',
+      sessions: [],
+    };
+
+    // ------------------------- Settings -------------------------
+    function getSettings() {
+      return {
+        base: document.getElementById('apiBase').value.trim(),
+        token: document.getElementById('apiToken').value.trim(),
+      };
+    }
+    function saveSettings() {
+      localStorage.setItem('asterSettings', JSON.stringify(getSettings()));
+      const s = document.getElementById('healthStatus');
+      s.textContent = 'Saved locally'; s.className = 'stat ok';
+      saveLocalSession(); // persist current session, too
+    }
+    function loadSettings() {
+      const raw = localStorage.getItem('asterSettings');
+      if (raw) {
+        try {
+          const { base, token } = JSON.parse(raw);
+          if (base) document.getElementById('apiBase').value = base;
+          if (token) document.getElementById('apiToken').value = token;
+        } catch {}
+      }
+      const sess = localStorage.getItem('asterCurrentSession');
+      if (sess) state.currentSession = sess;
+    }
+    function saveLocalSession() {
+      localStorage.setItem('asterCurrentSession', state.currentSession);
+    }
+
+    async function safeJson(res) {
+      const txt = await res.text();
+      try { return txt ? JSON.parse(txt) : {}; } catch { return { raw: txt }; }
+    }
+
+    async function pingHealth() {
+      const { base, token } = getSettings();
+      const stat = document.getElementById('healthStatus');
+      stat.textContent = 'Checking…'; stat.className = 'stat';
+      try {
+        const res = await fetch(`${base}/health`, { headers: { 'x-aster-token': token }});
+        const data = await safeJson(res);
+        if (!res.ok) throw new Error(JSON.stringify(data));
+        stat.textContent = JSON.stringify(data);
+        stat.className = 'stat ok';
+      } catch {
+        stat.textContent = 'Failed to fetch';
+        stat.className = 'stat err';
+      }
+    }
+
+    // ------------------------- Sessions -------------------------
+    async function fetchSessions() {
+      const { base, token } = getSettings();
+      try {
+        const res = await fetch(`${base}/sessions`, { headers: { 'x-aster-token': token }});
+        const data = await safeJson(res);
+        if (res.ok) {
+          state.sessions = data.sessions || [];
+        }
+      } catch {}
+    }
+    function renderSessions() {
+      const q = (document.getElementById('sessionSearch').value || '').toLowerCase();
+      const list = document.getElementById('sessionList');
+      list.innerHTML = '';
+      const filtered = state.sessions
+        .filter(s => !q || s.id.toLowerCase().includes(q))
+        .sort((a,b)=> (b.lastTs||0)-(a.lastTs||0));
+
+      for (const s of filtered) {
+        const el = document.createElement('div');
+        el.className = 'session-item' + (s.id === state.currentSession ? ' active' : '');
+        el.onclick = () => { state.currentSession = s.id; saveLocalSession(); loadHistory(true); renderSessions(); };
+        const left = document.createElement('div');
+        left.innerHTML = `<div style="font-weight:600;">${s.id}</div><div class="meta">${new Date(s.lastTs||Date.now()).toLocaleString()} · ${s.turns||0} turns</div>`;
+        const right = document.createElement('div');
+        const del = document.createElement('button');
+        del.className = 'btn small ghost'; del.textContent = 'Delete';
+        del.onclick = async (ev) => {
+          ev.stopPropagation();
+          if (!confirm(`Delete session "${s.id}"?`)) return;
+          await deleteSession(s.id);
+          if (state.currentSession === s.id) state.currentSession = (state.sessions[0]?.id || 'trainer-dev1');
+          await fetchSessions(); renderSessions(); loadHistory(true);
+        };
+        right.appendChild(del);
+        el.appendChild(left); el.appendChild(right);
+        list.appendChild(el);
+      }
+    }
+    async function newSession() {
+      const id = prompt('New session id:', `session-${Date.now()}`);
+      if (!id) return;
+      const { base, token } = getSettings();
+      await fetch(`${base}/session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-aster-token': token },
+        body: JSON.stringify({ id })
+      });
+      state.currentSession = id; saveLocalSession();
+      await fetchSessions(); renderSessions(); loadHistory(true);
+    }
+    async function deleteSession(id) {
+      const { base, token } = getSettings();
+      await fetch(`${base}/session/${encodeURIComponent(id)}`, {
+        method: 'DELETE', headers: { 'x-aster-token': token }
+      });
+    }
+
+    // ------------------------- Chat -------------------------
+    function appendChat(msg, cls) {
+      const el = document.createElement('div');
+      el.className = 'msg ' + (cls || '');
+      el.textContent = msg;
+      const box = document.getElementById('chatBox');
+      box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const { base, token } = getSettings();
+      const session = state.currentSession;
+      const text = document.getElementById('chatInput').value.trim();
+      if (!text) return;
+
+      try {
+        const res = await fetch(`${base}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-aster-token': token },
+          body: JSON.stringify({ sessionId: session, text })
+        });
+        const data = await safeJson(res);
+        appendChat(`user: ${text}`, 'user');
+        if (!res.ok) throw new Error(data?.error || JSON.stringify(data));
+        appendChat(`aster: ${data.reply}`, 'aster');
+        document.getElementById('chatInput').value = '';
+        // refresh session list metadata
+        await fetchSessions(); renderSessions();
+      } catch (err) {
+        appendChat(`aster: [error] ${err.message || err}`, 'error');
+      }
+    }
+
+    async function loadHistory(clear = false) {
+      const { base, token } = getSettings();
+      const session = state.currentSession;
+      try {
+        const res = await fetch(`${base}/history?sessionId=${encodeURIComponent(session)}&limit=200`, {
+          headers: { 'x-aster-token': token }
+        });
+        const data = await safeJson(res);
+        const box = document.getElementById('chatBox');
+        if (clear) box.innerHTML = '';
+        if (res.ok && Array.isArray(data.turns)) {
+          for (const t of data.turns) {
+            const who = t.role === 'user' ? 'user' : 'aster';
+            appendChat(`${who}: ${t.text || ''}`, who);
+          }
+        }
+      } catch {
+        appendChat('aster: [history error] Failed to fetch', 'error');
+      }
+    }
+
+    // Enter to send
+    document.addEventListener('keydown', (e) => {
+      const ta = document.getElementById('chatInput');
+      if (document.activeElement === ta && e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault(); sendMessage();
+      }
+    });
+
+    // ------------------------- Uploads -------------------------
+    async function uploadFile() {
+      const { base, token } = getSettings();
+      const session = state.currentSession;
+      const f = document.getElementById('fileInput').files[0];
+      if (!f) return;
+      const fd = new FormData();
+      fd.append('file', f);
+      const status = document.getElementById('fileStatus');
+      status.textContent = 'Uploading…';
+      try {
+        const res = await fetch(`${base}/upload?sessionId=${encodeURIComponent(session)}`, {
+          method: 'POST', headers: { 'x-aster-token': token }, body: fd
+        });
+        const data = await safeJson(res);
+        if (!res.ok) throw new Error(data?.error || 'Upload failed');
+        status.textContent = `Uploaded: ${data.objectName || data.url}`;
+        // ask model with the file attached
+        const files = [{ objectName: data.objectName, url: data.url, mimeType: data.mimeType }];
+        await askWithFiles('Please read and summarize this file.', files);
+      } catch (e) {
+        status.textContent = 'Upload failed';
+      }
+    }
+
+    async function askWithFiles(prompt, files) {
+      const { base, token } = getSettings();
+      const session = state.currentSession;
+      try {
+        const res = await fetch(`${base}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-aster-token': token },
+          body: JSON.stringify({ sessionId: session, text: prompt, files })
+        });
+        const data = await safeJson(res);
+        appendChat(`user: ${prompt}`, 'user');
+        if (!res.ok) throw new Error(data?.error || JSON.stringify(data));
+        appendChat(`aster: ${data.reply}`, 'aster');
+        await fetchSessions(); renderSessions();
+      } catch (err) {
+        appendChat(`aster: [error] ${err.message || err}`, 'error');
+      }
+    }
+
+    // ------------------------- Audio -------------------------
+    let recorder, audioBlob;
+    async function startRecording() {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recorder = new MediaRecorder(stream);
+      const chunks = [];
+      recorder.ondataavailable = e => chunks.push(e.data);
+      recorder.onstop = () => {
+        audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        document.getElementById('uploadAudioBtn').disabled = false;
+        document.getElementById('recStatus').textContent = 'ready';
+      };
+      recorder.start();
+      document.getElementById('recStatus').textContent = 'recording…';
+    }
+    function stopRecording() { if (recorder && recorder.state !== 'inactive') recorder.stop(); }
+    async function uploadAudio() {
+      const { base, token } = getSettings();
+      const session = state.currentSession;
+      if (!audioBlob) return;
+      const fd = new FormData();
+      fd.append('file', audioBlob, 'recording.webm');
+      const status = document.getElementById('recStatus');
+      status.textContent = 'uploading…';
+      try {
+        const res = await fetch(`${base}/upload?sessionId=${encodeURIComponent(session)}`, {
+          method: 'POST', headers: { 'x-aster-token': token }, body: fd
+        });
+        const data = await safeJson(res);
+        status.textContent = 'uploaded';
+        const files = [{ objectName: data.objectName, url: data.url, mimeType: data.mimeType }];
+        await askWithFiles('Transcribe this audio.', files);
+      } catch {
+        status.textContent = 'upload failed';
+      }
+    }
+
+    // ------------------------- Vision -------------------------
+    async function describeImage() {
+      const f = document.getElementById('visionFile').files[0];
+      if (!f) return;
+      const { base, token } = getSettings();
+      const session = state.currentSession;
+      const status = document.getElementById('visionStatus');
+      status.textContent = 'Uploading image…';
+      const fd = new FormData(); fd.append('file', f);
+      try {
+        const res = await fetch(`${base}/upload?sessionId=${encodeURIComponent(session)}`, {
+          method: 'POST', headers: { 'x-aster-token': token }, body: fd
+        });
+        const data = await safeJson(res);
+        status.textContent = 'Uploaded';
+        const files = [{ objectName: data.objectName, url: data.url, mimeType: data.mimeType }];
+        await askWithFiles('Describe this image in detail.', files);
+      } catch { status.textContent = 'Image upload failed'; }
+    }
+    async function paletteImage() {
+      const f = document.getElementById('visionFile').files[0];
+      if (!f) return;
+      const { base, token } = getSettings();
+      const session = state.currentSession;
+      const status = document.getElementById('visionStatus');
+      status.textContent = 'Uploading image…';
+      const fd = new FormData(); fd.append('file', f);
+      try {
+        const res = await fetch(`${base}/upload?sessionId=${encodeURIComponent(session)}`, {
+          method: 'POST', headers: { 'x-aster-token': token }, body: fd
+        });
+        const data = await safeJson(res);
+        status.textContent = 'Uploaded';
+        const files = [{ objectName: data.objectName, url: data.url, mimeType: data.mimeType }];
+        await askWithFiles('Extract a compact color palette (hex + names).', files);
+      } catch { status.textContent = 'Image upload failed'; }
+    }
+
+    // ------------------------- Init -------------------------
+    (async function init() {
+      loadSettings();
+      await fetchSessions();
+      // ensure current exists
+      if (!state.sessions.find(s => s.id === state.currentSession) && state.sessions[0]) {
+        state.currentSession = state.sessions[0].id;
+        saveLocalSession();
+      }
+      renderSessions();
+      await pingHealth();
+      await loadHistory(true);
+    })();
+  </script>
+</body>
+</html>

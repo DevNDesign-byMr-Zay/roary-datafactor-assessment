@@ -1,0 +1,2 @@
+/* Aster CSS v159 — authenticated buyer-safe derivative: image-tool hover-overlay backdrop. */
+.nexus-hover-overlay{position:absolute;inset:0;z-index:75;opacity:0;pointer-events:none;background:radial-gradient(1200px 700px at 18% 6%,rgba(177,132,255,.2) 0,rgba(0,0,0,.58) 45%,rgba(0,0,0,.74) 100%);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);transition:opacity 240ms var(--easeSoft);overflow:hidden}

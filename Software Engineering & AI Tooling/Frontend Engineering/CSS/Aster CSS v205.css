@@ -1,0 +1,4 @@
+/* Aster CSS v205 — authenticated buyer-safe derivative: image-tool side-panel styling variant 9. */
+#rtSidePanel[data-tool=enhance] .rtp-qbtn:hover{
+border-color:rgba(168,85,247,.55);box-shadow:0 0 0 2px rgba(168,85,247,.14),0 10px 24px rgba(168,85,247,.12);color:#fff;transform:translateY(-1px)
+}

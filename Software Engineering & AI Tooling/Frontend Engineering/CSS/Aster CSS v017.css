@@ -1,0 +1,28 @@
+/* Aster CSS v017
+Authenticated historical derivative: stable model-selector drawer interaction states.
+*/
+[data-aster-model-drawer]{
+  z-index:99999;
+  opacity:0;
+  transform:translateY(6px);
+  pointer-events:none;
+  transform-origin:bottom right;
+  transition:opacity .16s ease,transform .16s ease;
+}
+[data-aster-model-drawer].aster-model-drawer-open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+[data-aster-model-drawer].aster-model-drawer-closing{
+  opacity:0;
+  transform:translateY(6px);
+  pointer-events:none;
+}
+[data-aster-model-drawer] [data-aster-model]{
+  cursor:pointer;
+  pointer-events:auto;
+}
+[data-aster-model-drawer] [data-aster-model].is-selected{
+  box-shadow:0 0 0 1px rgba(255,255,255,.35) inset;
+}

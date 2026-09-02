@@ -1,0 +1,24 @@
+/* Aster CSS v021
+Authenticated historical derivative: class-level model drawer gap bridge and interaction stacking.
+*/
+[data-aster-model-wrap]{
+  position:relative;
+  z-index:99999;
+}
+[data-aster-model-drawer]{
+  z-index:100000;
+}
+[data-aster-model-wrap].open::before{
+  content:"";
+  position:absolute;
+  right:0;
+  bottom:100%;
+  width:max(100%,360px);
+  height:18px;
+  background:transparent;
+  pointer-events:auto;
+}
+[data-aster-model-wrap].open [data-aster-model-drawer],
+[data-aster-model-wrap].open [data-aster-model-drawer] *{
+  pointer-events:auto !important;
+}

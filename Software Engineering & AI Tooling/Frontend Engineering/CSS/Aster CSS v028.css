@@ -1,0 +1,9 @@
+/* Aster CSS v028 — isolated single-patch bridge with deterministic stacking. */
+[data-aster-model-wrap]{position:relative!important;isolation:isolate!important;z-index:2147483000!important;}
+[data-aster-model-wrap]::after{
+  content:"";position:absolute;bottom:100%;right:0;
+  width:var(--aster-drawer-bridge-width,360px);height:var(--aster-drawer-bridge-height,32px);
+  background:transparent;pointer-events:auto;z-index:2147483001;
+}
+[data-aster-model-drawer]{z-index:2147483002!important;pointer-events:auto!important;}
+[data-aster-model-drawer] [data-slot]{pointer-events:auto!important;cursor:pointer!important;position:relative;z-index:1;}

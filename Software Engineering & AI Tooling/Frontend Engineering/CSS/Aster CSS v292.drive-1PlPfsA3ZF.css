@@ -1,0 +1,6 @@
+@media (prefers-reduced-motion:reduce){
+      .fs-menu,
+      .sources-results,
+      .composer-wrap,
+      .attachments-row{transition:none!important;}
+    }

@@ -1,0 +1,5 @@
+/* Aster CSS v049 — expansion overlay containment on the active image shell. */
+[data-aster-image-shell]{position:relative;overflow:visible}
+[data-aster-expand-overlay]{position:absolute;inset:0;pointer-events:none;z-index:6}
+[data-aster-expand-frame]{pointer-events:auto;z-index:2}
+[data-aster-image-shell] img{object-fit:contain;object-position:50% 50%}

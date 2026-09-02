@@ -1,0 +1,1 @@
+#imageModal.expand-focus .img-modal-image-shell{width:calc(100% - var(--rtExpandFocusShift));max-width:calc(100% - var(--rtExpandFocusShift));margin-right:auto;transform:translateX(-24px)}

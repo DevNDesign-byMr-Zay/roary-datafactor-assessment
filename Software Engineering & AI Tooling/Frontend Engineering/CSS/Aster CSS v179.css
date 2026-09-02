@@ -1,0 +1,5 @@
+/* Aster CSS v179 — authenticated buyer-safe derivative: relight panel layout styling variant 4. */
+#rtSidePanel[data-tool=relight] .rtp-chip{
+margin:4px auto 6px !important;
+  padding:5px 12px !important;
+}

@@ -1,0 +1,58 @@
+/* Aster expansion preview — legacy overlay suppression and stacking contract */
+#asterExpandOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999999;
+}
+
+#asterExpandPreviewCanvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: .92;
+  mix-blend-mode: screen;
+  filter: blur(12px);
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+#asterExpandFrame {
+  position: absolute;
+  border: 1px dotted rgba(230,241,255,.78);
+  box-shadow: none;
+  background: transparent;
+  z-index: 2;
+}
+
+.asterExpandHandle {
+  z-index: 3;
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: rgba(168,85,247,.95);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.45);
+  pointer-events: auto;
+  touch-action: none;
+}
+.asterExpandHandle[data-h="nw"]{left:-7px;top:-7px;cursor:nwse-resize}
+.asterExpandHandle[data-h="ne"]{right:-7px;top:-7px;cursor:nesw-resize}
+.asterExpandHandle[data-h="sw"]{left:-7px;bottom:-7px;cursor:nesw-resize}
+.asterExpandHandle[data-h="se"]{right:-7px;bottom:-7px;cursor:nwse-resize}
+.asterExpandHandle[data-h="n"]{left:50%;top:-7px;transform:translateX(-50%);cursor:ns-resize}
+.asterExpandHandle[data-h="s"]{left:50%;bottom:-7px;transform:translateX(-50%);cursor:ns-resize}
+.asterExpandHandle[data-h="e"]{right:-7px;top:50%;transform:translateY(-50%);cursor:ew-resize}
+.asterExpandHandle[data-h="w"]{left:-7px;top:50%;transform:translateY(-50%);cursor:ew-resize}
+
+/* Disable the pre-eight-point overlay to prevent duplicate frames and competing glow animation. */
+.aster-expand-overlay,
+.aster-expand-overlay.on {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}

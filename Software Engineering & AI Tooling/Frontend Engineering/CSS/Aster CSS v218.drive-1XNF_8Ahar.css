@@ -1,0 +1,12 @@
+#asterExpandOverlay #rtExpandFrame8{
+    position:absolute;
+    left:var(--bx);
+    top:var(--by);
+    width:var(--bw);
+    height:var(--bh);
+    border:1.5px dashed rgba(225,235,255,.88);
+    border-radius:12px;
+    box-shadow:0 0 0 1px rgba(150,62,255,.22) inset;
+    pointer-events:none;
+    z-index:9;
+  }

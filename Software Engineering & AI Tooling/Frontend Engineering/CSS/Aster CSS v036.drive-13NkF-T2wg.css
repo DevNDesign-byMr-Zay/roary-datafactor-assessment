@@ -1,0 +1,4 @@
+[data-aster-tool-panel]{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+[data-aster-tool-panel-body]{min-height:0;overflow:auto;scrollbar-width:thin}
+[data-aster-tool-panel-footer]{position:sticky;bottom:0;z-index:4;margin-top:auto;background:inherit;padding-top:8px}
+[data-aster-tool-panel-footer] [data-aster-exec]{width:100%}

@@ -1,0 +1,36 @@
+/* Aster CSS v013
+Authenticated historical derivative: composer geometry and scroll-to-bottom follow behavior.
+Identity-specific styling and protected reasoning UI removed.
+*/
+:root{
+  --aster-composer-h:72px;
+  --aster-composer-one-line-h:44px;
+}
+
+#composerShell:not(.aster-composer-multiline) #composerInput{
+  height:var(--aster-composer-one-line-h) !important;
+  min-height:var(--aster-composer-one-line-h) !important;
+  max-height:var(--aster-composer-one-line-h) !important;
+  overflow-y:hidden !important;
+}
+
+#composerShell.aster-composer-multiline #composerInput{
+  min-height:var(--aster-composer-one-line-h) !important;
+  max-height:140px !important;
+  line-height:22px !important;
+}
+
+#scrollToBottomBtn[data-aster-composer-follow="1"]{
+  position:fixed !important;
+  left:50% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:calc(var(--aster-composer-h) + 14px) !important;
+  transform:translateX(-50%) !important;
+  margin:0 !important;
+}
+
+body.aster-image-modal-open #scrollToBottomBtn[data-aster-composer-follow="1"]{
+  opacity:0 !important;
+  pointer-events:none !important;
+}

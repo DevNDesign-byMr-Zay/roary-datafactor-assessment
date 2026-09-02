@@ -1,0 +1,142 @@
+/* Aster CSS v057 — authenticated buyer-safe derivative: compact topbar selector presentation and state styling. */
+:root{
+  --rtPurple: rgba(177,132,255,1);
+  --rtModelGray: rgba(255,255,255,.72);
+  --rtModelSub: rgba(255,255,255,.56);
+}
+
+/* Keep topbar brand layout stable */
+.topbar .brand{
+  display:flex;
+  align-items:center;
+  min-width:0;
+  gap:10px;
+}
+
+/* Slot sits next to logo */
+#rtTopbarModelSlot{
+  display:inline-flex;
+  align-items:center;
+  position:relative;
+  margin-left:34px;            /* push right (no overlap) */
+  margin-top:6px;              /* nudge down for vertical centering */
+  pointer-events:auto !important;
+}
+
+/* Button (title) */
+#rtTopbarModelBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:0;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+
+  font-family: display type, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-size:16px;
+  line-height:1;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--rtModelGray);
+}
+
+#rtTopbarModelBtn .rt-topbar-model-caret{
+  font-family:inherit;
+  font-size:14px;
+  opacity:.75;
+  transform:translateY(-1px);
+}
+
+/* Menu: slides down from behind topbar */
+#rtTopbarModelMenu{
+  position:absolute;
+  left:0;
+  top:calc(100% + 30px);        /* sit lower so it never overlaps topbar */
+  min-width:240px;
+
+  background: rgba(10,10,12,.86);
+  border:0 !important;          /* remove border from list */
+  box-shadow: 0 18px 38px rgba(0,0,0,.45);
+  border-radius: 0 0 8px 8px;   /* no top corners; reduced radius */
+  overflow:hidden;
+
+  padding:8px 12px 10px 12px;   /* RIGHT matches LEFT (slimmer) */
+
+  opacity:0;
+  transform: translateY(-18px); /* starts "behind" topbar */
+  pointer-events:none;
+  visibility:hidden;
+
+  transition:
+    opacity .18s ease,
+    transform .28s cubic-bezier(.22,1,.36,1),
+    visibility 0s linear .18s;
+}
+
+/* Open */
+#rtTopbarModelSlot.open #rtTopbarModelMenu,
+#rtTopbarModelMenu.open{
+  opacity:1;
+  transform: translateY(0);
+  pointer-events:auto;
+  visibility:visible;
+  transition:
+    opacity .18s ease,
+    transform .28s cubic-bezier(.22,1,.36,1),
+    visibility 0s;
+}
+
+/* Options: icon + text; no background/border */
+#rtTopbarModelMenu .rt-model-opt{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+
+  padding:8px 12px;            /* RIGHT matches LEFT */
+  margin:0;
+  border:0 !important;
+  background:transparent !important;
+  border-radius:0;
+
+  cursor:pointer;
+  pointer-events:auto;
+}
+
+#rtTopbarModelMenu .rt-model-opt + .rt-model-opt{
+  margin-top:6px;
+}
+
+/* Icon */
+#rtTopbarModelMenu .rt-model-opt-ico{
+  display:inline-flex;
+  width:16px;
+  height:16px;
+  margin-top:2px;
+  color:var(--rtModelGray);
+  flex:0 0 auto;
+}
+#rtTopbarModelMenu .rt-model-opt-ico svg{
+  width:16px;
+  height:16px;
+  display:block;
+}
+
+/* Text */
+#rtTopbarModelMenu .rt-model-opt-title{
+  font-family: display type, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-size:14px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  line-height:1.1;
+  color:var(--rtModelGray);
+}
+#rtTopbarModelMenu .rt-model-opt-sub{
+  font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-size:12px;
+  line-height:1.25;
+  margin-top:4px;
+  color:var(--rtModelSub);
+}

@@ -1,0 +1,8 @@
+.list{
+      flex:1;
+      overflow:auto;
+      padding:8px 4px;
+      border-radius:var(--radius);
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.12);
+    }

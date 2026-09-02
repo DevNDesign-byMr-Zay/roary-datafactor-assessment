@@ -1,0 +1,2 @@
+/* Aster CSS v140 — authenticated buyer-safe derivative: image-variation responsive grid. */
+.image-variation-grid{margin-top:8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;animation:imgFadeIn .35s ease-out}

@@ -1,0 +1,40 @@
+{
+  "source_window": "2025-09-21 through 2025-09-24",
+  "source_type": "authenticated Gmail development correspondence and attachments",
+  "gmail_sources": [
+    {
+      "message_id": "1997b013659fa7e8",
+      "role": "full historical index.mjs body"
+    },
+    {
+      "message_id": "199701268a636fdb",
+      "role": "historical frontend package.json attachment"
+    },
+    {
+      "message_id": "1997013009232812",
+      "role": "historical backend package.json attachment"
+    },
+    {
+      "message_id": "1996cf54cf779993",
+      "role": "Cloud Run/CORS deployment failure and smoke-test output"
+    },
+    {
+      "message_id": "199706b677818e63",
+      "role": "unauthorized token regression"
+    },
+    {
+      "message_id": "1997209ec1f77b67",
+      "role": "successful authenticated health/chat smoke test"
+    },
+    {
+      "message_id": "1997c4dfaa2e301e",
+      "role": "missing index.mjs entry-point failure"
+    },
+    {
+      "message_id": "1997c876d73aaf62",
+      "role": "successful local backend validation"
+    }
+  ],
+  "buyer_payload_policy": "only deidentified derivatives are licensable; Gmail source evidence remains provenance-only",
+  "ai_provenance": "historical code was AI-assisted and human-directed; this packaging/deidentification pass is also AI-assisted"
+}

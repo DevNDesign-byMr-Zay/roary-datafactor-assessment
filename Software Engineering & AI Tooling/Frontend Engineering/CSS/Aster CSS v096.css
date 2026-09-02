@@ -1,0 +1,9 @@
+/* Aster CSS v096 — authenticated buyer-safe derivative: Tool chips were non-interactive due to pointer-events:none. */
+#activeToolsChips{ pointer-events:auto !important; }
+  #activeToolsChips *{ pointer-events:auto; }
+
+  /* Avoid visibility toggles causing X to never paint in some layouts */
+  #asterComposerAttachmentsStrip .aster-attach-chip .aster-attach-x,
+  #toolsWrap .tool-chip .aster-attach-x{
+    visibility:visible !important;
+  }

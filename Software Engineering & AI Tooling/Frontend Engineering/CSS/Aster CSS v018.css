@@ -1,0 +1,19 @@
+/* Aster CSS v018
+Authenticated historical derivative: portal-safe drawer pointer/visibility hardening.
+*/
+[data-aster-drawer-wrap]{
+  position:relative;
+}
+[data-aster-drawer]{
+  pointer-events:none;
+}
+[data-aster-drawer].open,
+[data-aster-drawer].aster-portal-fixed{
+  pointer-events:auto;
+}
+[data-aster-drawer].aster-portal-fixed{
+  z-index:999999;
+}
+[data-aster-drawer-toggle][aria-expanded="true"] + [data-aster-drawer]{
+  display:block;
+}

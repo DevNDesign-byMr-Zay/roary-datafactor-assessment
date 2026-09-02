@@ -1,0 +1,12 @@
+.new-chat{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:var(--btn-gray);
+      border:1px solid #575757;
+      color:var(--text);
+      cursor:pointer;
+      transition:all .25s ease;
+    }

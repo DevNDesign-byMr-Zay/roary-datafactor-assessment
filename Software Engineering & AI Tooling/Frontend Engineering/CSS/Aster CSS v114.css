@@ -1,0 +1,32 @@
+/* Aster CSS v114 — authenticated buyer-safe derivative: Ensure base composer row is always centered when not expanded for attachments. */
+.composer:not(.composer--has-attachments){
+    display:flex !important;
+    align-items:center !important;
+  }
+
+  /* Single-line mode: CSS owns the textarea's vertical geometry */
+  .composer-wrap:not(.composer--is-multiline) .composer:not(.composer--has-attachments) #composerInput{
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    overflow-y: hidden !important;
+
+    /* Optical center: slight lift */
+    padding: 3px 4px 1px 4px !important;
+    line-height: 48px !important;
+
+    /* Prevent any inline height injected earlier from affecting layout */
+    align-self: center !important;
+  }
+
+  /* In multiline mode, revert to normal readable line-height/padding */
+  .composer-wrap.composer--is-multiline .composer:not(.composer--has-attachments) #composerInput{
+    padding: 10px 4px !important;
+    line-height: 22px !important;
+  }
+
+  /* Make sure buttons don't drift */
+  .composer:not(.composer--has-attachments) #attachBtn,
+  .composer:not(.composer--has-attachments) #sendBtn{
+    align-self:center !important;
+  }

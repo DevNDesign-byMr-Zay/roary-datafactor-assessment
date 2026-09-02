@@ -1,0 +1,50 @@
+/* Aster CSS v015
+Authenticated historical derivative: render-quality preset presentation.
+*/
+.aster-quality-control{
+  margin-top:10px;
+}
+.aster-quality-label{
+  display:block;
+  margin-bottom:6px;
+}
+.aster-quality-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.aster-quality-buttons{
+  display:flex;
+  flex:1;
+  gap:8px;
+}
+.aster-quality-button{
+  flex:1;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(10,10,12,.55);
+  color:rgba(255,255,255,.92);
+  padding:8px 10px;
+  border-radius:12px;
+  font-size:12px;
+  letter-spacing:.2px;
+  transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease,color .12s ease;
+}
+.aster-quality-button:hover{
+  border-color:rgba(255,255,255,.35);
+  box-shadow:0 0 0 2px rgba(255,255,255,.08);
+  color:#fff;
+  transform:translateY(-1px);
+}
+.aster-quality-button.is-active{
+  border-color:rgba(255,255,255,.65);
+  box-shadow:0 0 0 2px rgba(255,255,255,.12);
+  color:#fff;
+}
+.aster-quality-meta{
+  white-space:nowrap;
+  margin-left:10px;
+  font-size:11px;
+  color:rgba(255,255,255,.70);
+}

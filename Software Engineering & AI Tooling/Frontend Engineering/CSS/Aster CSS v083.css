@@ -1,0 +1,30 @@
+/* Aster CSS v083 — authenticated buyer-safe derivative: Active tool chip container (existing). */
+#activeToolsChips {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin-left: 6px !important;
+    z-index: 9 !important;
+    pointer-events: none !important;
+  }
+  #activeToolsChips .rt-tool-chip {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif !important;
+    font-size: 11px !important;
+    letter-spacing: .02em !important;
+    color: var(--rtPurple, #cbb6ff) !important;
+    opacity: .95 !important;
+    padding: 2px 6px !important;
+    border-radius: 8px !important;
+    background: rgba(177,132,255,.08) !important;
+  }
+  #activeToolsChips .rt-tool-chip svg{
+    width: 14px !important;
+    height: 14px !important;
+    stroke: currentColor !important;
+    fill: currentColor !important;
+    opacity: 1 !important;
+  }
+  #activeToolsChips .rt-tool-chip svg *{ stroke: currentColor !important; fill: currentColor !important; opacity: 1 !important; }

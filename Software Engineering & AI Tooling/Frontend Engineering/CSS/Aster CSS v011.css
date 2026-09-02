@@ -1,0 +1,72 @@
+/* Aster CSS v011
+Authenticated historical derivative: chat codeframe layout, token presentation, and action controls.
+Original product identity and protected internal reasoning architecture removed.
+*/
+.aster-codeframe{
+  margin:12px 0;
+  border-radius:12px;
+  background:var(--ac-code-bg,#000);
+  overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,255,255,.10),0 0 24px rgba(255,255,255,.06);
+}
+
+.aster-codebar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px 8px;
+  user-select:none;
+}
+
+.aster-code-lang{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  font-size:11px;
+  letter-spacing:.12em;
+  color:rgba(255,255,255,.55);
+}
+
+.aster-code-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.aster-code-btn{
+  border:0;
+  background:transparent;
+  color:rgba(230,230,238,.68);
+  cursor:pointer;
+  padding:4px 6px;
+  border-radius:6px;
+}
+
+.aster-code-btn:hover,
+.aster-code-btn:focus-visible{
+  color:#fff;
+  background:rgba(255,255,255,.06);
+}
+
+.aster-codepre{
+  margin:0;
+  padding:12px 14px 15px;
+  overflow:auto;
+  max-height:42vh;
+  scrollbar-gutter:stable both-edges;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:auto;
+}
+
+.aster-code{
+  display:block;
+  white-space:pre;
+  tab-size:2;
+  color:var(--ac-code-fg,rgba(236,236,244,.94));
+  font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+}
+
+.aster-code .tok-cmt{color:var(--ac-code-cmt);font-style:italic}
+.aster-code .tok-kw{color:var(--ac-code-kw)}
+.aster-code .tok-str{color:var(--ac-code-str)}
+.aster-code .tok-num{color:var(--ac-code-num)}
+.aster-code .tok-fn{color:var(--ac-code-fn)}

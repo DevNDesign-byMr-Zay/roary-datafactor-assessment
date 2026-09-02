@@ -1,0 +1,15 @@
+/* Aster CSS v071 — authenticated buyer-safe derivative: 4) Guarantee chips sit above any composer sheen layers. */
+#imageChatComposerShell .composer-host,
+  #imageChatComposerShell .attachments-row,
+  #imageChatComposerShell #toolsWrap,
+  #imageChatComposerShell #activeToolsChips{
+    position:relative;
+    z-index:5;
+  }
+  #composer .composer-host,
+  #composer .composer-wrap,
+  #composer #toolsWrap,
+  #composer #activeToolsChips{
+    position:relative;
+    z-index:5;
+  }

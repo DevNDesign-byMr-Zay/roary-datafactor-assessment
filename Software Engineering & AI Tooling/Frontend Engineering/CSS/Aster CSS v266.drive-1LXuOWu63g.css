@@ -1,0 +1,1 @@
+.leftbar:not(.collapsed) #mediaTitle .media-lib-inline-img{width:40px;height:40px;object-fit:contain;opacity:.9;transition:filter .16s ease,opacity .16s ease,transform .16s ease;pointer-events:none;user-select:none}

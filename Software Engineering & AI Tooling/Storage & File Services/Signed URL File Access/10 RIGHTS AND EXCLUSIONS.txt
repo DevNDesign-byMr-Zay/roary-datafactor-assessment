@@ -1,0 +1,1 @@
+AI-assisted, human-directed historical software development. License only the deidentified derivative files under 12_BUYER_PAYLOAD/01_LICENSABLE_OUTPUTS. Third-party package names identify dependencies/integration targets and are not claimed as owned source code. Gmail correspondence and private infrastructure details are excluded from license scope.

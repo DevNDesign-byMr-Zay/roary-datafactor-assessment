@@ -1,0 +1,28 @@
+/* Aster CSS v085 — authenticated buyer-safe derivative: Icon Fixes. */
+#toolsDrawer button .tool-icon, #toolsDrawer button svg {
+    width: 18px !important;
+    height: 18px !important;
+    margin-top: 2px !important;
+    opacity: .95 !important;
+    flex: 0 0 auto !important;
+    fill: currentColor !important;
+    opacity: 1 !important;
+    stroke: currentColor !important;
+  }
+
+  /* Text Stack */
+  .rt-tool-text { display: flex !important; flex-direction: column !important; gap: 2px !important; min-width: 0 !important; }
+  .rt-tool-name {
+    font-family: display type, sans-serif !important;
+    font-size: 14px !important;
+    letter-spacing: .12em !important;
+    color: var(--rtToolGray) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+  }
+  .rt-tool-desc {
+    font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif !important;
+    font-size: 11px !important;
+    color: var(--rtToolSub) !important;
+    line-height: 1.3 !important;
+  }

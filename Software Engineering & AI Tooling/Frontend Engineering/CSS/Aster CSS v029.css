@@ -1,0 +1,4 @@
+/* Aster CSS v029 — no-clone gap elimination: attach the drawer directly to the control. */
+[data-aster-model-wrap]{position:relative!important;}
+[data-aster-model-drawer]{bottom:100%!important;z-index:30000!important;}
+[data-aster-model-drawer] [data-slot]{cursor:pointer!important;pointer-events:auto!important;}

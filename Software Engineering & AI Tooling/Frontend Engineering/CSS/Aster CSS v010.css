@@ -1,0 +1,53 @@
+/* Aster CSS v010
+Authenticated historical derivative: shared code-palette variables and settings presentation.
+Original product identity and protected internal reasoning architecture removed.
+*/
+:root{
+  --ac-code-bg:#000;
+  --ac-code-border:rgba(255,255,255,0);
+  --ac-code-fg:rgba(236,236,244,.94);
+  --ac-code-cmt:rgba(180,190,210,.55);
+  --ac-code-kw:#C792EA;
+  --ac-code-str:#C3E88D;
+  --ac-code-num:#F78C6C;
+  --ac-code-fn:#FFCB6B;
+  --ac-code-type:#89DDFF;
+  --ac-code-tag:#82AAFF;
+  --ac-code-attr:#FF5370;
+  --ac-code-op:rgba(235,225,255,.86);
+  --ac-code-punc:rgba(235,225,255,.68);
+}
+
+.aster-code-palette-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
+  gap:8px;
+}
+
+.aster-code-palette-tile{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  padding:9px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+  cursor:pointer;
+}
+
+.aster-code-palette-tile[aria-selected="true"]{
+  border-color:rgba(216,180,254,.52);
+  box-shadow:0 0 0 1px rgba(216,180,254,.16);
+}
+
+.aster-code-palette-swatch{
+  height:26px;
+  border-radius:7px;
+  background:var(--ac-code-bg);
+  border:1px solid var(--ac-code-border);
+}
+
+.aster-code-palette-label{
+  font-size:11px;
+  color:rgba(235,235,242,.76);
+}

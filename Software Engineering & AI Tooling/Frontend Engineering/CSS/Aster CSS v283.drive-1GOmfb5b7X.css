@@ -1,0 +1,16 @@
+:root{
+      --glass-bg: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.22);
+      --panel-glow: 0 10px 40px rgba(255,255,255,0.06);
+      --text: #ffffff;
+      --muted: #b8b8b8;
+      --btn-gray: #3a3a3a;
+      --btn-gray-2: #2d2d2d;
+      --composer-left: 90px;
+      --sidebar-collapsed-w: 130px;
+      --sidebar-expanded-w: 320px;
+      --src-ease: cubic-bezier(.18,.89,.32,1.28);
+      --src-dur: .22s;
+      --src-dur-long: .32s;
+      --accent: #b184ff;
+    }

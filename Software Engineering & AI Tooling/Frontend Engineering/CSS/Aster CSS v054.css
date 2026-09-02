@@ -1,0 +1,3 @@
+/* Aster CSS v054 — expansion glow ring and accessible tool-panel focus. */
+[data-aster-expand-glow]{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(circle at 50% 50%,rgba(150,90,235,.35),rgba(65,25,120,.08) 65%,transparent 80%)}
+[data-aster-tool-panel]:focus-visible{outline:2px solid currentColor;outline-offset:2px}

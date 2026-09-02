@@ -1,0 +1,4 @@
+/* Aster CSS v192 — authenticated buyer-safe derivative: expand-tool panel styling variant 2. */
+#rtSidePanel[data-tool=expand] .rtp-heroicon{
+transform:translateX(8px)
+}

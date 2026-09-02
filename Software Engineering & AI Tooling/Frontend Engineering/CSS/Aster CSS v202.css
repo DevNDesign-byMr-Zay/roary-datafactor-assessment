@@ -1,0 +1,4 @@
+/* Aster CSS v202 — authenticated buyer-safe derivative: image-tool side-panel styling variant 6. */
+.rtp-mood-preview.mood-sunset::before{
+filter:saturate(calc(1.1 + (var(--relight-i) * .4))) contrast(calc(1.06 + (var(--relight-i) * .18))) hue-rotate(calc(-20deg - (var(--relight-i) * 14deg))) brightness(calc(1.02 + (var(--relight-i) * .08)))
+}

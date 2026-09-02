@@ -1,0 +1,11 @@
+models:
+  - name: dolphin-2.6-mistral-7b
+    backend: llama-cpp
+    path: /models/dolphin-2.6-mistral-7b/dolphin-2.6-mistral-7b-dpo-laser.Q2_K.gguf
+    parameters:
+      threads: 8
+      temperature: 0.7
+      top_p: 0.95
+      top_k: 40
+      n_batch: 256
+      n_predict: 1024

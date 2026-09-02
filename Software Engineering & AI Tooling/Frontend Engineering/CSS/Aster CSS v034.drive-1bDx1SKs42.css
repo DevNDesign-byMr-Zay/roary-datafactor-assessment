@@ -1,0 +1,4 @@
+[data-aster-exec].is-running{position:relative;overflow:hidden}
+[data-aster-exec] .aster-exec-bar{position:absolute;inset:0 auto 0 0;width:0;opacity:.9;pointer-events:none;transition:width 100ms linear;background:linear-gradient(90deg,rgba(255,255,255,.10),rgba(255,255,255,.24))}
+[data-aster-exec] .aster-exec-label,[data-aster-exec] .aster-exec-percent{position:relative;z-index:2}
+[data-aster-exec] .aster-exec-percent{margin-left:auto;font-variant-numeric:tabular-nums}

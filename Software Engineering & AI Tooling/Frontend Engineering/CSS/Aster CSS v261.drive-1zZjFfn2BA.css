@@ -1,0 +1,1 @@
+.img-nexus.open .img-nexus-tool{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) rotate(var(--a)) translate(var(--orbitR)) rotate(calc(var(--a) * -1)) translate(var(--rtNudgeX,0),var(--rtNudgeY,0)) scale(1) translateZ(0);transition-delay:calc(var(--i, 0) * 50ms)}

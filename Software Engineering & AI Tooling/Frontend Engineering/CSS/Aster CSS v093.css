@@ -1,0 +1,6 @@
+/* Aster CSS v093 — authenticated buyer-safe derivative: Ensure attachment icons render like tool-chip icons. */
+#asterComposerAttachmentsStrip .tool-chip.rt-attach-chip svg,
+  .aster-composer-attach-strip .tool-chip.rt-attach-chip svg{
+    fill: none !important;
+    stroke: currentColor !important;
+  }

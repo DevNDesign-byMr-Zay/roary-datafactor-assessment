@@ -1,0 +1,2 @@
+/* Aster CSS v119 — authenticated buyer-safe derivative: reference-media card presentation. */
+.ref-media-strip a{will-change:transform,filter,box-shadow;transform:translate3d(0,0,0) scale(1);transition:transform var(--dur-sm) var(--ease-soft),filter var(--dur-sm) var(--ease-soft),box-shadow var(--dur-sm) var(--ease-soft)!important}

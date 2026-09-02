@@ -1,0 +1,11 @@
+/* Aster CSS v090 — authenticated buyer-safe derivative: Base strip (hidden until attachments exist). */
+#asterComposerAttachmentsStrip,
+  .aster-composer-attach-strip{
+    display:none;
+    align-items:center;
+    gap:6px;
+    max-width:100%;
+    overflow:auto;
+    padding:0 0 6px 0;
+    pointer-events:auto;
+  }

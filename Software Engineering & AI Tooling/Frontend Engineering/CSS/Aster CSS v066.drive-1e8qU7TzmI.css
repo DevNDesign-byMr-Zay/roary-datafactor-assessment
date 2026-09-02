@@ -1,0 +1,4 @@
+/* Aster CSS v066 — authenticated buyer-safe derivative: If any tool chip uses a span for X, make it feel like a button. */
+.tool-chip span.aster-attach-x{
+    cursor:pointer !important;
+  }

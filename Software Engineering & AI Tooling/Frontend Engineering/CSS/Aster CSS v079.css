@@ -1,0 +1,13 @@
+/* Aster CSS v079 — authenticated buyer-safe derivative: v85: make footer logo a touch smaller. */
+.footer-aster-logo{width:28px!important;height:28px!important}
+
+.fs-btn[aria-expanded="true"] + .fs-menu{
+  opacity:1 !important;
+  pointer-events:auto !important;
+  transform:scale(1) translateY(0) !important;
+}
+.fs-opt.is-selected{
+  background:rgba(177,132,255,.14) !important;
+  box-shadow:inset 0 0 0 1px rgba(177,132,255,.22) !important;
+}
+.fs-opt.is-selected:hover{ background:rgba(177,132,255,.18) !important; }

@@ -1,0 +1,7 @@
+/* Aster CSS v037
+Authenticated historical derivative: layered relight mood-preview thumbnails.
+*/
+[data-aster-mood-preview]{position:relative;overflow:hidden;}
+[data-aster-preview-image-layer]{position:absolute;inset:0;background-position:center;background-size:cover;z-index:0;}
+[data-aster-mood-preview]::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;}
+[data-aster-mood-preview]>:not([data-aster-preview-image-layer]){position:relative;z-index:2;}

@@ -1,0 +1,87 @@
+/* Aster CSS v009
+Authenticated historical derivative: visible assistant message actions and accessible overflow drawer.
+Protected reasoning/dock layout, original product identity, and private architecture removed.
+*/
+.msg-actions-row{
+  display:flex !important;
+  opacity:1 !important;
+  pointer-events:auto !important;
+  margin-top:6px !important;
+  margin-bottom:18px !important;
+  max-width:100% !important;
+  justify-content:flex-start !important;
+  gap:14px !important;
+}
+
+.msg-actions-row .act-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.msg-actions-row .act-btn{
+  background:transparent !important;
+  border:none !important;
+  color:rgba(220,220,225,.70) !important;
+  cursor:pointer !important;
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  min-height:28px;
+  padding:4px 6px !important;
+}
+
+.msg-actions-row .act-btn:hover,
+.msg-actions-row .act-btn:focus-visible{
+  color:rgba(210,190,255,1) !important;
+}
+
+.msg-actions-row .act-more-wrap{
+  position:relative;
+  display:inline-flex;
+}
+
+.msg-actions-row .act-drawer{
+  position:absolute;
+  left:0;
+  top:32px;
+  min-width:240px;
+  background:rgba(18,18,22,.88);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;
+  padding:8px;
+  display:none;
+  z-index:9999;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+
+.msg-actions-row .act-more-wrap.open .act-drawer{
+  display:block;
+}
+
+.msg-actions-row .act-item{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:8px;
+  background:transparent;
+  border:none;
+  color:rgba(235,235,240,.86);
+  cursor:pointer;
+  text-align:left;
+}
+
+.msg-actions-row .act-item:hover,
+.msg-actions-row .act-item:focus-visible{
+  background:rgba(255,255,255,.06);
+}
+
+.msg-actions-row .act-divider{
+  height:1px;
+  background:rgba(255,255,255,.10);
+  margin:6px 0;
+}

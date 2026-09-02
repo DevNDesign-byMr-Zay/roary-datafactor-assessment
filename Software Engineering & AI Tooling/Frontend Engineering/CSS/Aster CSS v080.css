@@ -1,0 +1,4 @@
+/* Aster CSS v080 — authenticated buyer-safe derivative: Ensure sidebar toggle stays clickable and sidebar layout is stable. */
+#leftSidebar .leftbar-head-toggle{
+    pointer-events:auto !important;
+  }

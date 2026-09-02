@@ -1,0 +1,7 @@
+/* Aster CSS v035
+Authenticated historical derivative: loading-only progress visibility with subtle moving stripes.
+*/
+[data-aster-exec-progress] [data-aster-progress-bar]{opacity:0;pointer-events:none;}
+[data-aster-exec-progress].is-loading [data-aster-progress-bar]{opacity:1;}
+[data-aster-exec-progress].is-loading [data-aster-progress-fill]{min-width:10px;background-image:linear-gradient(90deg,rgba(255,255,255,.10) 0 18%,transparent 18% 36%);background-size:34px 100%;animation:asterExecStripes .75s linear infinite;}
+@keyframes asterExecStripes{from{background-position:0 0}to{background-position:34px 0}}

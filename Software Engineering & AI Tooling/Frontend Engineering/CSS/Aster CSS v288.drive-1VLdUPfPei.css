@@ -1,0 +1,13 @@
+.attachments-row{
+      position:absolute;
+      left:var(--composer-left);
+      right:20px;
+      bottom:86px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      max-height:120px;
+      overflow:auto;
+      padding:2px 2px 8px 2px;
+      transition:left .28s ease;
+    }

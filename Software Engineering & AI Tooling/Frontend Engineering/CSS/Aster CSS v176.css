@@ -1,0 +1,6 @@
+/* Aster CSS v176 — authenticated buyer-safe derivative: relight panel layout styling. */
+#rtSidePanel[data-tool=relight] .rtp-title{
+margin-top:1px !important;
+  font-size:19px !important;
+  letter-spacing:.28em !important;
+}

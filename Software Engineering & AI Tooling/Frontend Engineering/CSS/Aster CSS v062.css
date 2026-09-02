@@ -1,0 +1,18 @@
+/* Aster CSS v062 — authenticated buyer-safe derivative: Sidebar preview: hide image previews while in videos tab. */
+body[data-rt-media-tab="videos"] #mediaLibPreview > *{display:none !important;}
+  body[data-rt-media-tab="videos"] #mediaLibPreview::before{
+    content:"No videos yet";
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+    min-height:88px;
+    font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    font-size:12px;
+    letter-spacing:.06em;
+    color: rgba(245,240,255,.72);
+    border: 1px dashed rgba(245,240,255,.18);
+    border-radius: 10px;
+    background: rgba(0,0,0,.12);
+  }
+  body[data-rt-media-tab="images"] #mediaLibPreview::before{content:"";}

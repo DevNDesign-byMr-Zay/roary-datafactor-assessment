@@ -1,0 +1,6 @@
+/* Aster CSS v073 — authenticated buyer-safe derivative: Purple hover. */
+.aster-attach-x:hover{
+    color:#b85cff !important;
+    border-color: rgba(184,92,255,.55) !important;
+    background: rgba(184,92,255,.12) !important;
+  }

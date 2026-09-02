@@ -1,0 +1,2 @@
+/* Aster CSS v157 — authenticated buyer-safe derivative: image-tool orbit label transition. */
+.img-nexus-text{position:absolute;left:calc(100% + 8px);top:50%;max-width:220px;overflow:hidden;white-space:nowrap;opacity:0;transform:translateY(-50%) translateX(12px);clip-path:inset(0 100% 0 0);pointer-events:none;transition:opacity 420ms var(--easeSoft),transform 860ms var(--easeCine),clip-path 860ms var(--easeCine);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.2em;color:rgba(245,247,250,.88);text-shadow:0 14px 28px rgba(0,0,0,.55)}

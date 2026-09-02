@@ -1,0 +1,5 @@
+/* Aster CSS v044 — expansion handle layout. */
+[data-aster-expand-frame]{position:absolute;box-sizing:border-box;touch-action:none}
+[data-aster-expand-frame] [data-edge],[data-aster-expand-frame] [data-corner]{position:absolute;width:14px;height:14px;border-radius:999px;touch-action:none}
+[data-corner="nw"]{left:-7px;top:-7px}[data-corner="ne"]{right:-7px;top:-7px}[data-corner="se"]{right:-7px;bottom:-7px}[data-corner="sw"]{left:-7px;bottom:-7px}
+[data-edge="n"]{left:50%;top:-7px;transform:translateX(-50%)}[data-edge="e"]{right:-7px;top:50%;transform:translateY(-50%)}[data-edge="s"]{left:50%;bottom:-7px;transform:translateX(-50%)}[data-edge="w"]{left:-7px;top:50%;transform:translateY(-50%)}

@@ -1,0 +1,12 @@
+.field textarea,
+    .field input[type="text"],
+    .field input[type="password"],
+    .field input[type="number"],
+    .field select{
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--glass-border);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+    }

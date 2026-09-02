@@ -1,0 +1,23 @@
+/* Aster CSS v020
+Authenticated historical derivative: expanded composer menu no-clipping and collision hardening.
+*/
+[data-aster-composer],
+[data-aster-composer-wrap],
+[data-aster-modal-composer-wrap]{
+  overflow:visible !important;
+}
+[data-aster-tools-wrap]{
+  overflow:visible !important;
+  position:relative !important;
+  z-index:100000 !important;
+}
+[data-aster-tools-drawer]{
+  z-index:2147480000 !important;
+  max-height:calc(100vh - 150px) !important;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+}
+body.aster-tools-open [data-aster-secondary-composer],
+body.aster-tools-open [data-aster-attachment-layer]{
+  pointer-events:none !important;
+}

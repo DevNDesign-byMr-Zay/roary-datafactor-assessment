@@ -1,0 +1,64 @@
+/* Aster CSS v021
+Authenticated historical derivative: media-library image/video tab states.
+*/
+body[data-aster-topbar-mode="media"] [data-aster-model-option]{
+  display:none !important;
+}
+body[data-aster-topbar-mode="models"] [data-aster-media-tab]{
+  display:none !important;
+}
+body[data-aster-topbar-mode="media"] [data-aster-media-tab]{
+  display:flex;
+}
+
+.aster-media-tab-option{
+  width:100%;
+  align-items:flex-start;
+  gap:4px;
+  flex-direction:column;
+  cursor:pointer;
+}
+
+.aster-media-tab-option.is-selected{
+  box-shadow:0 0 0 1px rgba(255,255,255,.24) inset;
+}
+
+.aster-media-tab-title{
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+}
+
+.aster-media-tab-subtitle{
+  font-size:11px;
+  opacity:.72;
+}
+
+.aster-media-grid[hidden]{
+  display:none !important;
+}
+
+.aster-media-empty{
+  width:100%;
+  min-height:88px;
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border:1px dashed rgba(255,255,255,.18);
+  border-radius:14px;
+  background:rgba(0,0,0,.14);
+  text-align:center;
+}
+
+.aster-media-empty strong{
+  font-size:13px;
+  letter-spacing:.14em;
+}
+
+.aster-media-empty span{
+  font-size:12px;
+  opacity:.72;
+}

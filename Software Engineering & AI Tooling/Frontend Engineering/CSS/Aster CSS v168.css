@@ -1,0 +1,19 @@
+/* Aster CSS v168 — authenticated buyer-safe derivative: relight mood-control styling. */
+#rtSidePanel[data-tool=relight] .rtp-mood-preview span,
+#rtSidePanel[data-tool=relight] .rtp-mood-thumb span{
+position:absolute !important;
+  left:50% !important;
+  right:auto !important;
+  transform:translateX(-50%) !important;
+  bottom:5px !important;
+  max-width:calc(100% - 12px) !important;
+  width:max-content !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+  pointer-events:none !important;
+}

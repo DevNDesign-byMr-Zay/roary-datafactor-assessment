@@ -1,0 +1,5 @@
+[data-aster-media-grid]{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+[data-aster-media-thumb]{position:relative;overflow:hidden;border-radius:10px;aspect-ratio:1/1}
+[data-aster-media-thumb] img{width:100%;height:100%;object-fit:cover;display:block}
+[data-aster-media-badge]{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);max-width:calc(100% - 10px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+[data-aster-swap]{position:relative}[data-aster-swap-hover]{opacity:0}[data-aster-swap].is-hover [data-aster-swap-primary],[data-aster-swap]:hover [data-aster-swap-primary]{opacity:0}[data-aster-swap].is-hover [data-aster-swap-hover],[data-aster-swap]:hover [data-aster-swap-hover]{opacity:1}

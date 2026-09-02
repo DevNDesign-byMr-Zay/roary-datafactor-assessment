@@ -1,0 +1,5 @@
+/* Aster CSS v038
+Authenticated historical derivative: mood labels centered along the bottom of preview tiles.
+*/
+[data-aster-mood-preview]{display:flex;align-items:flex-end;justify-content:center;}
+[data-aster-mood-label]{position:relative;z-index:3;width:100%;text-align:center;margin-top:auto;padding:.35rem .25rem;}

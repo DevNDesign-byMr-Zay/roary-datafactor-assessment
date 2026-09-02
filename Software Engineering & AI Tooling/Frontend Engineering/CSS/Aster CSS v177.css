@@ -1,0 +1,6 @@
+/* Aster CSS v177 — authenticated buyer-safe derivative: relight panel layout styling variant 2. */
+#rtSidePanel[data-tool=relight] .rtp-heroicon{
+margin:-6px auto 0 !important;
+  width:46px !important;
+  height:46px !important;
+}

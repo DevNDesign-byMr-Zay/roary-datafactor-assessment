@@ -1,0 +1,8 @@
+/* Aster CSS v069 — authenticated buyer-safe derivative: 1) Prevent the legacy outer attachments row from overlaying/stealing hover. */
+#attachmentsRow{
+    display:none !important;
+    height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    pointer-events:none !important;
+  }

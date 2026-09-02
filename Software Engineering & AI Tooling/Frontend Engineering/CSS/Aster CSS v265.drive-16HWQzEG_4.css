@@ -1,0 +1,11 @@
+.stage img{
+      display:block;
+      max-width:100%;
+      max-height: calc(92vh - 120px);
+      object-fit:contain;
+      background:transparent;
+      user-select:none;
+      -webkit-user-drag:none;
+      position:relative;
+      z-index:2;
+    }

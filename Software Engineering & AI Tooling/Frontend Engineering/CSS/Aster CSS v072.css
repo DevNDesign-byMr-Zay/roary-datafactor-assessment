@@ -1,0 +1,21 @@
+/* Aster CSS v072 — authenticated buyer-safe derivative: 5) Global X reveal rules (so expanded/collapsed composer variants behave the same). */
+.tool-chip, .aster-attach-chip{ position:relative; }
+  .aster-attach-x{ z-index:10; }
+
+  .tool-chip:hover .aster-attach-x,
+  .tool-chip:focus-within .aster-attach-x,
+  .aster-attach-chip:hover .aster-attach-x,
+  .aster-attach-chip:focus-within .aster-attach-x{
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:translateY(-50%) scale(1) !important;
+  }
+
+  /* Reduce flicker if cursor passes from chip body -> X */
+  #toolsWrap:hover .tool-chip .aster-attach-x,
+  #activeToolsChips:hover .tool-chip .aster-attach-x,
+  #asterComposerAttachmentsStrip:hover .aster-attach-chip .aster-attach-x,
+  #imageChatAttachmentsRow:hover .aster-attach-chip .aster-attach-x{
+    opacity:1 !important;
+    visibility:visible !important;
+  }

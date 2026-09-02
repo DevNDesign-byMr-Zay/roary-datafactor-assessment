@@ -1,0 +1,4 @@
+/* Aster CSS v193 — authenticated buyer-safe derivative: relight panel layout styling variant 16. */
+#imageModalImg[data-rt-relight-preview="1"]{
+transition: filter 90ms linear;
+}

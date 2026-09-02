@@ -1,0 +1,5 @@
+{
+  "status": "PASS",
+  "hits": [],
+  "rule": "No Neural Loom, ThoughtDock/Thought Web, Three.js bridge, iframe message bridge, or spatial node-geometry architecture in buyer payload."
+}

@@ -1,0 +1,1 @@
+body[data-rt-orbtool=expand] #imageModalCarousel .img-carousel-item.next,body[data-rt-orbtool=expand] #imageModalCarousel .img-carousel-item.prev{opacity:.06!important;filter:blur(2px) saturate(.65) brightness(.6)!important;pointer-events:none!important}

@@ -1,0 +1,50 @@
+/* Aster CSS v016
+Authenticated historical derivative: percentage-progress execute-button styling.
+*/
+.aster-exec-progress{
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+.aster-exec-progress .aster-exec-label{
+  position:relative;
+  z-index:3;
+  letter-spacing:.06em;
+}
+.aster-exec-progress .aster-exec-percent{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:3;
+  font-variant-numeric:tabular-nums;
+  opacity:.92;
+  font-weight:600;
+}
+.aster-exec-progress .aster-exec-bar{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  opacity:0;
+  transition:opacity .18s ease;
+}
+.aster-exec-progress .aster-exec-bar-fill{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:0%;
+  background:linear-gradient(90deg,rgba(255,255,255,.08),rgba(255,255,255,.28),rgba(255,255,255,.10));
+  box-shadow:0 0 20px rgba(255,255,255,.14);
+  transition:width .14s linear;
+}
+.aster-exec-progress.is-loading{
+  pointer-events:none;
+  opacity:.95;
+}
+.aster-exec-progress.is-loading .aster-exec-bar{
+  opacity:1;
+}

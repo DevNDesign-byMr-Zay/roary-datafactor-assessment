@@ -1,0 +1,6 @@
+/* Aster CSS v081 — authenticated buyer-safe derivative: CRITICAL: Allow drawer to pop out of composer. */
+.composer, .composer-wrap {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 100 !important;
+  }

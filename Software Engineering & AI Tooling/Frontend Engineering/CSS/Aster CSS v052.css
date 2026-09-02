@@ -1,0 +1,4 @@
+/* Aster CSS v052 — single expansion overlay and no legacy duplicate outlines. */
+[data-aster-expand-overlay]{position:absolute;inset:0;pointer-events:none}
+[data-aster-expand-overlay] [data-aster-expand-frame]{pointer-events:auto}
+[data-aster-legacy-expand-overlay]{display:none!important}

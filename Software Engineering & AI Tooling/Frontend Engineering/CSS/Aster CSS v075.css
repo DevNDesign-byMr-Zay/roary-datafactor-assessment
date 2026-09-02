@@ -1,0 +1,13 @@
+/* Aster CSS v075 — authenticated buyer-safe derivative: Hide scrollbars on attachment strips (prompt scrolling belongs to textarea). */
+#asterComposerAttachmentsStrip,
+  .aster-composer-attach-strip,
+  #imageChatAttachmentsRow {
+    overflow-y: hidden !important;
+    scrollbar-width: none !important; /* Firefox */
+  }
+  #asterComposerAttachmentsStrip::-webkit-scrollbar,
+  .aster-composer-attach-strip::-webkit-scrollbar,
+  #imageChatAttachmentsRow::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+  }

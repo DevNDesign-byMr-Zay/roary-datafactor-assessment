@@ -1,0 +1,33 @@
+/* Aster CSS v008
+Authenticated historical derivative: reliable single-tap relight mood controls.
+Original product identity and protected internal reasoning architecture removed.
+*/
+#rtSidePanel[data-tool="relight"] .rtp-mood-thumb,
+#rtSidePanel[data-tool="relight"] .rtp-mood-tile,
+#rtSidePanel[data-tool="relight"] .mood-tile{
+  transition:none !important;
+  transform:none !important;
+  will-change:auto !important;
+  cursor:pointer;
+  pointer-events:auto !important;
+  touch-action:manipulation;
+}
+
+#rtSidePanel[data-tool="relight"] .rtp-mood-thumb:hover,
+#rtSidePanel[data-tool="relight"] .rtp-mood-tile:hover,
+#rtSidePanel[data-tool="relight"] .mood-tile:hover{
+  transform:none !important;
+  filter:none !important;
+  box-shadow:none !important;
+}
+
+body.rt-panel-open[data-rt-orbtool="relight"] #rtOrbToolScrim{
+  pointer-events:none !important;
+}
+
+#rtSidePanel[data-tool="relight"] .rt-relight-thumb-img,
+#rtSidePanel[data-tool="relight"] .rtp-mood-img,
+#rtSidePanel[data-tool="relight"] .rtp-mood-overlay,
+#rtSidePanel[data-tool="relight"] .rtp-mood-label{
+  pointer-events:none !important;
+}

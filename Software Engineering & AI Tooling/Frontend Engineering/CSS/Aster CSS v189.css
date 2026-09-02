@@ -1,0 +1,4 @@
+/* Aster CSS v189 — authenticated buyer-safe derivative: expand-tool panel styling. */
+#rtSidePanel[data-tool=expand] .rtp-control.rtp-readonly{
+margin-bottom:8px
+}

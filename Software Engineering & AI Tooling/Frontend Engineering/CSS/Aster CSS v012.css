@@ -1,0 +1,129 @@
+/* Aster CSS v012
+Authenticated historical derivative: message source drawer, action-detail surface, and user prompt action/edit controls.
+Original product identity and protected internal reasoning architecture removed.
+*/
+#actions-detail{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  width:min(420px,calc(100vw - 40px));
+  max-height:min(520px,70vh);
+  overflow:auto;
+  padding:16px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  background:rgba(18,18,22,.94);
+  box-shadow:0 18px 60px rgba(0,0,0,.42);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(8px);
+  transition:opacity .18s ease,transform .18s ease;
+  z-index:99999;
+}
+
+#actions-detail.open{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(0);
+}
+
+#actions-detail .ad-title{
+  font-weight:650;
+  color:rgba(245,245,248,.95);
+  margin-bottom:8px;
+}
+
+#actions-detail .ad-body{
+  color:rgba(230,230,236,.82);
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+
+#actions-detail .ad-hint{
+  margin-top:10px;
+  color:rgba(190,190,202,.56);
+  font-size:12px;
+  overflow-wrap:anywhere;
+}
+
+.aster-sources-wrap{
+  position:relative;
+  display:inline-flex;
+}
+
+.aster-sources-drawer{
+  position:absolute;
+  right:0;
+  top:calc(100% + 8px);
+  width:min(320px,80vw);
+  display:none;
+  padding:8px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;
+  background:rgba(18,18,22,.96);
+  z-index:9999;
+}
+
+.aster-sources-wrap.open .aster-sources-drawer{
+  display:block;
+}
+
+.aster-source-item{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:rgba(235,235,240,.86);
+  text-align:left;
+  padding:8px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.aster-source-item:hover,
+.aster-source-item:focus-visible{
+  background:rgba(255,255,255,.06);
+}
+
+.user-prompt-actions-row{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:4px;
+  width:100%;
+  margin:-4px 0 8px;
+  padding-right:72px;
+}
+
+.user-prompt-actions-row .act-btn{
+  border:0;
+  background:transparent;
+  color:rgba(220,220,225,.70);
+  cursor:pointer;
+  padding:4px 6px;
+}
+
+.user-prompt-actions-row .act-btn:hover,
+.user-prompt-actions-row .act-btn:focus-visible{
+  color:#fff;
+}
+
+.aster-user-inline-editor{
+  width:100%;
+  min-height:72px;
+  resize:vertical;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:10px;
+  background:rgba(255,255,255,.04);
+  color:rgba(245,245,248,.94);
+  padding:10px 12px;
+  font:inherit;
+}
+
+.aster-user-edit-controls{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:7px;
+}

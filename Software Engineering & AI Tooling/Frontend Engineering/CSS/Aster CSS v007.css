@@ -1,0 +1,13 @@
+/* Aster CSS v007
+Authenticated historical derivative: stacking-only expand glow treatment.
+Original product identity and protected internal architecture removed.
+*/
+.aster-expand-overlay{
+  z-index:5 !important;
+  pointer-events:none !important;
+}
+
+.aster-expand-overlay .glow{
+  filter:blur(18px) !important;
+  opacity:.95 !important;
+}

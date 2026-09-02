@@ -1,0 +1,5 @@
+/* Aster CSS v170 — authenticated buyer-safe derivative: relight mood-control styling variant 3. */
+#rtSidePanel[data-tool=relight] .rtp-mood-preview .rtp-mood-fx,
+#rtSidePanel[data-tool=relight] .rtp-mood-thumb .rtp-mood-fx{
+position:absolute;inset:0;z-index:1;mix-blend-mode:soft-light;opacity:.0;pointer-events:none
+}

@@ -1,0 +1,4 @@
+/* Aster CSS v214 — authenticated buyer-safe derivative: generated-media download-control styling variant 3. */
+.generated-image-frame .image-download-btn:hover svg{
+filter:drop-shadow(0 0 10px rgba(168,85,247,.65)) drop-shadow(0 0 22px rgba(168,85,247,.28)) !important;
+}

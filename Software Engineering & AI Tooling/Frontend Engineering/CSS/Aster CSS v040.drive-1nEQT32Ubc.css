@@ -1,0 +1,7 @@
+/* Aster CSS v040 — dual-image core hover/focus swap without layout changes. */
+[data-aster-core-swap]{position:relative;display:grid;place-items:center}
+[data-aster-core-swap] [data-core-image]{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;transition:opacity .28s ease,transform .28s ease,filter .28s ease}
+[data-aster-core-swap] [data-core-image="a"]{opacity:1;transform:scale(1);filter:blur(0)}
+[data-aster-core-swap] [data-core-image="b"]{opacity:0;transform:scale(1.06);filter:blur(1.2px)}
+[data-aster-core-swap]:is(:hover,:focus-visible) [data-core-image="a"]{opacity:0;transform:scale(.96);filter:blur(1.2px)}
+[data-aster-core-swap]:is(:hover,:focus-visible) [data-core-image="b"]{opacity:1;transform:scale(1);filter:blur(0)}

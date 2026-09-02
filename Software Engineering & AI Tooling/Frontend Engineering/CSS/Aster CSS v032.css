@@ -1,0 +1,13 @@
+/* Aster CSS v032
+Authenticated historical derivative: intentionally suppress the model drawer and its controls.
+Product-specific selectors removed.
+*/
+[data-aster-model-wrap],
+[data-aster-model-toggle],
+[data-aster-model-drawer],
+[data-aster-model-icon],
+[data-aster-model-label]{
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}

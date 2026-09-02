@@ -1,0 +1,2 @@
+/* Aster CSS v086 — authenticated buyer-safe derivative: Also ensure nothing overlays the composer in weird states. */
+.composer * { pointer-events: auto; }

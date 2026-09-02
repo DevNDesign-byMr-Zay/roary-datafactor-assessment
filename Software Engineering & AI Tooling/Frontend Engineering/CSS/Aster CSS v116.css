@@ -1,0 +1,11 @@
+/* Aster CSS v116 — authenticated buyer-safe derivative: Relight: slightly tighten grid spacing without shrinking previews. */
+#rtSidePanel[data-tool=relight] .rtp-mood-grid{
+  margin-top:6px !important;
+  gap:10px !important;
+}
+
+/* keep Execute visible and separated */
+#rtSidePanel[data-tool=expand] .rtp-actions,
+#rtSidePanel[data-tool=relight] .rtp-actions{
+  padding-top:4px !important;
+}

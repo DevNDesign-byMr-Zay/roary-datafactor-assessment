@@ -1,0 +1,7 @@
+.topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:12px 14px;
+      border-bottom:1px solid var(--stroke);
+      background:rgba(0,0,0,.14);
+      backdrop-filter: blur(10px);
+    }

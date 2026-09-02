@@ -1,0 +1,31 @@
+/* Aster CSS v094 — authenticated buyer-safe derivative: Attachment thumbnail: same footprint as icons. */
+.rt-attach-thumb{
+    width:18px !important;
+    height:18px !important;
+    border-radius:4px !important;
+    background-size:cover !important;
+    background-position:center !important;
+    background-repeat:no-repeat !important;
+    flex:0 0 auto !important;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.14) inset !important;
+  }
+
+  #asterComposerAttachmentsStrip .tool-chip.rt-attach-chip .tool-chip-label,
+  .aster-composer-attach-strip .tool-chip.rt-attach-chip .tool-chip-label{
+    display:inline-block !important;
+    max-width: 220px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    padding-right: 24px !important; /* room for X */
+  }
+
+    .rt-attach-ico{
+    width:18px !important;
+    height:18px !important;
+    display:block !important;
+    flex:0 0 auto !important;
+    stroke: currentColor !important;
+    fill: none !important;
+    opacity: 1 !important;
+  }

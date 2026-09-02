@@ -1,0 +1,14 @@
+/* Aster CSS v097 — authenticated buyer-safe derivative: Show X when hovering the strip (bigger hover target), and on individual chip hover. */
+#asterComposerAttachmentsStrip:hover .aster-attach-x,
+  #asterComposerAttachmentsStrip .aster-attach-chip:hover .aster-attach-x{
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:translateY(-50%) scale(1) translateZ(0);
+  }
+
+  #toolsWrap:hover .tool-chip .aster-attach-x,
+  #toolsWrap .tool-chip:hover .aster-attach-x{
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:translateY(-50%) scale(1) translateZ(0);
+  }

@@ -1,0 +1,4 @@
+/* Aster CSS v206 — authenticated buyer-safe derivative: image-tool side-panel styling variant 10. */
+.rtp-mood-preview.mood-cinematic::before{
+filter:saturate(calc(1.12 + (var(--relight-i) * .28))) contrast(calc(1.1 + (var(--relight-i) * .32))) brightness(calc(1 + (var(--relight-i) * .06)))
+}

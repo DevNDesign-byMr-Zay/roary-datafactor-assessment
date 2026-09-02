@@ -1,0 +1,1 @@
+#rtOrb .nexus-ring,#rtOrb .rt-core,#rtOrb .rt-core-img,#rtOrb .rt-core-media,#rtOrb .rt-node,#rtOrb .tool-label,#rtOrb .tool-pill{transition-property:transform,opacity,filter,box-shadow,border-color,background-color;transition-duration:var(--durL);transition-timing-function:var(--easeCine);will-change:transform,opacity,filter}

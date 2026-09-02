@@ -1,0 +1,18 @@
+/* Aster CSS v100 — authenticated buyer-safe derivative: wrapping attachment strip without horizontal scrollbars. */
+#asterComposerAttachmentsStrip,
+  #imageChatAttachmentsRow,
+  #attachmentsRow,
+  #imageChatAttachmentsRow {
+    overflow: visible !important;
+    max-height: none !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  #asterComposerAttachmentsStrip::-webkit-scrollbar,
+  #imageChatAttachmentsRow::-webkit-scrollbar,
+  #attachmentsRow::-webkit-scrollbar,
+  #imageChatAttachmentsRow::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+  }

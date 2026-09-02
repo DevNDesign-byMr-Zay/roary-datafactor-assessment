@@ -1,0 +1,2 @@
+/* Aster CSS v060 — authenticated buyer-safe derivative: Remove legacy topbar images title (kept as safety if it exists elsewhere). */
+#topbarImagesTitle{display:none !important;}

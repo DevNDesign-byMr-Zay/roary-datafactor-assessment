@@ -1,0 +1,24 @@
+/* Aster CSS v105 — authenticated buyer-safe derivative: 4) Remove any overlay pseudo-elements that can steal hover in composer rows. */
+#composerShell::before, #composerShell::after,
+  #imageChatComposerShell::before, #imageChatComposerShell::after,
+  .composer-wrap::before, .composer-wrap::after,
+  .tools-wrap::before, .tools-wrap::after,
+  .attachments-row::before, .attachments-row::after {
+    pointer-events: none !important;
+  }
+
+  /* 5) Scrollbar should ONLY live in the message typing area when content exceeds max height. */
+  #composerInput,
+  textarea#imageChatComposer {
+    overflow-y: hidden; /* JS will toggle to auto when needed */
+    scrollbar-width: thin;
+  }
+  #composerInput::-webkit-scrollbar,
+  textarea#imageChatComposer::-webkit-scrollbar {
+    width: 8px;
+  }
+  #composerInput::-webkit-scrollbar-thumb,
+  textarea#imageChatComposer::-webkit-scrollbar-thumb {
+    background: rgba(181,108,255,.45);
+    border-radius: 10px;
+  }

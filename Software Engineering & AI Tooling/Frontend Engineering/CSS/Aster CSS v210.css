@@ -1,0 +1,7 @@
+/* Aster CSS v210 — authenticated buyer-safe derivative: generated-media download-control styling variant 2. */
+.generated-image-frame .image-download-btn svg{
+width:18px;height:18px;
+  transition:filter 140ms ease;
+  will-change:filter;
+  filter:drop-shadow(0 0 12px rgba(0,0,0,.55));
+}

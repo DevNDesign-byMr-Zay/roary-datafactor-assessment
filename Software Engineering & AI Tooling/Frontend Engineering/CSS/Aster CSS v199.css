@@ -1,0 +1,4 @@
+/* Aster CSS v199 — authenticated buyer-safe derivative: image-tool side-panel styling variant 3. */
+.rtp-mood-preview.mood-dawn::after{
+opacity:calc(.14 + (var(--relight-i) * .26));background:radial-gradient(120% 140% at 18% 0,rgba(255,170,90,.38),rgba(255,120,190,.14) 34%,rgba(0,0,0,0) 62%),linear-gradient(to bottom,rgba(255,160,80,.08),rgba(0,0,0,.38))
+}

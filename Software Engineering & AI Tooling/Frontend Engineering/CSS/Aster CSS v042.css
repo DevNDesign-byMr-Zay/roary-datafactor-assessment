@@ -1,0 +1,3 @@
+/* Aster CSS v042 — compact variation-count badge anchored to media thumbnails. */
+[data-media-thumb]{position:relative}
+[data-variation-badge]{position:absolute;left:6px;bottom:6px;min-width:18px;height:18px;padding:0 6px;border-radius:999px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:11px;line-height:18px;font-weight:700;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);pointer-events:none}

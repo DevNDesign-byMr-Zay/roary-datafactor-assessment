@@ -1,0 +1,1 @@
+Original historical bytes/text remain in authenticated Gmail sources listed in 03_INCLUDED_SOURCE_EVIDENCE/PROVENANCE_INDEX.json. Raw correspondence is intentionally not duplicated into the buyer-facing Drive package.

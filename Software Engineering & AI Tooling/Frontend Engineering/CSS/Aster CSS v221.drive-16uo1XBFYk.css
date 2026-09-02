@@ -1,0 +1,11 @@
+#rtExpandFrame .rt-expand-size-badge{
+  position:absolute;right:6px;bottom:6px;
+  font:600 11px/1 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  letter-spacing:.08em;
+  padding:6px 8px;border-radius:10px;
+  color:rgba(250,250,255,.92);
+  background:rgba(0,0,0,.38);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter: blur(10px);
+  pointer-events:none;
+}

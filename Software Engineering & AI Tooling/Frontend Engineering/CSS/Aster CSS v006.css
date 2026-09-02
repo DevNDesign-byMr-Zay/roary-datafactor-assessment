@@ -1,0 +1,57 @@
+/* Aster CSS v006
+Authenticated historical derivative: animated expand-focus glow layer.
+Original product identity and private architecture removed.
+*/
+#imageModal.expand-focus #asterExpandGlowLayer,
+body[data-rt-orbtool="expand"] #asterExpandGlowLayer{
+  display:block;
+}
+
+#asterExpandGlowLayer{
+  display:none;
+  position:fixed;
+  pointer-events:none;
+  border-radius:2px;
+  opacity:.92;
+  filter:blur(0px);
+  will-change:transform, opacity, background-position, filter;
+  background:
+    radial-gradient(120% 120% at 18% 22%, rgba(186,0,255,.62), rgba(186,0,255,0) 58%),
+    radial-gradient(140% 140% at 82% 34%, rgba(106,0,255,.48), rgba(106,0,255,0) 60%),
+    radial-gradient(140% 140% at 52% 86%, rgba(255,0,204,.28), rgba(255,0,204,0) 62%),
+    linear-gradient(120deg, rgba(140,0,255,.18), rgba(0,0,0,0) 55%),
+    linear-gradient(0deg, rgba(80,0,255,.14), rgba(0,0,0,0) 60%);
+  background-size:140% 140%, 150% 150%, 150% 150%, 140% 140%, 140% 140%;
+  background-position:0% 0%, 100% 0%, 50% 100%, 0% 50%, 50% 0%;
+  animation:asterExpandGlowMoveV3 6.2s ease-in-out infinite alternate;
+  mix-blend-mode:screen;
+}
+
+@keyframes asterExpandGlowMoveV3{
+  0%{
+    background-position:0% 0%, 100% 0%, 50% 100%, 0% 50%, 50% 0%;
+    filter:blur(0px) saturate(1.08);
+    opacity:.78;
+  }
+  50%{
+    background-position:60% 30%, 30% 60%, 45% 30%, 80% 40%, 35% 70%;
+    filter:blur(.2px) saturate(1.12);
+    opacity:.90;
+  }
+  100%{
+    background-position:100% 100%, 0% 100%, 55% 0%, 100% 60%, 0% 30%;
+    filter:blur(.35px) saturate(1.18);
+    opacity:.82;
+  }
+}
+
+#imageModal.expand-focus #imageModalImg,
+body[data-rt-orbtool="expand"] #imageModalImg{
+  position:relative;
+  z-index:10;
+}
+
+#imageModal.expand-focus #rtExpandFrame,
+body[data-rt-orbtool="expand"] #rtExpandFrame{
+  z-index:12 !important;
+}
