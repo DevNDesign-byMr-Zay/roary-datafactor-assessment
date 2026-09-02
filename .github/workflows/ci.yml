@@ -16,16 +16,16 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: npm
       - name: Reproducible install
         run: npm ci --ignore-scripts
       - name: Dependency security audit
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=moderate
       - name: Lint maintained service and tests
         run: npm run lint
       - name: Run tests with enforced coverage
