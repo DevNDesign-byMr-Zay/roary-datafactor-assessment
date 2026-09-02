@@ -4,6 +4,8 @@ on:
   push:
     branches: ["**"]
   pull_request:
+  schedule:
+    - cron: "17 10 * * 1"
 
 permissions:
   contents: read
@@ -24,7 +26,7 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Dependency security audit
         run: npm audit --audit-level=high
-      - name: Lint maintained service code
+      - name: Lint maintained service and tests
         run: npm run lint
-      - name: Run automated tests
-        run: npm test
+      - name: Run tests with enforced coverage
+        run: npm run test:coverage
