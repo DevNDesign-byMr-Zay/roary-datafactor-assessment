@@ -11,10 +11,10 @@
     "check": "npm run lint && npm run test:coverage"
   },
   "dependencies": {
+    "@google-cloud/firestore": "^9.0.1",
     "@google/genai": "^2.19.0",
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "firebase-admin": "^14.3.0",
     "pino": "^9.9.0",
     "zod": "^3.25.76"
   },
