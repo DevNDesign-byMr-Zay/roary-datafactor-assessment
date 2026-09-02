@@ -26,7 +26,11 @@ jobs:
           node-version: 22
           cache: npm
       - name: Refresh package-lock.json
-        run: npm install --package-lock-only --ignore-scripts
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          npm audit fix --package-lock-only --ignore-scripts || true
+      - name: Report remaining dependency findings
+        run: npm audit || true
       - name: Commit refreshed lockfile
         shell: bash
         run: |
