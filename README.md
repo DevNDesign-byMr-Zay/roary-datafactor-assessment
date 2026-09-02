@@ -14,7 +14,7 @@ The maintained reference service is intentionally layered instead of monolithic:
 
 - `index.mjs` — minimal executable/export entrypoint.
 - `src/app.mjs` — Express application factory and HTTP boundary.
-- `src/cloud.mjs` — lazy production construction of Vertex AI and Firestore dependencies.
+- `src/cloud.mjs` — production construction of the Google Gen AI Vertex adapter and direct Firestore server client.
 - `src/history-store.mjs` — conversation persistence abstraction.
 - `src/model-response.mjs` — defensive provider-response text extraction.
 - `src/validation.mjs` — Zod request-boundary validation.
@@ -23,11 +23,11 @@ The maintained reference service is intentionally layered instead of monolithic:
 - `index.test.mjs` — credential-free Supertest/Jest endpoint tests using injected doubles.
 - `tests/` — focused unit and edge-contract specs for application failures, cloud construction, persistence, logging, provider-response parsing, server bootstrap, and request validation.
 
-The application factory accepts cloud/database dependencies, so importing or testing the service does **not** require Google Application Default Credentials and does not bind a network port.
+The application factory accepts cloud/database dependencies, so importing or testing the service does **not** require Google Application Default Credentials and does not bind a network port. Production cloud construction uses `@google/genai` for Vertex AI access and `@google-cloud/firestore` directly rather than the broader Firebase Admin dependency tree.
 
 ## Fresh-clone setup
 
-Requirements: Node.js 20+ and npm.
+Requirements: Node.js 22+ and npm.
 
 ```bash
 git clone https://github.com/DevNDesign-byMr-Zay/roary-datafactor-assessment.git
@@ -67,7 +67,7 @@ JSON body:
 
 ## Test strategy
 
-The maintained service is tested at both HTTP and module boundaries. Tests cover health/chat success, invalid and oversized input, strict unknown-field rejection, provider and persistence failures, chronological history reconstruction, write-failure propagation, model-response fallbacks, cloud initialization, logger configuration, server startup, 404 handling, and dependency-injection requirements.
+The maintained service is tested at both HTTP and module boundaries. Tests cover health/chat success, invalid and oversized input, strict unknown-field rejection, provider and persistence failures, chronological history reconstruction, write-failure propagation, model-response fallbacks, cloud initialization, Google Gen AI adapter behavior, direct Firestore construction, logger configuration, server startup, 404 handling, and dependency-injection requirements.
 
 The historical corpus under `Software Engineering & AI Tooling/` is preserved as assessment/provenance material and is not falsely counted as covered by the reference-service coverage metric. Representative corpus artifacts are promoted into executable test surfaces in focused commits rather than bulk-modifying historical source.
 
@@ -77,12 +77,12 @@ Every push and pull request runs a Drive-independent quality workflow containing
 
 ```bash
 npm ci --ignore-scripts
-npm audit --audit-level=high
+npm audit --audit-level=moderate
 npm run lint
 npm run test:coverage
 ```
 
-The same checks run weekly so dependency/security state is re-evaluated against current advisories. Dependabot is configured for npm and GitHub Actions dependencies. Drive-corpus import and verification workflows remain separate maintenance concerns.
+The same checks run weekly so dependency/security state is re-evaluated against current advisories. Dependabot is configured for npm and GitHub Actions dependencies. Static analysis is also maintained separately through CodeQL. Drive-corpus import and verification workflows remain separate maintenance concerns.
 
 ## Privacy and IP scope
 
