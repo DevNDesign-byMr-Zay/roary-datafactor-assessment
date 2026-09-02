@@ -3,6 +3,7 @@ name: Refresh npm lockfile
 on:
   workflow_dispatch:
   push:
+    branches: ["main"]
     paths:
       - "package.json"
       - ".github/workflows/refresh-lockfile.yml"
@@ -11,7 +12,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: npm-lockfile-refresh
+  group: npm-lockfile-refresh-main
   cancel-in-progress: true
 
 jobs:
