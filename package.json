@@ -7,7 +7,7 @@
     "start": "node index.mjs",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
     "test:coverage": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --coverage",
-    "lint": "eslint --max-warnings=0 index.mjs index.test.mjs src",
+    "lint": "eslint --max-warnings=0 --ext .mjs index.mjs index.test.mjs src",
     "check": "npm run lint && npm test"
   },
   "dependencies": {
