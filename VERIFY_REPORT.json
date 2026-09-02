@@ -1,0 +1,13 @@
+{
+  "status": "PASS \u2014 EXACT LIVE MATCH",
+  "live_recursive_drive_files": 1610,
+  "eligible_drive_files": 1610,
+  "excluded_drive_files": 0,
+  "repository_files_under_corpus_root": 1610,
+  "missing_repository_files": 0,
+  "unexpected_repository_files": 0,
+  "duplicate_planned_repository_paths": 0,
+  "excluded": [],
+  "missing": [],
+  "unexpected": []
+}
