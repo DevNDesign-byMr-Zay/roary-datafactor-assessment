@@ -1,0 +1,40 @@
+name: Verify live Drive corpus
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/verify-drive.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Install Drive probe dependency
+        run: python3 -m pip install --disable-pip-version-check --no-cache-dir "gdown==6.1.0"
+
+      - name: Verify live Drive against GitHub corpus
+        run: python3 .github/scripts/verify_drive.py
+
+      - name: Commit verification report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- VERIFY_REPORT.md VERIFY_REPORT.json
+          if git diff --cached --quiet; then
+            echo "Verification report unchanged."
+            exit 0
+          fi
+          git commit -m "Verify live Drive corpus against GitHub [skip ci]"
+          git push origin HEAD:main
