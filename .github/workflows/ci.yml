@@ -28,5 +28,7 @@ jobs:
         run: npm audit --audit-level=moderate
       - name: Lint maintained service and tests
         run: npm run lint
+      - name: Verify promoted corpus integrity
+        run: npm run verify:integrity
       - name: Run tests with enforced coverage
         run: npm run test:coverage
