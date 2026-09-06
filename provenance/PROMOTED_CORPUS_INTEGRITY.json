@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "base_main_commit": "6ccd295f57e472bfa9184b6745b4496eb3feb205",
+  "purpose": "Bind the promoted historical corpus artifacts used by the maintained assessment surface to deterministic content identities without rewriting those artifacts.",
+  "historical_authorship": "shared-team/unknown",
+  "artifacts": [
+    {
+      "path": "Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs",
+      "bytes": 314,
+      "sha256": "542d8bcb97d86cd33dc4573eef71c7bffe2ed98e8f366bfaefdb27e31b6f7809",
+      "git_blob_sha1": "f1cc6cff92b3784580910d10bdb219303eb96832",
+      "promotion_basis": "README maintained-and-measured surface; enforced by Jest coverage and lint."
+    },
+    {
+      "path": "Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs",
+      "bytes": 521,
+      "sha256": "d25a30f7629b21e87b779cf405ddec6f5ba7ce6c437fab4ba5647fdfb116c612",
+      "git_blob_sha1": "3e97cdf62fab3ea6e769ac9be9155c725e1670f2",
+      "promotion_basis": "README maintained-and-measured surface; enforced by Jest coverage and lint."
+    },
+    {
+      "path": "Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs",
+      "bytes": 537,
+      "sha256": "a6531428bbd95a9d45e77d1bf15b499232e730bde8e6394156f92a1caaf34f74",
+      "git_blob_sha1": "ac683ef87c219da88dcf3b8c1c52b4ff72af6da7",
+      "promotion_basis": "README maintained-and-measured surface; enforced by Jest coverage and lint."
+    }
+  ]
+}
