@@ -3,6 +3,8 @@ import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
+import { describe, expect, test } from '@jest/globals';
+
 import {
   PROMOTED_ARTIFACT_PATHS,
   verifyPromotedCorpusIntegrity,
