@@ -23,7 +23,7 @@
     "node": ">=22"
   },
   "devDependencies": {
-    "eslint": "^10.9.1",
+    "eslint": "^10.10.0",
     "jest": "^30.1.3",
     "supertest": "^7.1.4"
   }
