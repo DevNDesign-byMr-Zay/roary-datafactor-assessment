@@ -85,6 +85,30 @@ export function createApp({
     }
   });
 
+  app.use((error, _req, res, next) => {
+    if (error?.type === 'entity.too.large') {
+      logger.warn({ event: 'request.body_too_large' }, 'Rejected oversized request body');
+      return res.status(413).json({
+        error: {
+          code: 'REQUEST_TOO_LARGE',
+          message: 'Request body exceeds the 64kb limit.',
+        },
+      });
+    }
+
+    if (error?.type === 'entity.parse.failed') {
+      logger.warn({ event: 'request.invalid_json' }, 'Rejected malformed JSON request');
+      return res.status(400).json({
+        error: {
+          code: 'INVALID_JSON',
+          message: 'Request body must contain valid JSON.',
+        },
+      });
+    }
+
+    return next(error);
+  });
+
   app.use((_req, res) => {
     res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Route not found.' } });
   });
