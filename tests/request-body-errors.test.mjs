@@ -72,7 +72,7 @@ describe('request body failures', () => {
     const response = await request(app)
       .post('/chat')
       .set('Content-Type', 'application/json')
-      .set('Content-Encoding', 'br')
+      .set('Content-Encoding', 'snappy')
       .send('{"text":"hello","sessionId":"session-123"}');
 
     expect(response.status).toBe(415);
