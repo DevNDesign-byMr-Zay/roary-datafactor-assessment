@@ -65,4 +65,27 @@ describe('request body failures', () => {
       'Rejected oversized request body',
     );
   });
+
+  test('unsupported content encoding returns a structured 415 before model invocation', async () => {
+    const { app, log, model } = buildApp();
+
+    const response = await request(app)
+      .post('/chat')
+      .set('Content-Type', 'application/json')
+      .set('Content-Encoding', 'snappy')
+      .send('{"text":"hello","sessionId":"session-123"}');
+
+    expect(response.status).toBe(415);
+    expect(response.body).toEqual({
+      error: {
+        code: 'UNSUPPORTED_CONTENT_ENCODING',
+        message: 'Request content encoding is not supported.',
+      },
+    });
+    expect(model.generateContent).not.toHaveBeenCalled();
+    expect(log.warn).toHaveBeenCalledWith(
+      { event: 'request.unsupported_encoding' },
+      'Rejected unsupported request encoding',
+    );
+  });
 });

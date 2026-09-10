@@ -106,6 +106,16 @@ export function createApp({
       });
     }
 
+    if (error?.type === 'encoding.unsupported') {
+      logger.warn({ event: 'request.unsupported_encoding' }, 'Rejected unsupported request encoding');
+      return res.status(415).json({
+        error: {
+          code: 'UNSUPPORTED_CONTENT_ENCODING',
+          message: 'Request content encoding is not supported.',
+        },
+      });
+    }
+
     return next(error);
   });
 
