@@ -55,7 +55,7 @@ describe('chat request validation', () => {
     expect(result.error.fields.sessionId).toBeDefined();
   });
 
-  test.each(['session/child', 'session id', '.hidden', ':prefixed', 'session@host']) (
+  test.each(['session/child', 'session id', '.hidden', ':prefixed', 'session@host'])(
     'rejects unsupported session identifier %s',
     (sessionId) => {
       const result = parseChatRequest({ text: 'hello', sessionId });
@@ -66,10 +66,10 @@ describe('chat request validation', () => {
   );
 
   test('accepts the supported session identifier character set at the boundary', () => {
-    const sessionId = `s${'a'.repeat(120)}._:-`;
+    const sessionId = `s${'a'.repeat(123)}._:-`;
     const result = parseChatRequest({ text: 'hello', sessionId });
 
-    expect(sessionId).toHaveLength(125);
+    expect(sessionId).toHaveLength(128);
     expect(result).toEqual({
       ok: true,
       value: { text: 'hello', sessionId },
