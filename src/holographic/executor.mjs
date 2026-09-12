@@ -32,7 +32,11 @@ export async function executeHolographicScene({ scene, adapter, executionId, cal
       throw new Error(`Calibration type ${profile.type} does not match ${adapter.device.type}.`);
     }
     executionScene = calibrateScene(normalizedScene, profile);
-    calibrationReceipt = Object.freeze({ schema: profile.schema, type: profile.type });
+    calibrationReceipt = Object.freeze({
+      schema: profile.schema,
+      type: profile.type,
+      nodeCount: executionScene.nodes.length,
+    });
   }
 
   const startedAt = new Date().toISOString();
