@@ -42,7 +42,7 @@ describe('holographic scene executor', () => {
       adapter,
       calibration: createCalibrationProfile({ type: 'projector', origin: { x: 10 }, scale: 2 }),
     });
-    expect(receipt.calibration).toEqual({ schema: 'holo.calibration.v1', type: 'projector' });
+    expect(receipt.calibration).toEqual({ schema: 'holo.calibration.v1', type: 'projector', nodeCount: 1 });
   });
 
   test('rejects calibration for a different device type', async () => {
