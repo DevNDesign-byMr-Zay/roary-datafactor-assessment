@@ -32,13 +32,19 @@ test('provider failures log bounded metadata without raw error text or stack', a
   };
   const vertexClient = { getGenerativeModel: jest.fn(() => model) };
   const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
-  const app = createApp({ vertexClient, db: buildDb(), logger });
+  const app = createApp({
+    vertexClient,
+    db: buildDb(),
+    logger,
+    requestIdFactory: () => 'failure-log-test',
+  });
 
   const response = await request(app)
     .post('/chat')
     .send({ text: 'hello', sessionId: 'session-123' });
 
   expect(response.status).toBe(500);
+  expect(response.headers['x-request-id']).toBe('failure-log-test');
   expect(response.body).toEqual({
     error: {
       code: 'CHAT_REQUEST_FAILED',
@@ -50,6 +56,7 @@ test('provider failures log bounded metadata without raw error text or stack', a
       event: 'chat.failed',
       errorName: 'Error',
       errorCode: 'UPSTREAM_FAILURE',
+      requestId: 'failure-log-test',
       sessionId: 'session-123',
     },
     'Chat request failed',
