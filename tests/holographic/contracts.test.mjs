@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+import { describe, expect, test } from '@jest/globals';
 
 import { createDeviceDescriptor, createScene, createTransform, validateSceneForDevice } from '../../src/holographic/index.mjs';
 
