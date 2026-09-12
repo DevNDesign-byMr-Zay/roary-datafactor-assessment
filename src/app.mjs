@@ -116,7 +116,7 @@ export function createApp({
     }
 
     const { text, sessionId } = parsed.value;
-    const abortController = new AbortController();
+    const abortController = new globalThis.AbortController();
     const handleRequestAbort = () => abortController.abort();
     req.once('aborted', handleRequestAbort);
 
