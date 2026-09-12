@@ -6,6 +6,7 @@ export {
   validateSceneForDevice,
 } from './contracts.mjs';
 export { planHolographicScene } from './planner.mjs';
+export { executeHolographicScene } from './executor.mjs';
 export {
   SimulatedHoloMatAdapter,
   SimulatedProjectorAdapter,
