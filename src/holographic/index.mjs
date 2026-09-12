@@ -7,6 +7,7 @@ export {
 } from './contracts.mjs';
 export { planHolographicScene } from './planner.mjs';
 export { executeHolographicScene } from './executor.mjs';
+export { createCalibrationProfile, mapPoint, calibrateScene } from './calibration.mjs';
 export {
   SimulatedHoloMatAdapter,
   SimulatedProjectorAdapter,
