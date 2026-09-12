@@ -44,7 +44,7 @@ describe('chat deadline boundary', () => {
   });
 
   test('fails immediately when the request is already aborted', async () => {
-    const controller = new AbortController();
+    const controller = new globalThis.AbortController();
     const task = jest.fn(async () => 'should-not-run');
     controller.abort();
 
@@ -58,7 +58,7 @@ describe('chat deadline boundary', () => {
   });
 
   test('stops waiting when the request aborts after work starts', async () => {
-    const controller = new AbortController();
+    const controller = new globalThis.AbortController();
     const clearTimeoutFn = jest.fn();
     const pending = runWithChatDeadline(() => new Promise(() => {}), {
       timeoutMs: 100,
