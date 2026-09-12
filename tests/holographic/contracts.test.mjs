@@ -1,3 +1,5 @@
+/* global describe, expect, test */
+
 import { createDeviceDescriptor, createScene, createTransform, validateSceneForDevice } from '../../src/holographic/index.mjs';
 
 describe('holographic contracts', () => {
