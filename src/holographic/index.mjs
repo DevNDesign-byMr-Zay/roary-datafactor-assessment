@@ -16,6 +16,12 @@ export {
   rollbackExecutionLifecycle,
 } from './lifecycle.mjs';
 export {
+  DEVICE_SPACE_SCHEMA,
+  createDeviceSpaceProfile,
+  mapScenePointToDeviceSpace,
+  createDeviceSpaceEvidence,
+} from './device-space.mjs';
+export {
   SimulatedHoloMatAdapter,
   SimulatedProjectorAdapter,
   SimulatedThreeDPlatformAdapter,
