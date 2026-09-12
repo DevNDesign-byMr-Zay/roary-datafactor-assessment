@@ -1,9 +1,18 @@
 import { z } from 'zod';
 
+const sessionIdSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(128)
+  .regex(/^[A-Za-z0-9][A-Za-z0-9._:-]*$/, {
+    message: 'Session id contains unsupported characters.',
+  });
+
 export const chatRequestSchema = z
   .object({
     text: z.string().trim().min(1).max(12_000),
-    sessionId: z.string().trim().min(1).max(128).default('default'),
+    sessionId: sessionIdSchema.default('default'),
   })
   .strict();
 
