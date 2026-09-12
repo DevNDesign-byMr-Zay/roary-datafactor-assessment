@@ -3,6 +3,11 @@ import { randomUUID } from 'node:crypto';
 import cors from 'cors';
 import express from 'express';
 
+import {
+  ChatAbortError,
+  ChatTimeoutError,
+  runWithChatDeadline,
+} from './chat-deadline.mjs';
 import { createHistoryStore } from './history-store.mjs';
 import { extractModelText } from './model-response.mjs';
 import { parseChatRequest } from './validation.mjs';
@@ -38,6 +43,9 @@ export function createApp({
   modelName = 'gemini-2.5-flash',
   historyLimit = 12,
   requestIdFactory = randomUUID,
+  chatTimeoutMs = 15_000,
+  setTimeoutFn = setTimeout,
+  clearTimeoutFn = clearTimeout,
 } = {}) {
   if (!vertexClient?.getGenerativeModel) {
     throw new TypeError('A Vertex AI-compatible client is required.');
@@ -46,6 +54,12 @@ export function createApp({
   if (!logger) throw new TypeError('A structured logger is required.');
   if (typeof requestIdFactory !== 'function') {
     throw new TypeError('requestIdFactory must be a function.');
+  }
+  if (!Number.isFinite(chatTimeoutMs) || chatTimeoutMs <= 0) {
+    throw new TypeError('chatTimeoutMs must be a positive finite number.');
+  }
+  if (typeof setTimeoutFn !== 'function' || typeof clearTimeoutFn !== 'function') {
+    throw new TypeError('timer functions must be functions.');
   }
 
   const app = express();
@@ -102,12 +116,24 @@ export function createApp({
     }
 
     const { text, sessionId } = parsed.value;
+    const abortController = new AbortController();
+    const handleRequestAbort = () => abortController.abort();
+    req.once('aborted', handleRequestAbort);
 
     try {
       const history = await historyStore.load(sessionId);
-      const result = await model.generateContent({
-        contents: [...history, { role: 'user', parts: [{ text }] }],
-      });
+      const result = await runWithChatDeadline(
+        () =>
+          model.generateContent({
+            contents: [...history, { role: 'user', parts: [{ text }] }],
+          }),
+        {
+          timeoutMs: chatTimeoutMs,
+          signal: abortController.signal,
+          setTimeoutFn,
+          clearTimeoutFn,
+        },
+      );
       const reply = extractModelText(result);
 
       if (!reply) {
@@ -128,6 +154,27 @@ export function createApp({
       logger.info({ event: 'chat.completed', requestId, sessionId }, 'Chat request completed');
       return res.status(200).json({ reply, sessionId });
     } catch (error) {
+      if (error instanceof ChatAbortError || req.aborted) {
+        logger.warn(
+          { event: 'chat.client_aborted', requestId, sessionId },
+          'Chat request aborted by client',
+        );
+        return undefined;
+      }
+
+      if (error instanceof ChatTimeoutError) {
+        logger.warn(
+          { event: 'chat.timed_out', requestId, sessionId },
+          'Chat request timed out',
+        );
+        return res.status(504).json({
+          error: {
+            code: 'CHAT_TIMEOUT',
+            message: 'The chat request timed out.',
+          },
+        });
+      }
+
       logger.error(
         { ...sanitizeFailureMetadata(error), requestId, sessionId },
         'Chat request failed',
@@ -138,6 +185,8 @@ export function createApp({
           message: 'Unable to complete the chat request.',
         },
       });
+    } finally {
+      req.off('aborted', handleRequestAbort);
     }
   });
 
