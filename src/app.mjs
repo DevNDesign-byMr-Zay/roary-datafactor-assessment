@@ -10,6 +10,15 @@ const SYSTEM_INSTRUCTION = `You are a concise, helpful conversational assistant.
 - If you do not know, say so and offer next steps.
 - Avoid sensitive or personal data unless explicitly requested.`;
 
+function sanitizeFailureMetadata(error) {
+  const metadata = { event: 'chat.failed' };
+
+  if (typeof error?.name === 'string' && error.name) metadata.errorName = error.name;
+  if (typeof error?.code === 'string' && error.code) metadata.errorCode = error.code;
+
+  return metadata;
+}
+
 export function createApp({
   vertexClient,
   db,
@@ -85,7 +94,10 @@ export function createApp({
       logger.info({ event: 'chat.completed', sessionId }, 'Chat request completed');
       return res.status(200).json({ reply, sessionId });
     } catch (error) {
-      logger.error({ event: 'chat.failed', sessionId, err: error }, 'Chat request failed');
+      logger.error(
+        { ...sanitizeFailureMetadata(error), sessionId },
+        'Chat request failed',
+      );
       return res.status(500).json({
         error: {
           code: 'CHAT_REQUEST_FAILED',
