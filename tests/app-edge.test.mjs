@@ -52,6 +52,14 @@ describe('application edge behavior', () => {
     expect(() => createApp({ vertexClient: client, db: database })).toThrow(TypeError);
   });
 
+  test('rejects a non-function request id factory', () => {
+    const { database } = db();
+    const { client } = vertex();
+    expect(() =>
+      createApp({ vertexClient: client, db: database, logger: logger(), requestIdFactory: 'bad' }),
+    ).toThrow(TypeError);
+  });
+
   test('GET / returns the liveness message', async () => {
     const { database } = db();
     const { client } = vertex();
@@ -78,14 +86,20 @@ describe('application edge behavior', () => {
     const { database } = db();
     const { client, model } = vertex();
     const log = logger();
-    const app = createApp({ vertexClient: client, db: database, logger: log });
+    const app = createApp({
+      vertexClient: client,
+      db: database,
+      logger: log,
+      requestIdFactory: () => 'validation-test',
+    });
 
     const response = await request(app).post('/chat').send({ text: 'hello', extra: true });
 
     expect(response.status).toBe(400);
+    expect(response.headers['x-request-id']).toBe('validation-test');
     expect(model.generateContent).not.toHaveBeenCalled();
     expect(log.warn).toHaveBeenCalledWith(
-      { event: 'chat.validation_failed' },
+      { event: 'chat.validation_failed', requestId: 'validation-test' },
       'Rejected invalid chat request',
     );
   });
