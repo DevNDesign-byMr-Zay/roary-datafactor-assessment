@@ -1,3 +1,5 @@
+/* global describe, expect, test */
+
 import { createDeviceDescriptor } from '../../src/holographic/contracts.mjs';
 import { planHolographicScene } from '../../src/holographic/planner.mjs';
 
