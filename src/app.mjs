@@ -45,6 +45,16 @@ export function createApp({
   });
 
   app.post('/chat', async (req, res) => {
+    if (!req.is('application/json')) {
+      logger.warn({ event: 'request.unsupported_media_type' }, 'Rejected non-JSON chat request');
+      return res.status(415).json({
+        error: {
+          code: 'UNSUPPORTED_MEDIA_TYPE',
+          message: 'Chat requests must use application/json.',
+        },
+      });
+    }
+
     const parsed = parseChatRequest(req.body);
     if (!parsed.ok) {
       logger.warn({ event: 'chat.validation_failed' }, 'Rejected invalid chat request');

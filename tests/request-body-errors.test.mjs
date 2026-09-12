@@ -88,4 +88,26 @@ describe('request body failures', () => {
       'Rejected unsupported request encoding',
     );
   });
+
+  test('non-JSON chat requests return a structured 415 before validation or model invocation', async () => {
+    const { app, log, model } = buildApp();
+
+    const response = await request(app)
+      .post('/chat')
+      .set('Content-Type', 'text/plain')
+      .send('{"text":"hello","sessionId":"session-123"}');
+
+    expect(response.status).toBe(415);
+    expect(response.body).toEqual({
+      error: {
+        code: 'UNSUPPORTED_MEDIA_TYPE',
+        message: 'Chat requests must use application/json.',
+      },
+    });
+    expect(model.generateContent).not.toHaveBeenCalled();
+    expect(log.warn).toHaveBeenCalledWith(
+      { event: 'request.unsupported_media_type' },
+      'Rejected non-JSON chat request',
+    );
+  });
 });
