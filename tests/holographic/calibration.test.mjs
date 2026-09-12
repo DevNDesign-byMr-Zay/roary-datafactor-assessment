@@ -1,10 +1,11 @@
 import { describe, expect, test } from '@jest/globals';
-import { createCalibrationProfile, mapPoint, calibrateScene } from '../../src/holographic/calibration.mjs';
+import { CALIBRATION_SCHEMA, createCalibrationProfile, mapPoint, calibrateScene } from '../../src/holographic/calibration.mjs';
 import { createScene } from '../../src/holographic/contracts.mjs';
 
 describe('holographic calibration', () => {
   test('maps a point deterministically using origin and scale', () => {
     const profile = createCalibrationProfile({ type: 'projector', origin: { x: 10, y: -2, z: 4 }, scale: 2 });
+    expect(profile.schema).toBe(CALIBRATION_SCHEMA);
     expect(mapPoint({ x: 1, y: 3, z: -2 }, profile)).toEqual({ x: 12, y: 4, z: 0 });
   });
 
@@ -18,6 +19,6 @@ describe('holographic calibration', () => {
     const calibrated = calibrateScene(scene, profile);
     expect(calibrated.nodes[0].transform).toMatchObject({ x: 6, y: 2, z: 3 });
     expect(scene.nodes[0].transform.x).toBe(1);
-    expect(calibrated.metadata.calibrationType).toBe('holomat');
+    expect(calibrated.metadata).toMatchObject({ calibrationSchema: CALIBRATION_SCHEMA, calibrationType: 'holomat' });
   });
 });
