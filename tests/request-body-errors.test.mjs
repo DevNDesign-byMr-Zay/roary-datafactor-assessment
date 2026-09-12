@@ -19,7 +19,16 @@ function buildApp() {
     })),
   };
 
-  return { app: createApp({ vertexClient, db, logger: log }), log, model };
+  return {
+    app: createApp({
+      vertexClient,
+      db,
+      logger: log,
+      requestIdFactory: () => 'request-body-test',
+    }),
+    log,
+    model,
+  };
 }
 
 describe('request body failures', () => {
@@ -32,6 +41,7 @@ describe('request body failures', () => {
       .send('{"text":');
 
     expect(response.status).toBe(400);
+    expect(response.headers['x-request-id']).toBe('request-body-test');
     expect(response.body).toEqual({
       error: {
         code: 'INVALID_JSON',
@@ -40,7 +50,7 @@ describe('request body failures', () => {
     });
     expect(model.generateContent).not.toHaveBeenCalled();
     expect(log.warn).toHaveBeenCalledWith(
-      { event: 'request.invalid_json' },
+      { event: 'request.invalid_json', requestId: 'request-body-test' },
       'Rejected malformed JSON request',
     );
   });
@@ -53,6 +63,7 @@ describe('request body failures', () => {
       .send({ text: 'x'.repeat(70 * 1024) });
 
     expect(response.status).toBe(413);
+    expect(response.headers['x-request-id']).toBe('request-body-test');
     expect(response.body).toEqual({
       error: {
         code: 'REQUEST_TOO_LARGE',
@@ -61,7 +72,7 @@ describe('request body failures', () => {
     });
     expect(model.generateContent).not.toHaveBeenCalled();
     expect(log.warn).toHaveBeenCalledWith(
-      { event: 'request.body_too_large' },
+      { event: 'request.body_too_large', requestId: 'request-body-test' },
       'Rejected oversized request body',
     );
   });
@@ -76,6 +87,7 @@ describe('request body failures', () => {
       .send('{"text":"hello","sessionId":"session-123"}');
 
     expect(response.status).toBe(415);
+    expect(response.headers['x-request-id']).toBe('request-body-test');
     expect(response.body).toEqual({
       error: {
         code: 'UNSUPPORTED_CONTENT_ENCODING',
@@ -84,7 +96,7 @@ describe('request body failures', () => {
     });
     expect(model.generateContent).not.toHaveBeenCalled();
     expect(log.warn).toHaveBeenCalledWith(
-      { event: 'request.unsupported_encoding' },
+      { event: 'request.unsupported_encoding', requestId: 'request-body-test' },
       'Rejected unsupported request encoding',
     );
   });
@@ -98,6 +110,7 @@ describe('request body failures', () => {
       .send('{"text":"hello","sessionId":"session-123"}');
 
     expect(response.status).toBe(415);
+    expect(response.headers['x-request-id']).toBe('request-body-test');
     expect(response.body).toEqual({
       error: {
         code: 'UNSUPPORTED_MEDIA_TYPE',
@@ -106,7 +119,7 @@ describe('request body failures', () => {
     });
     expect(model.generateContent).not.toHaveBeenCalled();
     expect(log.warn).toHaveBeenCalledWith(
-      { event: 'request.unsupported_media_type' },
+      { event: 'request.unsupported_media_type', requestId: 'request-body-test' },
       'Rejected non-JSON chat request',
     );
   });
