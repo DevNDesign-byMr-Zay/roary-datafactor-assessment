@@ -1,5 +1,6 @@
 import { createTransform } from './contracts.mjs';
 
+export const CALIBRATION_SCHEMA = 'holo.calibration.v1';
 const PROFILE_TYPES = Object.freeze(['projector', 'holomat', 'three-d-platform']);
 
 function finite(value, name) {
@@ -14,11 +15,13 @@ export function createCalibrationProfile({ type, origin = {}, scale = 1, rotatio
     rx: rotation.rx ?? 0, ry: rotation.ry ?? 0, rz: rotation.rz ?? 0,
     scale,
   });
-  return Object.freeze({ type, transform });
+  return Object.freeze({ schema: CALIBRATION_SCHEMA, type, transform });
 }
 
 export function mapPoint(point = {}, profile) {
-  if (!profile || !PROFILE_TYPES.includes(profile.type)) throw new TypeError('A valid calibration profile is required.');
+  if (!profile || profile.schema !== CALIBRATION_SCHEMA || !PROFILE_TYPES.includes(profile.type)) {
+    throw new TypeError('A valid calibration profile is required.');
+  }
   const x = finite(point.x ?? 0, 'x');
   const y = finite(point.y ?? 0, 'y');
   const z = finite(point.z ?? 0, 'z');
@@ -36,11 +39,8 @@ export function calibrateScene(scene, profile) {
     ...scene,
     nodes: Object.freeze(scene.nodes.map((node) => {
       const mapped = mapPoint(node.transform, profile);
-      return Object.freeze({
-        ...node,
-        transform: Object.freeze({ ...node.transform, ...mapped }),
-      });
+      return Object.freeze({ ...node, transform: Object.freeze({ ...node.transform, ...mapped }) });
     })),
-    metadata: Object.freeze({ ...scene.metadata, calibrationType: profile.type }),
+    metadata: Object.freeze({ ...scene.metadata, calibrationSchema: CALIBRATION_SCHEMA, calibrationType: profile.type }),
   });
 }
