@@ -46,6 +46,7 @@ export function createApp({
   chatTimeoutMs = 15_000,
   setTimeoutFn = setTimeout,
   clearTimeoutFn = clearTimeout,
+  advisoryCoordinator = null,
 } = {}) {
   if (!vertexClient?.getGenerativeModel) {
     throw new TypeError('A Vertex AI-compatible client is required.');
@@ -60,6 +61,9 @@ export function createApp({
   }
   if (typeof setTimeoutFn !== 'function' || typeof clearTimeoutFn !== 'function') {
     throw new TypeError('timer functions must be functions.');
+  }
+  if (advisoryCoordinator !== null && typeof advisoryCoordinator !== 'function') {
+    throw new TypeError('advisoryCoordinator must be a function when provided.');
   }
 
   const app = express();
@@ -143,6 +147,21 @@ export function createApp({
         );
         return res.status(502).json({
           error: { code: 'EMPTY_MODEL_RESPONSE', message: 'The model returned no text.' },
+        });
+      }
+
+      if (advisoryCoordinator) {
+        const advisoryContext = Object.freeze({
+          requestId,
+          sessionId,
+          reply,
+          signal: abortController.signal,
+        });
+        await runWithChatDeadline(() => advisoryCoordinator(advisoryContext), {
+          timeoutMs: chatTimeoutMs,
+          signal: abortController.signal,
+          setTimeoutFn,
+          clearTimeoutFn,
         });
       }
 
