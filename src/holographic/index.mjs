@@ -27,3 +27,7 @@ export {
   createHolographicScenePacket,
   validateHolographicScenePacket,
 } from './scene-packet.mjs';
+export {
+  createDisplaySession,
+  validateDisplaySession,
+} from './display-session.mjs';
