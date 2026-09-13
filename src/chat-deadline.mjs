@@ -14,6 +14,30 @@ export class ChatAbortError extends Error {
   }
 }
 
+function readNow(nowFn) {
+  const value = nowFn();
+  if (!Number.isFinite(value)) throw new TypeError('nowFn must return a finite number.');
+  return value;
+}
+
+export function createChatDeadlineBudget(timeoutMs, { nowFn = Date.now } = {}) {
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) {
+    throw new TypeError('timeoutMs must be a positive finite number.');
+  }
+  if (typeof nowFn !== 'function') throw new TypeError('nowFn must be a function.');
+
+  const deadlineAt = readNow(nowFn) + timeoutMs;
+
+  return Object.freeze({
+    deadlineAt,
+    remainingMs() {
+      const remaining = deadlineAt - readNow(nowFn);
+      if (remaining <= 0) throw new ChatTimeoutError();
+      return remaining;
+    },
+  });
+}
+
 export async function runWithChatDeadline(
   task,
   {

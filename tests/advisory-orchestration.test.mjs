@@ -9,6 +9,7 @@ function buildHarness({
   chatTimeoutMs = 15_000,
   setTimeoutFn = setTimeout,
   clearTimeoutFn = clearTimeout,
+  nowFn = Date.now,
 } = {}) {
   const log = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
   const model = {
@@ -38,6 +39,7 @@ function buildHarness({
       chatTimeoutMs,
       setTimeoutFn,
       clearTimeoutFn,
+      nowFn,
     }),
     add,
     log,
@@ -66,6 +68,61 @@ describe('request-scoped advisory orchestration', () => {
     expect(add).toHaveBeenCalledTimes(2);
     expect(advisoryCoordinator.mock.invocationCallOrder[0]).toBeLessThan(
       add.mock.invocationCallOrder[0],
+    );
+  });
+
+  test('shares one shrinking deadline across model and advisory work', async () => {
+    const readings = [1_000, 1_020, 1_065, 1_070];
+    const nowFn = jest.fn(() => readings.shift());
+    const setTimeoutFn = jest.fn((_callback, timeoutMs) => `timer-${timeoutMs}`);
+    const clearTimeoutFn = jest.fn();
+    const advisoryCoordinator = jest.fn(async () => undefined);
+    const { app, add } = buildHarness({
+      advisoryCoordinator,
+      chatTimeoutMs: 100,
+      nowFn,
+      setTimeoutFn,
+      clearTimeoutFn,
+    });
+
+    const response = await request(app)
+      .post('/chat')
+      .send({ text: 'share one budget', sessionId: 'session-budget' });
+
+    expect(response.status).toBe(200);
+    expect(setTimeoutFn.mock.calls.map(([, timeoutMs]) => timeoutMs)).toEqual([80, 35]);
+    expect(advisoryCoordinator).toHaveBeenCalledTimes(1);
+    expect(add).toHaveBeenCalledTimes(2);
+  });
+
+  test('fails before advisory work when generation consumes the remaining budget', async () => {
+    const readings = [1_000, 1_020, 1_100];
+    const nowFn = jest.fn(() => readings.shift());
+    const advisoryCoordinator = jest.fn(async () => undefined);
+    const { app, add, log } = buildHarness({
+      advisoryCoordinator,
+      requestId: 'request-budget-exhausted',
+      chatTimeoutMs: 100,
+      nowFn,
+      setTimeoutFn: jest.fn(() => 'timer'),
+      clearTimeoutFn: jest.fn(),
+    });
+
+    const response = await request(app)
+      .post('/chat')
+      .send({ text: 'consume the budget', sessionId: 'session-budget-exhausted' });
+
+    expect(response.status).toBe(504);
+    expect(response.body.error.requestId).toBe('request-budget-exhausted');
+    expect(advisoryCoordinator).not.toHaveBeenCalled();
+    expect(add).not.toHaveBeenCalled();
+    expect(log.warn).toHaveBeenCalledWith(
+      {
+        event: 'chat.timed_out',
+        requestId: 'request-budget-exhausted',
+        sessionId: 'session-budget-exhausted',
+      },
+      'Chat request timed out',
     );
   });
 
@@ -136,9 +193,10 @@ describe('request-scoped advisory orchestration', () => {
     );
   });
 
-  test('rejects a non-function advisory coordinator during app construction', () => {
+  test('rejects invalid orchestration dependencies during app construction', () => {
     expect(() => buildHarness({ advisoryCoordinator: {} })).toThrow(
       'advisoryCoordinator must be a function when provided.',
     );
+    expect(() => buildHarness({ nowFn: 'bad' })).toThrow('nowFn must be a function.');
   });
 });
