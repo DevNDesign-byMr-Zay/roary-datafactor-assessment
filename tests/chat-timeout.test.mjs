@@ -50,6 +50,7 @@ describe('chat timeout handling', () => {
       error: {
         code: 'CHAT_TIMEOUT',
         message: 'The chat request timed out.',
+        requestId: 'timeout-request-1',
       },
     });
     expect(model.generateContent).toHaveBeenCalledTimes(1);
