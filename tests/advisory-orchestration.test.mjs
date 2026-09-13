@@ -105,7 +105,7 @@ describe('request-scoped advisory orchestration', () => {
     let timerCalls = 0;
     const setTimeoutFn = jest.fn((callback) => {
       timerCalls += 1;
-      if (timerCalls === 2) queueMicrotask(callback);
+      if (timerCalls === 2) globalThis.queueMicrotask(callback);
       return timerCalls;
     });
     const clearTimeoutFn = jest.fn();
