@@ -42,7 +42,7 @@ describe('request-scoped advisory orchestration', () => {
       expect(context.requestId).toBe('request-advisory-1');
       expect(context.sessionId).toBe('session-advisory-1');
       expect(context.reply).toBe('advisory-ready reply');
-      expect(context.signal).toBeInstanceOf(AbortSignal);
+      expect(context.signal).toBeInstanceOf(globalThis.AbortSignal);
       expect(context.signal.aborted).toBe(false);
     });
     const { app, add } = buildHarness({ advisoryCoordinator });
@@ -55,12 +55,16 @@ describe('request-scoped advisory orchestration', () => {
     expect(response.headers['x-request-id']).toBe('request-advisory-1');
     expect(advisoryCoordinator).toHaveBeenCalledTimes(1);
     expect(add).toHaveBeenCalledTimes(2);
-    expect(advisoryCoordinator.mock.invocationCallOrder[0]).toBeLessThan(add.mock.invocationCallOrder[0]);
+    expect(advisoryCoordinator.mock.invocationCallOrder[0]).toBeLessThan(
+      add.mock.invocationCallOrder[0],
+    );
   });
 
   test('does not persist a partial turn when advisory work fails', async () => {
     const advisoryCoordinator = jest.fn(async () => {
-      throw Object.assign(new Error('private advisory provider detail'), { code: 'ADVISORY_FAILED' });
+      throw Object.assign(new Error('private advisory provider detail'), {
+        code: 'ADVISORY_FAILED',
+      });
     });
     const { app, add, log } = buildHarness({
       advisoryCoordinator,
