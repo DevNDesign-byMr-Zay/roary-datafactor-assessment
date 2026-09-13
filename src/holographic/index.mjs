@@ -12,3 +12,8 @@ export {
   SimulatedProjectorAdapter,
   SimulatedThreeDPlatformAdapter,
 } from './adapters.mjs';
+export {
+  createCalibrationProfile,
+  mapLogicalTransform,
+  mapSceneToDisplay,
+} from './calibration.mjs';
