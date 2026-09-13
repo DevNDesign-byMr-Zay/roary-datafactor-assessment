@@ -3,7 +3,13 @@ import request from 'supertest';
 
 import { createApp } from '../src/app.mjs';
 
-function buildHarness({ advisoryCoordinator = null, requestId = 'request-advisory-1' } = {}) {
+function buildHarness({
+  advisoryCoordinator = null,
+  requestId = 'request-advisory-1',
+  chatTimeoutMs = 15_000,
+  setTimeoutFn = setTimeout,
+  clearTimeoutFn = clearTimeout,
+} = {}) {
   const log = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
   const model = {
     generateContent: jest.fn(async () => ({ response: { text: () => 'advisory-ready reply' } })),
@@ -29,6 +35,9 @@ function buildHarness({ advisoryCoordinator = null, requestId = 'request-advisor
       logger: log,
       requestIdFactory: () => requestId,
       advisoryCoordinator,
+      chatTimeoutMs,
+      setTimeoutFn,
+      clearTimeoutFn,
     }),
     add,
     log,
@@ -90,6 +99,41 @@ describe('request-scoped advisory orchestration', () => {
       'Chat request failed',
     );
     expect(JSON.stringify(log.error.mock.calls)).not.toContain('private advisory provider detail');
+  });
+
+  test('times out hanging advisory work without persisting a partial turn', async () => {
+    let timerCalls = 0;
+    const setTimeoutFn = jest.fn((callback) => {
+      timerCalls += 1;
+      if (timerCalls === 2) queueMicrotask(callback);
+      return timerCalls;
+    });
+    const clearTimeoutFn = jest.fn();
+    const advisoryCoordinator = jest.fn(() => new Promise(() => {}));
+    const { app, add, log } = buildHarness({
+      advisoryCoordinator,
+      requestId: 'request-advisory-timeout',
+      setTimeoutFn,
+      clearTimeoutFn,
+    });
+
+    const response = await request(app)
+      .post('/chat')
+      .send({ text: 'prepare bounded advisory view', sessionId: 'session-advisory-timeout' });
+
+    expect(response.status).toBe(504);
+    expect(response.headers['x-request-id']).toBe('request-advisory-timeout');
+    expect(response.body.error.code).toBe('CHAT_TIMEOUT');
+    expect(advisoryCoordinator).toHaveBeenCalledTimes(1);
+    expect(add).not.toHaveBeenCalled();
+    expect(log.warn).toHaveBeenCalledWith(
+      {
+        event: 'chat.timed_out',
+        requestId: 'request-advisory-timeout',
+        sessionId: 'session-advisory-timeout',
+      },
+      'Chat request timed out',
+    );
   });
 
   test('rejects a non-function advisory coordinator during app construction', () => {
