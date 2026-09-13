@@ -71,15 +71,19 @@ describe('application edge behavior', () => {
     expect(response.text).toBe('Conversational AI service is live');
   });
 
-  test('unknown routes return a structured 404', async () => {
+  test('unknown routes return a correlated structured 404', async () => {
     const { database } = db();
     const { client } = vertex();
     const app = createApp({ vertexClient: client, db: database, logger: logger() });
 
     const response = await request(app).get('/missing');
+    const requestId = response.headers['x-request-id'];
 
     expect(response.status).toBe(404);
-    expect(response.body).toEqual({ error: { code: 'NOT_FOUND', message: 'Route not found.' } });
+    expect(requestId).toBeTruthy();
+    expect(response.body).toEqual({
+      error: { code: 'NOT_FOUND', message: 'Route not found.', requestId },
+    });
   });
 
   test('strict validation rejects unexpected request fields before model invocation', async () => {
@@ -97,6 +101,7 @@ describe('application edge behavior', () => {
 
     expect(response.status).toBe(400);
     expect(response.headers['x-request-id']).toBe('validation-test');
+    expect(response.body.error.requestId).toBe('validation-test');
     expect(model.generateContent).not.toHaveBeenCalled();
     expect(log.warn).toHaveBeenCalledWith(
       { event: 'chat.validation_failed', requestId: 'validation-test' },
@@ -122,7 +127,11 @@ describe('application edge behavior', () => {
         doc: jest.fn(() => ({
           collection: jest.fn(() => ({
             orderBy: jest.fn(() => ({
-              limit: jest.fn(() => ({ get: jest.fn(async () => { throw failure; }) })),
+              limit: jest.fn(() => ({
+                get: jest.fn(async () => {
+                  throw failure;
+                }),
+              })),
             })),
           })),
         })),
@@ -136,6 +145,7 @@ describe('application edge behavior', () => {
 
     expect(response.status).toBe(500);
     expect(response.body.error.code).toBe('CHAT_REQUEST_FAILED');
+    expect(response.body.error.requestId).toBe(response.headers['x-request-id']);
     expect(JSON.stringify(response.body)).not.toContain('database internals');
     expect(log.error).toHaveBeenCalled();
   });
