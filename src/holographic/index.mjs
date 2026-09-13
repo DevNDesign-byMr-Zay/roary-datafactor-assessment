@@ -22,3 +22,8 @@ export {
   createHolographicInteractionEvent,
   resolveHolographicInteraction,
 } from './interaction.mjs';
+export {
+  PACKET_VERSION,
+  createHolographicScenePacket,
+  validateHolographicScenePacket,
+} from './scene-packet.mjs';
