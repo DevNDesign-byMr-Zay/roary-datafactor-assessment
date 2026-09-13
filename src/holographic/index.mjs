@@ -31,3 +31,7 @@ export {
   createDisplaySession,
   validateDisplaySession,
 } from './display-session.mjs';
+export {
+  createHolographicInteractionSession,
+  validateHolographicInteractionSession,
+} from './interaction-session.mjs';
