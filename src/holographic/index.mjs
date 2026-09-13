@@ -17,3 +17,8 @@ export {
   mapLogicalTransform,
   mapSceneToDisplay,
 } from './calibration.mjs';
+export {
+  ACTIONS,
+  createHolographicInteractionEvent,
+  resolveHolographicInteraction,
+} from './interaction.mjs';
