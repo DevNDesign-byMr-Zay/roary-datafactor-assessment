@@ -151,15 +151,18 @@ export function createApp({
       }
 
       if (advisoryCoordinator) {
-        await advisoryCoordinator(
-          Object.freeze({
-            requestId,
-            sessionId,
-            reply,
-            signal: abortController.signal,
-          }),
-        );
-        if (abortController.signal.aborted) throw new ChatAbortError();
+        const advisoryContext = Object.freeze({
+          requestId,
+          sessionId,
+          reply,
+          signal: abortController.signal,
+        });
+        await runWithChatDeadline(() => advisoryCoordinator(advisoryContext), {
+          timeoutMs: chatTimeoutMs,
+          signal: abortController.signal,
+          setTimeoutFn,
+          clearTimeoutFn,
+        });
       }
 
       await historyStore.append(sessionId, [
