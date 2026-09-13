@@ -6,6 +6,7 @@ import express from 'express';
 import {
   ChatAbortError,
   ChatTimeoutError,
+  createChatDeadlineBudget,
   runWithChatDeadline,
 } from './chat-deadline.mjs';
 import { createHistoryStore } from './history-store.mjs';
@@ -55,6 +56,7 @@ export function createApp({
   chatTimeoutMs = 15_000,
   setTimeoutFn = setTimeout,
   clearTimeoutFn = clearTimeout,
+  nowFn = Date.now,
   advisoryCoordinator = null,
 } = {}) {
   if (!vertexClient?.getGenerativeModel) {
@@ -71,6 +73,7 @@ export function createApp({
   if (typeof setTimeoutFn !== 'function' || typeof clearTimeoutFn !== 'function') {
     throw new TypeError('timer functions must be functions.');
   }
+  if (typeof nowFn !== 'function') throw new TypeError('nowFn must be a function.');
   if (advisoryCoordinator !== null && typeof advisoryCoordinator !== 'function') {
     throw new TypeError('advisoryCoordinator must be a function when provided.');
   }
@@ -134,6 +137,7 @@ export function createApp({
     req.once('aborted', handleRequestAbort);
 
     try {
+      const deadline = createChatDeadlineBudget(chatTimeoutMs, { nowFn });
       const history = await historyStore.load(sessionId);
       const result = await runWithChatDeadline(
         () =>
@@ -141,7 +145,7 @@ export function createApp({
             contents: [...history, { role: 'user', parts: [{ text }] }],
           }),
         {
-          timeoutMs: chatTimeoutMs,
+          timeoutMs: deadline.remainingMs(),
           signal: abortController.signal,
           setTimeoutFn,
           clearTimeoutFn,
@@ -170,13 +174,14 @@ export function createApp({
           signal: abortController.signal,
         });
         await runWithChatDeadline(() => advisoryCoordinator(advisoryContext), {
-          timeoutMs: chatTimeoutMs,
+          timeoutMs: deadline.remainingMs(),
           signal: abortController.signal,
           setTimeoutFn,
           clearTimeoutFn,
         });
       }
 
+      deadline.remainingMs();
       await historyStore.append(sessionId, [
         { role: 'user', text },
         { role: 'assistant', text: reply },
