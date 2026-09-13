@@ -97,10 +97,11 @@ describe('assessment service', () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error.code).toBe('INVALID_CHAT_REQUEST');
+    expect(response.body.error.requestId).toBe(response.headers['x-request-id']);
     expect(model.generateContent).not.toHaveBeenCalled();
   });
 
-  test('POST /chat returns a sanitized 500 when model generation fails', async () => {
+  test('POST /chat returns a correlated sanitized 500 when model generation fails', async () => {
     const { db } = makeDb();
     const secretFailure = new Error('provider secret details must not leak');
     const { vertexClient } = makeVertex(async () => {
@@ -112,12 +113,15 @@ describe('assessment service', () => {
     const response = await request(app)
       .post('/chat')
       .send({ text: 'Trigger failure', sessionId: 'session-123' });
+    const requestId = response.headers['x-request-id'];
 
     expect(response.status).toBe(500);
+    expect(requestId).toBeTruthy();
     expect(response.body).toEqual({
       error: {
         code: 'CHAT_REQUEST_FAILED',
         message: 'Unable to complete the chat request.',
+        requestId,
       },
     });
     expect(JSON.stringify(response.body)).not.toContain('provider secret details');
@@ -135,5 +139,6 @@ describe('assessment service', () => {
 
     expect(response.status).toBe(502);
     expect(response.body.error.code).toBe('EMPTY_MODEL_RESPONSE');
+    expect(response.body.error.requestId).toBe(response.headers['x-request-id']);
   });
 });

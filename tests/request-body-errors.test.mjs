@@ -46,6 +46,7 @@ describe('request body failures', () => {
       error: {
         code: 'INVALID_JSON',
         message: 'Request body must contain valid JSON.',
+        requestId: 'request-body-test',
       },
     });
     expect(model.generateContent).not.toHaveBeenCalled();
@@ -68,6 +69,7 @@ describe('request body failures', () => {
       error: {
         code: 'REQUEST_TOO_LARGE',
         message: 'Request body exceeds the 64kb limit.',
+        requestId: 'request-body-test',
       },
     });
     expect(model.generateContent).not.toHaveBeenCalled();
@@ -92,6 +94,7 @@ describe('request body failures', () => {
       error: {
         code: 'UNSUPPORTED_CONTENT_ENCODING',
         message: 'Request content encoding is not supported.',
+        requestId: 'request-body-test',
       },
     });
     expect(model.generateContent).not.toHaveBeenCalled();
@@ -115,6 +118,7 @@ describe('request body failures', () => {
       error: {
         code: 'UNSUPPORTED_MEDIA_TYPE',
         message: 'Chat requests must use application/json.',
+        requestId: 'request-body-test',
       },
     });
     expect(model.generateContent).not.toHaveBeenCalled();

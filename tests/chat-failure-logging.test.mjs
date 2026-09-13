@@ -49,6 +49,7 @@ test('provider failures log bounded metadata without raw error text or stack', a
     error: {
       code: 'CHAT_REQUEST_FAILED',
       message: 'Unable to complete the chat request.',
+      requestId: 'failure-log-test',
     },
   });
   expect(logger.error).toHaveBeenCalledWith(

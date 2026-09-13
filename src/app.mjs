@@ -34,6 +34,15 @@ function normalizeRequestId(value) {
   return requestId;
 }
 
+function requestErrorBody(requestId, error) {
+  return {
+    error: {
+      ...error,
+      requestId,
+    },
+  };
+}
+
 export function createApp({
   vertexClient,
   db,
@@ -102,12 +111,12 @@ export function createApp({
         { event: 'request.unsupported_media_type', requestId },
         'Rejected non-JSON chat request',
       );
-      return res.status(415).json({
-        error: {
+      return res.status(415).json(
+        requestErrorBody(requestId, {
           code: 'UNSUPPORTED_MEDIA_TYPE',
           message: 'Chat requests must use application/json.',
-        },
-      });
+        }),
+      );
     }
 
     const parsed = parseChatRequest(req.body);
@@ -116,7 +125,7 @@ export function createApp({
         { event: 'chat.validation_failed', requestId },
         'Rejected invalid chat request',
       );
-      return res.status(400).json({ error: parsed.error });
+      return res.status(400).json(requestErrorBody(requestId, parsed.error));
     }
 
     const { text, sessionId } = parsed.value;
@@ -145,9 +154,12 @@ export function createApp({
           { event: 'chat.empty_model_response', requestId, sessionId },
           'Model returned no text',
         );
-        return res.status(502).json({
-          error: { code: 'EMPTY_MODEL_RESPONSE', message: 'The model returned no text.' },
-        });
+        return res.status(502).json(
+          requestErrorBody(requestId, {
+            code: 'EMPTY_MODEL_RESPONSE',
+            message: 'The model returned no text.',
+          }),
+        );
       }
 
       if (advisoryCoordinator) {
@@ -186,24 +198,24 @@ export function createApp({
           { event: 'chat.timed_out', requestId, sessionId },
           'Chat request timed out',
         );
-        return res.status(504).json({
-          error: {
+        return res.status(504).json(
+          requestErrorBody(requestId, {
             code: 'CHAT_TIMEOUT',
             message: 'The chat request timed out.',
-          },
-        });
+          }),
+        );
       }
 
       logger.error(
         { ...sanitizeFailureMetadata(error), requestId, sessionId },
         'Chat request failed',
       );
-      return res.status(500).json({
-        error: {
+      return res.status(500).json(
+        requestErrorBody(requestId, {
           code: 'CHAT_REQUEST_FAILED',
           message: 'Unable to complete the chat request.',
-        },
-      });
+        }),
+      );
     } finally {
       req.off('aborted', handleRequestAbort);
     }
@@ -217,22 +229,22 @@ export function createApp({
         { event: 'request.body_too_large', requestId },
         'Rejected oversized request body',
       );
-      return res.status(413).json({
-        error: {
+      return res.status(413).json(
+        requestErrorBody(requestId, {
           code: 'REQUEST_TOO_LARGE',
           message: 'Request body exceeds the 64kb limit.',
-        },
-      });
+        }),
+      );
     }
 
     if (error?.type === 'entity.parse.failed') {
       logger.warn({ event: 'request.invalid_json', requestId }, 'Rejected malformed JSON request');
-      return res.status(400).json({
-        error: {
+      return res.status(400).json(
+        requestErrorBody(requestId, {
           code: 'INVALID_JSON',
           message: 'Request body must contain valid JSON.',
-        },
-      });
+        }),
+      );
     }
 
     if (error?.type === 'encoding.unsupported') {
@@ -240,19 +252,24 @@ export function createApp({
         { event: 'request.unsupported_encoding', requestId },
         'Rejected unsupported request encoding',
       );
-      return res.status(415).json({
-        error: {
+      return res.status(415).json(
+        requestErrorBody(requestId, {
           code: 'UNSUPPORTED_CONTENT_ENCODING',
           message: 'Request content encoding is not supported.',
-        },
-      });
+        }),
+      );
     }
 
     return next(error);
   });
 
-  app.use((_req, res) => {
-    res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Route not found.' } });
+  app.use((req, res) => {
+    res.status(404).json(
+      requestErrorBody(req.requestId, {
+        code: 'NOT_FOUND',
+        message: 'Route not found.',
+      }),
+    );
   });
 
   return app;
