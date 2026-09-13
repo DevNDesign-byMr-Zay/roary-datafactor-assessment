@@ -5,6 +5,14 @@ export function createHistoryStore(db, { historyLimit = 12 } = {}) {
     return db.collection('sessions').doc(sessionId).collection('messages');
   }
 
+  function durableRecord(record) {
+    return {
+      role: record.role,
+      text: record.text,
+      createdAt: new Date(),
+    };
+  }
+
   return {
     async load(sessionId) {
       const snapshot = await messages(sessionId)
@@ -23,15 +31,17 @@ export function createHistoryStore(db, { historyLimit = 12 } = {}) {
 
     async append(sessionId, records) {
       const collection = messages(sessionId);
-      await Promise.all(
-        records.map((record) =>
-          collection.add({
-            role: record.role,
-            text: record.text,
-            createdAt: new Date(),
-          }),
-        ),
-      );
+
+      if (typeof db.batch === 'function' && typeof collection.doc === 'function') {
+        const batch = db.batch();
+        for (const record of records) {
+          batch.set(collection.doc(), durableRecord(record));
+        }
+        await batch.commit();
+        return;
+      }
+
+      await Promise.all(records.map((record) => collection.add(durableRecord(record))));
     },
   };
 }
