@@ -1,14 +1,13 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
+import { expect, test } from '@jest/globals';
 import { createScene } from '../../src/holographic/contracts.mjs';
 import { createDisplaySession } from '../../src/holographic/display-session.mjs';
 import { dispatchHolographicSurface } from '../../src/holographic/surface-dispatch.mjs';
 import { SimulatedHoloMatAdapter, SimulatedProjectorAdapter, SimulatedThreeDPlatformAdapter } from '../../src/holographic/adapters.mjs';
 
-const scene = createScene({ id: 'surface-scene', nodes: [{ id: 'node-1', label: 'Grid', transform: { x: 1, y: 2, z: 3 } }] });
+const scene = createScene({ id: 'surface-scene', nodes: [{ id: 'node-1', type: 'content', transform: { x: 1, y: 2, z: 3 } }] });
 
 for (const [name, Adapter, expected] of [
-  ['holo-mat', SimulatedHoloMatAdapter, 'mapScene'],
+  ['holomat', SimulatedHoloMatAdapter, 'mapScene'],
   ['projector', SimulatedProjectorAdapter, 'render'],
   ['three-d-platform', SimulatedThreeDPlatformAdapter, 'stage'],
 ]) {
@@ -16,14 +15,14 @@ for (const [name, Adapter, expected] of [
     const adapter = new Adapter({ id: `${name}-test` });
     const session = createDisplaySession({ scene, sessionId: `session-${name}` });
     const result = await dispatchHolographicSurface({ session, adapter });
-    assert.equal(result.operation, expected);
-    assert.equal(result.surfaceType, name);
-    assert.equal(result.safety.authoritative, false);
-    assert.equal(result.safety.physicalActuation, false);
+    expect(result.operation).toBe(expected);
+    expect(result.surfaceType).toBe(name);
+    expect(result.safety.authoritative).toBe(false);
+    expect(result.safety.physicalActuation).toBe(false);
   });
 }
 
 test('unknown surface types fail closed', async () => {
   const session = createDisplaySession({ scene, sessionId: 'session-unknown' });
-  await assert.rejects(() => dispatchHolographicSurface({ session, adapter: { device: { type: 'unknown' } } }), /unsupported holographic surface/);
+  await expect(dispatchHolographicSurface({ session, adapter: { device: { type: 'unknown' } } })).rejects.toThrow(/unsupported holographic surface/);
 });
