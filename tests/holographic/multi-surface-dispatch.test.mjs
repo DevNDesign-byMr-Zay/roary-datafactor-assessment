@@ -1,4 +1,4 @@
-import { expect, it } from 'vitest';
+import { expect, test } from '@jest/globals';
 import { createScene } from '../../src/holographic/contracts.mjs';
 import { createCalibrationProfile } from '../../src/holographic/calibration.mjs';
 import { createDisplaySession } from '../../src/holographic/display-session.mjs';
@@ -7,13 +7,11 @@ import { SimulatedHoloMatAdapter, SimulatedProjectorAdapter, SimulatedThreeDPlat
 
 const scene = createScene({
   id: 'surface-fixture',
-  nodes: [
-    { id: 'asset-a', label: 'Asset A', position: { x: 1, y: 2, z: 3 }, capabilities: ['topology'] },
-  ],
+  nodes: [{ id: 'asset-a', type: 'asset', transform: { x: 1, y: 2, z: 3 }, data: { requires: ['topology'] } }],
 });
 const calibration = createCalibrationProfile({ width: 1920, height: 1080, scaleX: 1, scaleY: 1, depthScale: 1 });
 
-it('dispatches one validated renderer-neutral session across simulated surfaces', async () => {
+test('dispatches one validated renderer-neutral session across simulated surfaces', async () => {
   const surfaces = [
     [new SimulatedHoloMatAdapter({ id: 'mat-test', capabilities: ['topology'] }), 'mapScene'],
     [new SimulatedProjectorAdapter({ id: 'projector-test', capabilities: ['topology'] }), 'render'],
