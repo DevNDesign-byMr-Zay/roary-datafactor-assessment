@@ -28,6 +28,37 @@ test('surfaces a renewable opportunity without selecting or scheduling execution
   assert.equal('executeAt' in advisory, false);
 });
 
+test('treats the exact 0.75 boundary as an advisory opportunity for normal priority', () => {
+  const advisory = createRenewableOpportunityAdvisory({
+    renewableAvailability: 0.75,
+    priority: 'normal',
+    renewableWindowMinutes: 0,
+  });
+
+  assert.equal(advisory.opportunity, 'renewable-window-available');
+  assert.equal(advisory.evidence.renewableAvailability, 0.75);
+  assert.equal(advisory.evidence.renewableWindowMinutes, 0);
+  assert.equal(advisory.safety.schedulesWorkload, false);
+});
+
+test('accepts finite availability endpoints without changing advisory authority', () => {
+  const none = createRenewableOpportunityAdvisory({
+    renewableAvailability: 0,
+    priority: 'normal',
+  });
+  const full = createRenewableOpportunityAdvisory({
+    renewableAvailability: 1,
+    priority: 'normal',
+  });
+
+  assert.equal(none.opportunity, 'no-renewable-window');
+  assert.equal(full.opportunity, 'renewable-window-available');
+  assert.equal(none.safety.authoritative, false);
+  assert.equal(full.safety.authoritative, false);
+  assert.equal(none.safety.executesWorkload, false);
+  assert.equal(full.safety.executesWorkload, false);
+});
+
 test('critical workloads suppress renewable-window advice without issuing an execution command', () => {
   const advisory = createRenewableOpportunityAdvisory({
     renewableAvailability: 1,
