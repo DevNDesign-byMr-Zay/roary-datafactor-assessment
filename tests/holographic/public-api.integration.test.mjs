@@ -1,5 +1,4 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
+import { expect, test } from '@jest/globals';
 import {
   createScene,
   createTransform,
@@ -10,15 +9,13 @@ import {
 
 test('public holographic API preserves advisory interaction boundary', () => {
   const scene = createScene({
-    sceneId: 'roary-public-api',
-    snapshotId: 'snapshot-1',
-    provenanceRef: 'prov-1',
-    transforms: [createTransform({ nodeId: 'node-1', x: 1, y: 2, z: 3 })],
+    id: 'roary-public-api',
+    nodes: [{ id: 'node-1', type: 'asset', transform: createTransform({ x: 1, y: 2, z: 3 }) }],
   });
-  const event = createHolographicInteractionEvent({ sceneId: scene.sceneId, nodeId: 'node-1', action: 'focus' });
-  const session = createHolographicInteractionSession({ scene, events: [event] });
-  assert.equal(validateHolographicInteractionSession(session), true);
-  assert.equal(session.safety.authoritative, false);
-  assert.equal(session.safety.physicalActuation, false);
-  assert.equal(session.safety.advisoryOnly, true);
+  const event = createHolographicInteractionEvent({ sceneId: scene.id, nodeId: 'node-1', action: 'focus' });
+  const session = createHolographicInteractionSession({ scene, events: [event], sessionId: 'public-api-session' });
+  expect(validateHolographicInteractionSession(session)).toBe(true);
+  expect(session.safety.authoritative).toBe(false);
+  expect(session.safety.physicalActuation).toBe(false);
+  expect(session.safety.advisoryOnly).toBe(true);
 });

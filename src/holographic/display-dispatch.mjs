@@ -8,8 +8,16 @@ function canonical(value) {
   return value;
 }
 
-function fingerprintDispatch(value) {
-  return createHash('sha256').update(JSON.stringify(canonical(value)), 'utf8').digest('hex');
+function dispatchFingerprintBody(dispatch) {
+  return Object.fromEntries(
+    Object.entries(dispatch).filter(([key]) => key !== 'dispatchFingerprint' && key !== 'safety'),
+  );
+}
+
+export function fingerprintHolographicDispatch(dispatch) {
+  return createHash('sha256')
+    .update(JSON.stringify(canonical(dispatchFingerprintBody(dispatch))), 'utf8')
+    .digest('hex');
 }
 
 export async function dispatchHolographicDisplaySession({ session, adapter, operation = 'render' } = {}) {
@@ -27,7 +35,7 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
     result,
     calibrated: Boolean(session.packet.calibrationProfile),
   };
-  const dispatchFingerprint = fingerprintDispatch(dispatch);
+  const dispatchFingerprint = fingerprintHolographicDispatch(dispatch);
   return Object.freeze({
     ...dispatch,
     dispatchFingerprint,
@@ -37,6 +45,6 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
 
 export function verifyHolographicDispatchFingerprint(dispatch) {
   if (!dispatch || typeof dispatch !== 'object' || typeof dispatch.dispatchFingerprint !== 'string') return false;
-  const { dispatchFingerprint: _dispatchFingerprint, safety: _safety, ...body } = dispatch;
-  return /^[a-f0-9]{64}$/.test(dispatch.dispatchFingerprint) && dispatch.dispatchFingerprint === fingerprintDispatch(body);
+  return /^[a-f0-9]{64}$/.test(dispatch.dispatchFingerprint)
+    && dispatch.dispatchFingerprint === fingerprintHolographicDispatch(dispatch);
 }

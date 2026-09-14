@@ -41,12 +41,14 @@ export function mapSceneToDisplay(scene, profile) {
   }
   const calibration = createCalibrationProfile(profile);
   return Object.freeze({
+    id: scene.id,
     sceneId: scene.id,
     calibration,
     nodes: Object.freeze(scene.nodes.map((node) => Object.freeze({
       id: node.id,
       transform: mapLogicalTransform(node.transform, calibration),
       visible: node.visible !== false,
+      data: Object.freeze({ ...(node.data ?? {}) }),
     }))),
   });
 }

@@ -1,5 +1,4 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
+import { expect, test } from '@jest/globals';
 
 import {
   createHolographicInteractionEvent,
@@ -15,36 +14,30 @@ test('normalizes a safe interaction event', () => {
   const event = createHolographicInteractionEvent({
     sceneId: 'scene-001', nodeId: 'title', action: 'focus',
   });
-  assert.equal(event.action, 'focus');
-  assert.equal(event.advisoryOnly, true);
-  assert.equal(event.physicalActuation, false);
+  expect(event.action).toBe('focus');
+  expect(event.advisoryOnly).toBe(true);
+  expect(event.physicalActuation).toBe(false);
 });
 
 test('resolves an interaction without mutating the scene', () => {
   const result = resolveHolographicInteraction(scene, {
     sceneId: 'scene-001', nodeId: 'title', action: 'inspect',
   });
-  assert.equal(result.handled, true);
-  assert.equal(result.node.id, 'title');
-  assert.equal(result.physicalActuation, false);
-  assert.deepEqual(scene.nodes[0].transform, { x: 0, y: 0, z: 1 });
+  expect(result.handled).toBe(true);
+  expect(result.node.id).toBe('title');
+  expect(result.physicalActuation).toBe(false);
+  expect(scene.nodes[0].transform).toEqual({ x: 0, y: 0, z: 1 });
 });
 
 test('fails closed for unknown actions and mismatched scenes', () => {
-  assert.throws(
-    () => createHolographicInteractionEvent({ sceneId: 'scene-001', nodeId: 'title', action: 'launch' }),
-    /Unsupported holographic action/,
-  );
-  assert.throws(
-    () => resolveHolographicInteraction(scene, { sceneId: 'other', nodeId: 'title', action: 'focus' }),
-    /must match/,
-  );
+  expect(() => createHolographicInteractionEvent({ sceneId: 'scene-001', nodeId: 'title', action: 'launch' })).toThrow(/Unsupported holographic action/);
+  expect(() => resolveHolographicInteraction(scene, { sceneId: 'other', nodeId: 'title', action: 'focus' })).toThrow(/must match/);
 });
 
 test('reports an unknown node without inventing a target', () => {
   const result = resolveHolographicInteraction(scene, {
     sceneId: 'scene-001', nodeId: 'missing', action: 'focus',
   });
-  assert.equal(result.handled, false);
-  assert.equal(result.node, null);
+  expect(result.handled).toBe(false);
+  expect(result.node).toBeNull();
 });
