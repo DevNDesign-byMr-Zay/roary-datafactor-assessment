@@ -1,12 +1,13 @@
-export const EXECUTION_MODES = Object.freeze({
-  IMMEDIATE: 'immediate',
-  RENEWABLE_PREFERRED: 'renewable-preferred',
-});
+export {
+  RENEWABLE_POLICY_MODES as EXECUTION_MODES,
+  shouldPreferRenewableExecution,
+} from './renewable-policy.mjs';
 
-export function selectExecutionMode({ renewableAvailability = 0, priority = 'normal' }) {
-  if (renewableAvailability >= 0.75 && priority !== 'critical') {
-    return EXECUTION_MODES.RENEWABLE_PREFERRED;
+export function selectExecutionMode({ renewableAvailability = 0, priority = 'normal' } = {}) {
+  if (priority === 'critical') {
+    return 'urgent';
   }
 
-  return EXECUTION_MODES.IMMEDIATE;
+  const renewableAvailable = renewableAvailability >= 0.75;
+  return renewableAvailable ? 'renewable-preferred' : 'balanced';
 }
