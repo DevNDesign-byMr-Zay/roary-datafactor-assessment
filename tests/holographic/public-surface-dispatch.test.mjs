@@ -1,23 +1,31 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { createScene, dispatchHolographicSurface, SimulatedHoloMatAdapter, SimulatedProjectorAdapter, SimulatedThreeDPlatformAdapter } from '../../src/holographic/index.mjs';
+import { expect, test } from '@jest/globals';
+import {
+  createDisplaySession,
+  createScene,
+  dispatchHolographicSurface,
+  SimulatedHoloMatAdapter,
+  SimulatedProjectorAdapter,
+  SimulatedThreeDPlatformAdapter,
+} from '../../src/holographic/index.mjs';
 
-const scene = createScene({ id: 'scene-public-1', title: 'Public surface fixture', nodes: [{ id: 'node-1', label: 'Grid', transform: { x: 1, y: 2, z: 3 } }] });
+const scene = createScene({ id: 'scene-public-1', nodes: [{ id: 'node-1', type: 'content', transform: { x: 1, y: 2, z: 3 } }] });
 
 test('public surface dispatcher routes supported simulated surfaces', async () => {
   const cases = [
-    [new SimulatedHoloMatAdapter({ id: 'mat-1' }), 'mapScene', 'mapped'],
-    [new SimulatedProjectorAdapter({ id: 'projector-1' }), 'render', 'rendered'],
-    [new SimulatedThreeDPlatformAdapter({ id: 'platform-1' }), 'stage', 'staged'],
+    [new SimulatedHoloMatAdapter({ id: 'mat-1' }), 'mapped'],
+    [new SimulatedProjectorAdapter({ id: 'projector-1' }), 'rendered'],
+    [new SimulatedThreeDPlatformAdapter({ id: 'platform-1' }), 'staged'],
   ];
-  for (const [adapter, operation, status] of cases) {
-    const result = await dispatchHolographicSurface({ scene, adapter, operation });
-    assert.equal(result.result.status, status);
-    assert.equal(result.safety.physicalActuation, false);
-    assert.equal(result.safety.advisoryOnly, true);
+  for (const [adapter, status] of cases) {
+    const session = createDisplaySession({ scene, sessionId: `session-${adapter.device.id}` });
+    const result = await dispatchHolographicSurface({ session, adapter });
+    expect(result.result.status).toBe(status);
+    expect(result.safety.physicalActuation).toBe(false);
+    expect(result.safety.advisoryOnly).toBe(true);
   }
 });
 
-test('public surface dispatcher fails closed for unsupported operations', async () => {
-  await assert.rejects(() => dispatchHolographicSurface({ scene, adapter: new SimulatedProjectorAdapter(), operation: 'stage' }), /operation not supported/);
+test('public surface dispatcher fails closed for unsupported surfaces', async () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-unsupported' });
+  await expect(dispatchHolographicSurface({ session, adapter: { device: { type: 'unknown' } } })).rejects.toThrow(/unsupported holographic surface/);
 });
