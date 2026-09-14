@@ -27,27 +27,41 @@ test('surfaces a renewable opportunity without selecting or scheduling execution
   expect(advisory).not.toHaveProperty('executeAt');
 });
 
-test('treats the exact 0.75 boundary as an advisory opportunity for normal priority', () => {
+test('treats the exact 0.75 boundary as an advisory opportunity only with a positive window', () => {
   const advisory = createRenewableOpportunityAdvisory({
     renewableAvailability: 0.75,
     priority: 'normal',
-    renewableWindowMinutes: 0,
+    renewableWindowMinutes: 1,
   });
 
   expect(advisory.opportunity).toBe('renewable-window-available');
   expect(advisory.evidence.renewableAvailability).toBe(0.75);
-  expect(advisory.evidence.renewableWindowMinutes).toBe(0);
+  expect(advisory.evidence.renewableWindowMinutes).toBe(1);
   expect(advisory.safety.schedulesWorkload).toBe(false);
+});
+
+test('does not report a renewable window when the declared window length is zero', () => {
+  const advisory = createRenewableOpportunityAdvisory({
+    renewableAvailability: 1,
+    priority: 'normal',
+    renewableWindowMinutes: 0,
+  });
+
+  expect(advisory.opportunity).toBe('no-renewable-window');
+  expect(advisory.reason).toMatch(/no positive renewable window is declared/);
+  expect(advisory.safety.delaysWorkload).toBe(false);
 });
 
 test('accepts finite availability endpoints without changing advisory authority', () => {
   const none = createRenewableOpportunityAdvisory({
     renewableAvailability: 0,
     priority: 'normal',
+    renewableWindowMinutes: 15,
   });
   const full = createRenewableOpportunityAdvisory({
     renewableAvailability: 1,
     priority: 'normal',
+    renewableWindowMinutes: 15,
   });
 
   expect(none.opportunity).toBe('no-renewable-window');
