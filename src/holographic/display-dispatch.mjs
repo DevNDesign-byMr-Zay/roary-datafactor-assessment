@@ -10,7 +10,7 @@ function canonical(value) {
 
 function dispatchFingerprintBody(dispatch) {
   return Object.fromEntries(
-    Object.entries(dispatch).filter(([key]) => key !== 'dispatchFingerprint' && key !== 'safety'),
+    Object.entries(dispatch).filter(([key]) => key !== 'dispatchFingerprint'),
   );
 }
 
@@ -34,12 +34,12 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
     operation,
     result,
     calibrated: Boolean(session.packet.calibrationProfile),
+    safety: Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true }),
   };
   const dispatchFingerprint = fingerprintHolographicDispatch(dispatch);
   return Object.freeze({
     ...dispatch,
     dispatchFingerprint,
-    safety: Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true }),
   });
 }
 
