@@ -69,6 +69,18 @@ test('records interruptibility as evidence without granting interruption authori
   expect(evidence.safety.interruptsWorkload).toBe(false);
 });
 
+test('rejects undeclared classifier fields instead of silently discarding control intent', () => {
+  expect(() =>
+    createWorkloadFlexibilityEvidence(source({ schedulesWorkload: true })),
+  ).toThrow(/unsupported workload metadata field: schedulesWorkload/);
+  expect(() =>
+    createWorkloadFlexibilityEvidence(source({ executeAt: '2026-09-15T00:00:00Z' })),
+  ).toThrow(/unsupported workload metadata field: executeAt/);
+  expect(() =>
+    createWorkloadFlexibilityEvidence(source({ queue: 'renewable-later' })),
+  ).toThrow(/unsupported workload metadata field: queue/);
+});
+
 test('rejects malformed identity, priority, booleans, and delay windows', () => {
   expect(() => createWorkloadFlexibilityEvidence(source({ workloadId: '   ' }))).toThrow(
     /workloadId must be a non-empty string/,
