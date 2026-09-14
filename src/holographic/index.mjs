@@ -17,3 +17,4 @@ export { ACTIONS, createHolographicInteractionEvent, resolveHolographicInteracti
 export { PACKET_VERSION, createHolographicScenePacket, validateHolographicScenePacket } from './scene-packet.mjs';
 export { createDisplaySession, validateDisplaySession } from './display-session.mjs';
 export { createHolographicInteractionSession, validateHolographicInteractionSession, resolveInteractionSessionEvent } from './interaction-session.mjs';
+export { dispatchHolographicSurface, HOLOGRAPHIC_SURFACE_OPERATIONS } from './surface-dispatch.mjs';
