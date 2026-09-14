@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
 import { createScene } from '../../src/holographic/contracts.mjs';
 import { createCalibrationProfile } from '../../src/holographic/calibration.mjs';
 import { createDisplaySession } from '../../src/holographic/display-session.mjs';
