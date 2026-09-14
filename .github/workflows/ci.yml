@@ -32,3 +32,5 @@ jobs:
         run: npm run verify:integrity
       - name: Run tests with enforced coverage
         run: npm run test:coverage
+      - name: Run renewable evidence demo
+        run: npm run demo:renewable-evidence
