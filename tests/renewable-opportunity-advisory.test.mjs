@@ -1,5 +1,4 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
+import { expect, test } from '@jest/globals';
 
 import { createRenewableOpportunityAdvisory } from '../src/services/renewable-opportunity-advisory.mjs';
 
@@ -10,9 +9,9 @@ test('surfaces a renewable opportunity without selecting or scheduling execution
     renewableWindowMinutes: 30,
   });
 
-  assert.equal(advisory.opportunity, 'renewable-window-available');
-  assert.equal(advisory.application, 'operator-or-runtime-policy-decision-required');
-  assert.deepEqual(advisory.safety, {
+  expect(advisory.opportunity).toBe('renewable-window-available');
+  expect(advisory.application).toBe('operator-or-runtime-policy-decision-required');
+  expect(advisory.safety).toEqual({
     advisoryOnly: true,
     authoritative: false,
     schedulesWorkload: false,
@@ -20,12 +19,12 @@ test('surfaces a renewable opportunity without selecting or scheduling execution
     executesWorkload: false,
     physicalActuation: false,
   });
-  assert.equal(Object.isFrozen(advisory), true);
-  assert.equal(Object.isFrozen(advisory.evidence), true);
-  assert.equal(Object.isFrozen(advisory.safety), true);
-  assert.equal('strategy' in advisory, false);
-  assert.equal('shouldExecute' in advisory, false);
-  assert.equal('executeAt' in advisory, false);
+  expect(Object.isFrozen(advisory)).toBe(true);
+  expect(Object.isFrozen(advisory.evidence)).toBe(true);
+  expect(Object.isFrozen(advisory.safety)).toBe(true);
+  expect(advisory).not.toHaveProperty('strategy');
+  expect(advisory).not.toHaveProperty('shouldExecute');
+  expect(advisory).not.toHaveProperty('executeAt');
 });
 
 test('treats the exact 0.75 boundary as an advisory opportunity for normal priority', () => {
@@ -35,10 +34,10 @@ test('treats the exact 0.75 boundary as an advisory opportunity for normal prior
     renewableWindowMinutes: 0,
   });
 
-  assert.equal(advisory.opportunity, 'renewable-window-available');
-  assert.equal(advisory.evidence.renewableAvailability, 0.75);
-  assert.equal(advisory.evidence.renewableWindowMinutes, 0);
-  assert.equal(advisory.safety.schedulesWorkload, false);
+  expect(advisory.opportunity).toBe('renewable-window-available');
+  expect(advisory.evidence.renewableAvailability).toBe(0.75);
+  expect(advisory.evidence.renewableWindowMinutes).toBe(0);
+  expect(advisory.safety.schedulesWorkload).toBe(false);
 });
 
 test('accepts finite availability endpoints without changing advisory authority', () => {
@@ -51,12 +50,12 @@ test('accepts finite availability endpoints without changing advisory authority'
     priority: 'normal',
   });
 
-  assert.equal(none.opportunity, 'no-renewable-window');
-  assert.equal(full.opportunity, 'renewable-window-available');
-  assert.equal(none.safety.authoritative, false);
-  assert.equal(full.safety.authoritative, false);
-  assert.equal(none.safety.executesWorkload, false);
-  assert.equal(full.safety.executesWorkload, false);
+  expect(none.opportunity).toBe('no-renewable-window');
+  expect(full.opportunity).toBe('renewable-window-available');
+  expect(none.safety.authoritative).toBe(false);
+  expect(full.safety.authoritative).toBe(false);
+  expect(none.safety.executesWorkload).toBe(false);
+  expect(full.safety.executesWorkload).toBe(false);
 });
 
 test('critical workloads suppress renewable-window advice without issuing an execution command', () => {
@@ -66,10 +65,10 @@ test('critical workloads suppress renewable-window advice without issuing an exe
     renewableWindowMinutes: 60,
   });
 
-  assert.equal(advisory.opportunity, 'no-renewable-window');
-  assert.match(advisory.reason, /critical workload priority/);
-  assert.equal(advisory.safety.schedulesWorkload, false);
-  assert.equal(advisory.safety.delaysWorkload, false);
+  expect(advisory.opportunity).toBe('no-renewable-window');
+  expect(advisory.reason).toMatch(/critical workload priority/);
+  expect(advisory.safety.schedulesWorkload).toBe(false);
+  expect(advisory.safety.delaysWorkload).toBe(false);
 });
 
 test('below-threshold evidence remains a no-op advisory', () => {
@@ -79,28 +78,24 @@ test('below-threshold evidence remains a no-op advisory', () => {
     renewableWindowMinutes: 15,
   });
 
-  assert.equal(advisory.opportunity, 'no-renewable-window');
-  assert.match(advisory.reason, /below the advisory threshold/);
+  expect(advisory.opportunity).toBe('no-renewable-window');
+  expect(advisory.reason).toMatch(/below the advisory threshold/);
 });
 
 test('rejects malformed availability, priority, and renewable windows', () => {
   for (const renewableAvailability of [-0.1, 1.1, Number.NaN, Number.POSITIVE_INFINITY]) {
-    assert.throws(
-      () => createRenewableOpportunityAdvisory({ renewableAvailability }),
+    expect(() => createRenewableOpportunityAdvisory({ renewableAvailability })).toThrow(
       /renewableAvailability must be a finite number between 0 and 1/,
     );
   }
 
-  assert.throws(
-    () => createRenewableOpportunityAdvisory({ priority: 'urgent' }),
+  expect(() => createRenewableOpportunityAdvisory({ priority: 'urgent' })).toThrow(
     /unsupported workload priority/,
   );
-  assert.throws(
-    () => createRenewableOpportunityAdvisory({ renewableWindowMinutes: 1.5 }),
+  expect(() => createRenewableOpportunityAdvisory({ renewableWindowMinutes: 1.5 })).toThrow(
     /renewableWindowMinutes must be a non-negative integer/,
   );
-  assert.throws(
-    () => createRenewableOpportunityAdvisory({ renewableWindowMinutes: -1 }),
+  expect(() => createRenewableOpportunityAdvisory({ renewableWindowMinutes: -1 })).toThrow(
     /renewableWindowMinutes must be a non-negative integer/,
   );
 });
