@@ -37,6 +37,8 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
 
 export function verifyHolographicDispatchFingerprint(dispatch) {
   if (!dispatch || typeof dispatch !== 'object' || typeof dispatch.dispatchFingerprint !== 'string') return false;
-  const { dispatchFingerprint: _dispatchFingerprint, safety: _safety, ...body } = dispatch;
+  const body = Object.fromEntries(
+    Object.entries(dispatch).filter(([key]) => key !== 'dispatchFingerprint' && key !== 'safety'),
+  );
   return /^[a-f0-9]{64}$/.test(dispatch.dispatchFingerprint) && dispatch.dispatchFingerprint === fingerprintDispatch(body);
 }
