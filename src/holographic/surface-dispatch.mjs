@@ -1,4 +1,7 @@
-import { dispatchHolographicDisplaySession } from './display-dispatch.mjs';
+import {
+  dispatchHolographicDisplaySession,
+  fingerprintHolographicDispatch,
+} from './display-dispatch.mjs';
 
 const OPERATIONS = Object.freeze({
   holomat: 'mapScene',
@@ -12,7 +15,11 @@ export async function dispatchHolographicSurface({ session, adapter } = {}) {
   const operation = OPERATIONS[type];
   if (!operation) throw new TypeError(`unsupported holographic surface: ${type ?? 'unknown'}`);
   const result = await dispatchHolographicDisplaySession({ session, adapter, operation });
-  return Object.freeze({ ...result, surfaceType: type });
+  const surfaceDispatch = { ...result, surfaceType: type };
+  return Object.freeze({
+    ...surfaceDispatch,
+    dispatchFingerprint: fingerprintHolographicDispatch(surfaceDispatch),
+  });
 }
 
 export { OPERATIONS as HOLOGRAPHIC_SURFACE_OPERATIONS };
