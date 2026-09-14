@@ -25,7 +25,7 @@ export function createRenewableOpportunityAdvisory({
     throw new TypeError(`unsupported workload priority: ${priority}`);
   }
   const window = windowMinutes(renewableWindowMinutes);
-  const available = availability >= 0.75 && priority !== 'critical';
+  const available = availability >= 0.75 && priority !== 'critical' && window > 0;
 
   return Object.freeze({
     version: ADVISORY_VERSION,
@@ -36,10 +36,12 @@ export function createRenewableOpportunityAdvisory({
     }),
     opportunity: available ? 'renewable-window-available' : 'no-renewable-window',
     reason: available
-      ? 'reported renewable availability meets the advisory threshold for a non-critical workload'
+      ? 'reported renewable availability meets the advisory threshold for a non-critical workload with a positive declared window'
       : priority === 'critical'
         ? 'critical workload priority prevents renewable-window advice'
-        : 'reported renewable availability is below the advisory threshold',
+        : window === 0
+          ? 'no positive renewable window is declared'
+          : 'reported renewable availability is below the advisory threshold',
     application: 'operator-or-runtime-policy-decision-required',
     safety: Object.freeze({
       advisoryOnly: true,
