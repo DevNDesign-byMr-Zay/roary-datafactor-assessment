@@ -1,5 +1,8 @@
 export function createHistoryStore(db, { historyLimit = 12 } = {}) {
   if (!db) throw new TypeError('A Firestore-compatible database is required.');
+  if (!Number.isInteger(historyLimit) || historyLimit <= 0) {
+    throw new TypeError('historyLimit must be a positive integer.');
+  }
 
   function messages(sessionId) {
     return db.collection('sessions').doc(sessionId).collection('messages');
