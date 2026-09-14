@@ -90,6 +90,17 @@ test('rejects malformed identity, priority, booleans, and delay windows', () => 
   );
 });
 
+test('evidence fingerprint changes when workload identity or declared flexibility metadata changes', () => {
+  const baseline = createWorkloadFlexibilityEvidence(source());
+  const changedWorkload = createWorkloadFlexibilityEvidence(source({ workloadId: 'workload-2' }));
+  const changedWindow = createWorkloadFlexibilityEvidence(source({ maxDelayMinutes: 60 }));
+  const changedInterruptibility = createWorkloadFlexibilityEvidence(source({ interruptible: true }));
+
+  expect(changedWorkload.evidenceFingerprint).not.toBe(baseline.evidenceFingerprint);
+  expect(changedWindow.evidenceFingerprint).not.toBe(baseline.evidenceFingerprint);
+  expect(changedInterruptibility.evidenceFingerprint).not.toBe(baseline.evidenceFingerprint);
+});
+
 test('evidence identity is deterministic, immutable, and tamper-evident', () => {
   const input = source();
   const first = createWorkloadFlexibilityEvidence(input);
