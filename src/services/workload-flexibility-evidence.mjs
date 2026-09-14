@@ -2,6 +2,13 @@ import { createHash } from 'node:crypto';
 
 const EVIDENCE_VERSION = 1;
 const VALID_PRIORITIES = Object.freeze(['normal', 'critical']);
+const SOURCE_FIELDS = Object.freeze([
+  'workloadId',
+  'priority',
+  'deferrable',
+  'maxDelayMinutes',
+  'interruptible',
+]);
 
 function text(value, name) {
   if (typeof value !== 'string' || !value.trim()) {
@@ -15,6 +22,19 @@ function nonNegativeInteger(value, name) {
     throw new TypeError(`${name} must be a non-negative integer`);
   }
   return value;
+}
+
+function exactSource(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    throw new TypeError('workload flexibility source must be an object');
+  }
+  const allowed = new Set(SOURCE_FIELDS);
+  for (const key of Object.keys(input)) {
+    if (!allowed.has(key)) {
+      throw new TypeError(`unsupported workload metadata field: ${key}`);
+    }
+  }
+  return input;
 }
 
 function canonical(value) {
@@ -35,13 +55,15 @@ function deepFreeze(value) {
   return Object.freeze(value);
 }
 
-function evidenceBody({
-  workloadId,
-  priority = 'normal',
-  deferrable = false,
-  maxDelayMinutes = 0,
-  interruptible = false,
-} = {}) {
+function evidenceBody(input = {}) {
+  const source = exactSource(input);
+  const {
+    workloadId,
+    priority = 'normal',
+    deferrable = false,
+    maxDelayMinutes = 0,
+    interruptible = false,
+  } = source;
   const id = text(workloadId, 'workloadId');
   if (!VALID_PRIORITIES.includes(priority)) {
     throw new TypeError(`unsupported workload priority: ${priority}`);
