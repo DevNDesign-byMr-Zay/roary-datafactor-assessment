@@ -39,3 +39,4 @@ export {
   createHolographicDispatchBatchReceipt,
   validateHolographicDispatchBatchReceipt,
 } from './dispatch-batch-receipt.mjs';
+export { dispatchAndSealHolographicSurfaces } from './verified-multi-surface-dispatch.mjs';
