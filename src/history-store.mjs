@@ -13,12 +13,20 @@ export function createHistoryStore(db, { historyLimit = 12 } = {}) {
     };
   }
 
+  function assertWriteActive(signal) {
+    if (signal?.aborted) {
+      throw new globalThis.DOMException('The operation was aborted.', 'AbortError');
+    }
+  }
+
   return {
-    async load(sessionId) {
+    async load(sessionId, { signal } = {}) {
+      assertWriteActive(signal);
       const snapshot = await messages(sessionId)
         .orderBy('createdAt', 'desc')
         .limit(historyLimit)
         .get();
+      assertWriteActive(signal);
 
       return snapshot.docs
         .map((doc) => doc.data())
@@ -29,19 +37,28 @@ export function createHistoryStore(db, { historyLimit = 12 } = {}) {
         }));
     },
 
-    async append(sessionId, records) {
+    async append(sessionId, records, { signal } = {}) {
+      assertWriteActive(signal);
       const collection = messages(sessionId);
 
       if (typeof db.batch === 'function' && typeof collection.doc === 'function') {
         const batch = db.batch();
         for (const record of records) {
+          assertWriteActive(signal);
           batch.set(collection.doc(), durableRecord(record));
         }
+        assertWriteActive(signal);
         await batch.commit();
         return;
       }
 
-      await Promise.all(records.map((record) => collection.add(durableRecord(record))));
+      assertWriteActive(signal);
+      await Promise.all(
+        records.map((record) => {
+          assertWriteActive(signal);
+          return collection.add(durableRecord(record));
+        }),
+      );
     },
   };
 }
