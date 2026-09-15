@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {
   createScene,
   createCalibrationProfile,
+  createDisplaySession,
   createHolographicSurfaceSession,
+  dispatchHolographicDisplaySession,
   dispatchHolographicSurfaceSession,
   SimulatedHoloMatAdapter,
   verifyHolographicDispatchFingerprint,
@@ -24,4 +26,59 @@ test('tampering a dispatch result invalidates its fingerprint', async () => {
   const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-tamper-session' });
   const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
   assert.equal(verifyHolographicDispatchFingerprint({ ...dispatch, operation: 'render' }), false);
+});
+
+test('dispatch snapshots adapter evidence before fingerprinting', async () => {
+  const scene = createScene({ sceneId: 'dispatch-isolation-scene', nodes: [] });
+  const session = createDisplaySession({ scene, sessionId: 'dispatch-isolation-session' });
+  const sourceResult = {
+    status: 'rendered',
+    metrics: { confidence: 0.9 },
+    tags: ['reviewed'],
+  };
+  const adapter = {
+    async render() {
+      return sourceResult;
+    },
+  };
+
+  const dispatch = await dispatchHolographicDisplaySession({ session, adapter });
+  const originalFingerprint = dispatch.dispatchFingerprint;
+
+  sourceResult.metrics.confidence = 0.1;
+  sourceResult.tags.push('mutated');
+
+  assert.deepEqual(dispatch.result, {
+    status: 'rendered',
+    metrics: { confidence: 0.9 },
+    tags: ['reviewed'],
+  });
+  assert.equal(Object.isFrozen(dispatch.result), true);
+  assert.equal(Object.isFrozen(dispatch.result.metrics), true);
+  assert.equal(Object.isFrozen(dispatch.result.tags), true);
+  assert.equal(dispatch.dispatchFingerprint, originalFingerprint);
+  assert.equal(verifyHolographicDispatchFingerprint(dispatch), true);
+});
+
+test('dispatch rejects non-serializable or circular adapter evidence', async () => {
+  const scene = createScene({ sceneId: 'dispatch-invalid-evidence-scene', nodes: [] });
+  const session = createDisplaySession({ scene, sessionId: 'dispatch-invalid-evidence-session' });
+
+  await assert.rejects(
+    () => dispatchHolographicDisplaySession({
+      session,
+      adapter: { async render() { return { bad: () => true }; } },
+    }),
+    /JSON-compatible evidence/,
+  );
+
+  const circular = { status: 'rendered' };
+  circular.self = circular;
+  await assert.rejects(
+    () => dispatchHolographicDisplaySession({
+      session,
+      adapter: { async render() { return circular; } },
+    }),
+    /circular references/,
+  );
 });
