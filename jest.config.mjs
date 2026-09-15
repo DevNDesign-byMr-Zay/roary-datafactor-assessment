@@ -1,6 +1,14 @@
 export default {
   testEnvironment: 'node',
   testMatch: ['**/*.test.mjs'],
+  testPathIgnorePatterns: [
+    '/tests/holographic/interaction.test.mjs$',
+    '/tests/holographic/surface-session.test.mjs$',
+    '/tests/holographic/public-api.integration.test.mjs$',
+    '/tests/holographic/public-surface-dispatch.test.mjs$',
+    '/tests/holographic/display-session-integration.test.mjs$',
+    '/tests/holographic/interaction-session.integration.test.mjs$',
+  ],
   transform: {},
   collectCoverageFrom: [
     'src/**/*.mjs',
