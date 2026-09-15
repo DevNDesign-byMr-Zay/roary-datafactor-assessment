@@ -15,8 +15,9 @@ export function createTransform({ x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, s
   });
 }
 
-export function createScene({ id, version = 1, nodes = [], metadata = {} } = {}) {
-  if (typeof id !== 'string' || !id.trim()) throw new TypeError('Scene id is required.');
+export function createScene({ id, sceneId, version = 1, nodes = [], metadata = {} } = {}) {
+  const normalizedId = id ?? sceneId;
+  if (typeof normalizedId !== 'string' || !normalizedId.trim()) throw new TypeError('Scene id is required.');
   if (!Number.isInteger(version) || version < 1) throw new TypeError('Scene version must be a positive integer.');
   if (!Array.isArray(nodes)) throw new TypeError('Scene nodes must be an array.');
   const normalizedNodes = nodes.map((node, index) => {
@@ -31,7 +32,8 @@ export function createScene({ id, version = 1, nodes = [], metadata = {} } = {})
       data: Object.freeze({ ...(node.data ?? {}) }),
     });
   });
-  return Object.freeze({ id: id.trim(), version, nodes: Object.freeze(normalizedNodes), metadata: Object.freeze({ ...metadata }) });
+  const trimmedId = normalizedId.trim();
+  return Object.freeze({ id: trimmedId, sceneId: trimmedId, version, nodes: Object.freeze(normalizedNodes), metadata: Object.freeze({ ...metadata }) });
 }
 
 export function createDeviceDescriptor({ id, type, capabilities = [], simulated = true } = {}) {
