@@ -14,6 +14,39 @@ function canonical(value) {
   return value;
 }
 
+function snapshotDispatchEvidence(value, path = 'result', seen = new WeakSet()) {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) throw new TypeError(`${path} numbers must be finite`);
+    return value;
+  }
+  if (!value || typeof value !== 'object') {
+    throw new TypeError(`${path} must contain JSON-compatible evidence`);
+  }
+  if (seen.has(value)) throw new TypeError(`${path} must not contain circular references`);
+  seen.add(value);
+
+  if (Array.isArray(value)) {
+    const copy = Object.freeze(
+      value.map((item, index) => snapshotDispatchEvidence(item, `${path}[${index}]`, seen)),
+    );
+    seen.delete(value);
+    return copy;
+  }
+
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== Object.prototype && prototype !== null) {
+    throw new TypeError(`${path} must use plain objects`);
+  }
+
+  const copy = {};
+  for (const [key, nested] of Object.entries(value)) {
+    copy[key] = snapshotDispatchEvidence(nested, `${path}.${key}`, seen);
+  }
+  seen.delete(value);
+  return Object.freeze(copy);
+}
+
 function fingerprintDispatch(value) {
   return createHash('sha256')
     .update(JSON.stringify(canonical(value)), 'utf8')
@@ -38,7 +71,7 @@ export async function dispatchHolographicDisplaySession({
   const scene = session.packet.calibrationProfile
     ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile)
     : session.packet.scene;
-  const result = await adapter[operation](scene);
+  const result = snapshotDispatchEvidence(await adapter[operation](scene));
   const safety = Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true });
   const dispatch = {
     sessionId: session.sessionId,
