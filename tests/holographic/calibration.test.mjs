@@ -25,12 +25,12 @@ describe('holographic display calibration', () => {
     expect(scene.nodes[0].transform.x).toBe(2);
   });
 
-  test('preserves capability requirements for downstream device validation', () => {
+  test('preserves capability requirements for downstream device validation', async () => {
     const scene = createScene({ id: 'capability-demo', nodes: [{ id: 'depth-node', data: { requires: ['depth'] }, transform: { x: 1 } }] });
     const display = mapSceneToDisplay(scene, profile);
     const adapter = new SimulatedProjectorAdapter({ id: 'projector-no-depth' });
     expect(adapter.device.capabilities).not.toContain('depth');
-    expect(() => adapter.render(display)).rejects.toThrow('Scene requires unsupported capabilities: depth');
+    await expect(adapter.render(display)).rejects.toThrow('Scene requires unsupported capabilities: depth');
   });
 
   test('rejects unsafe calibration dimensions', () => {
