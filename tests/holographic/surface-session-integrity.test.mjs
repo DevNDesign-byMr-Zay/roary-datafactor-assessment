@@ -1,9 +1,8 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createScene, createHolographicSurfaceSession, dispatchHolographicSurfaceSession, SimulatedHoloMatAdapter } from '../../src/holographic/index.mjs';
 
 test('surface-session dispatch rejects a mutated session before adapter execution', async () => {
-  const scene = createScene({ sceneId: 'integrity-scene', nodes: [] });
+  const scene = createScene({ id: 'integrity-scene', nodes: [] });
   const session = createHolographicSurfaceSession({ scene, sessionId: 'integrity-session' });
   const tampered = {
     ...session,
@@ -16,7 +15,7 @@ test('surface-session dispatch rejects a mutated session before adapter executio
 });
 
 test('surface-session dispatch preserves the validated session identity', async () => {
-  const scene = createScene({ sceneId: 'identity-scene', nodes: [] });
+  const scene = createScene({ id: 'identity-scene', nodes: [] });
   const session = createHolographicSurfaceSession({ scene, sessionId: 'identity-session' });
   const result = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'identity-adapter' }) });
   assert.equal(result.sessionId, session.sessionId);
