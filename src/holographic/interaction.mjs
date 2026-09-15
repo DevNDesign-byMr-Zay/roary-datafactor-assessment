@@ -33,6 +33,7 @@ export function resolveHolographicInteraction(scene, event) {
   const interaction = createHolographicInteractionEvent(event);
   if (interaction.sceneId !== scene.id) throw new TypeError('event.sceneId must match scene.id.');
   const node = scene.nodes.find((candidate) => candidate.id === interaction.nodeId);
+  const safety = Object.freeze({ advisoryOnly: true, authoritative: false, physicalActuation: false });
   return Object.freeze({
     handled: Boolean(node),
     action: interaction.action,
@@ -40,6 +41,7 @@ export function resolveHolographicInteraction(scene, event) {
     node: node ?? null,
     advisoryOnly: true,
     physicalActuation: false,
+    safety,
   });
 }
 
