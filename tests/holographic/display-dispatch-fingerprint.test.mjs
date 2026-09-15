@@ -8,6 +8,7 @@ import {
   dispatchHolographicDisplaySession,
   dispatchHolographicSurfaceSession,
   SimulatedHoloMatAdapter,
+  verifyHolographicDispatchAgainstAdapter,
   verifyHolographicDispatchAgainstSession,
   verifyHolographicDispatchFingerprint,
 } from '../../src/holographic/index.mjs';
@@ -15,13 +16,16 @@ import {
 test('surface dispatch returns deterministic integrity and session-lineage fingerprints', async () => {
   const scene = createScene({ sceneId: 'dispatch-fingerprint-scene', nodes: [] });
   const calibration = createCalibrationProfile({ width: 1920, height: 1080, scaleX: 2, scaleY: 2 });
+  const adapter = new SimulatedHoloMatAdapter({ id: 'holo-mat-test' });
   const session = createHolographicSurfaceSession({ scene, calibrationProfile: calibration, sessionId: 'dispatch-fingerprint-session' });
-  const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
+  const dispatch = await dispatchHolographicSurfaceSession({ session, adapter });
   assert.match(dispatch.dispatchFingerprint, /^[a-f0-9]{64}$/);
   assert.match(dispatch.sessionFingerprint, /^[a-f0-9]{64}$/);
   assert.match(dispatch.sourcePacketFingerprint, /^[a-f0-9]{64}$/);
+  assert.deepEqual(dispatch.adapterDevice, adapter.device);
   assert.equal(verifyHolographicDispatchFingerprint(dispatch), true);
   assert.equal(verifyHolographicDispatchAgainstSession(dispatch, session.displaySession), true);
+  assert.equal(verifyHolographicDispatchAgainstAdapter(dispatch, adapter), true);
   assert.equal(dispatch.safety.physicalActuation, false);
 });
 
@@ -76,12 +80,14 @@ test('dispatch snapshots adapter evidence before fingerprinting', async () => {
     metrics: { confidence: 0.9 },
     tags: ['reviewed'],
   });
+  assert.equal(dispatch.adapterDevice, null);
   assert.equal(Object.isFrozen(dispatch.result), true);
   assert.equal(Object.isFrozen(dispatch.result.metrics), true);
   assert.equal(Object.isFrozen(dispatch.result.tags), true);
   assert.equal(dispatch.dispatchFingerprint, originalFingerprint);
   assert.equal(verifyHolographicDispatchFingerprint(dispatch), true);
   assert.equal(verifyHolographicDispatchAgainstSession(dispatch, session), true);
+  assert.equal(verifyHolographicDispatchAgainstAdapter(dispatch, adapter), false);
 });
 
 test('dispatch lineage rejects a different but otherwise valid session', async () => {
@@ -110,6 +116,53 @@ test('dispatch lineage rejects a different but otherwise valid session', async (
     }),
     false,
   );
+});
+
+test('dispatch device lineage rejects a different valid adapter identity', async () => {
+  const scene = createScene({ sceneId: 'dispatch-device-lineage-scene', nodes: [] });
+  const session = createDisplaySession({ scene, sessionId: 'dispatch-device-lineage-session' });
+  const adapter = new SimulatedHoloMatAdapter({ id: 'holo-mat-a', capabilities: ['depth'] });
+  const otherAdapter = new SimulatedHoloMatAdapter({ id: 'holo-mat-b', capabilities: ['depth'] });
+  const dispatch = await dispatchHolographicDisplaySession({
+    session,
+    adapter,
+    operation: 'mapScene',
+    surfaceType: 'holo-mat',
+  });
+
+  assert.equal(verifyHolographicDispatchAgainstAdapter(dispatch, adapter), true);
+  assert.equal(verifyHolographicDispatchAgainstAdapter(dispatch, otherAdapter), false);
+  assert.equal(
+    verifyHolographicDispatchFingerprint({
+      ...dispatch,
+      adapterDevice: otherAdapter.device,
+    }),
+    false,
+  );
+});
+
+test('dispatch rejects accessor-backed adapter identity without evaluating getters', async () => {
+  const scene = createScene({ sceneId: 'dispatch-device-accessor-scene', nodes: [] });
+  const session = createDisplaySession({ scene, sessionId: 'dispatch-device-accessor-session' });
+  let getterReads = 0;
+  const adapter = {
+    async render() {
+      return { status: 'rendered' };
+    },
+  };
+  Object.defineProperty(adapter, 'device', {
+    enumerable: true,
+    get() {
+      getterReads += 1;
+      return { id: 'unsafe', type: 'projector', capabilities: [], simulated: true };
+    },
+  });
+
+  await assert.rejects(
+    () => dispatchHolographicDisplaySession({ session, adapter }),
+    /adapter\.device must not use accessors/,
+  );
+  assert.equal(getterReads, 0);
 });
 
 test('dispatch rejects non-serializable or circular adapter evidence', async () => {
