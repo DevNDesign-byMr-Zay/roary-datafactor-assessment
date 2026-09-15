@@ -12,6 +12,10 @@ function fingerprintDispatch(value) {
   return createHash('sha256').update(JSON.stringify(canonical(value)), 'utf8').digest('hex');
 }
 
+function safetyPolicy() {
+  return Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true });
+}
+
 export async function dispatchHolographicDisplaySession({ session, adapter, operation = 'render' } = {}) {
   if (!validateDisplaySession(session)) throw new TypeError('invalid holographic display session');
   if (!adapter || typeof adapter !== 'object') throw new TypeError('adapter must be an object');
@@ -20,23 +24,26 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
     ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile)
     : session.packet.scene;
   const result = await adapter[operation](scene);
+  const safety = safetyPolicy();
   const dispatch = {
     sessionId: session.sessionId,
     sceneId: session.sceneId,
     operation,
     result,
     calibrated: Boolean(session.packet.calibrationProfile),
+    safety,
   };
   const dispatchFingerprint = fingerprintDispatch(dispatch);
-  return Object.freeze({
-    ...dispatch,
-    dispatchFingerprint,
-    safety: Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true }),
-  });
+  return Object.freeze({ ...dispatch, dispatchFingerprint });
 }
 
 export function verifyHolographicDispatchFingerprint(dispatch) {
-  if (!dispatch || typeof dispatch !== 'object' || typeof dispatch.dispatchFingerprint !== 'string') return false;
-  const { dispatchFingerprint: _dispatchFingerprint, safety: _safety, ...body } = dispatch;
-  return /^[a-f0-9]{64}$/.test(dispatch.dispatchFingerprint) && dispatch.dispatchFingerprint === fingerprintDispatch(body);
+  try {
+    if (!dispatch || typeof dispatch !== 'object' || typeof dispatch.dispatchFingerprint !== 'string') return false;
+    if (!dispatch.safety || dispatch.safety.authoritative !== false || dispatch.safety.physicalActuation !== false || dispatch.safety.advisoryOnly !== true) return false;
+    const { dispatchFingerprint: _dispatchFingerprint, ...body } = dispatch;
+    return /^[a-f0-9]{64}$/.test(dispatch.dispatchFingerprint) && dispatch.dispatchFingerprint === fingerprintDispatch(body);
+  } catch {
+    return false;
+  }
 }
