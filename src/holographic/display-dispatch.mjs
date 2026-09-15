@@ -158,9 +158,13 @@ export async function dispatchHolographicDisplaySession({
   }
 
   const adapterDevice = normalizeAdapterDevice(adapter);
-  const scene = session.packet.calibrationProfile
+  const mappedScene = session.packet.calibrationProfile
     ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile)
     : session.packet.scene;
+  // Never expose the live session packet to an adapter. The adapter receives a
+  // frozen, renderer-neutral snapshot so adapter code cannot mutate session state
+  // after validation and before the dispatch fingerprint is committed.
+  const scene = snapshotDispatchEvidence(mappedScene, 'scene');
   const result = snapshotDispatchEvidence(await operationFn.call(adapter, scene));
   const safety = safetyPolicy();
   const dispatch = {
