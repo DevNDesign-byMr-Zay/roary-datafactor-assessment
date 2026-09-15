@@ -95,9 +95,24 @@ function partialDispatchSummary(dispatch) {
   });
 }
 
+function safeFailureReason(cause) {
+  if (!(cause instanceof Error)) return 'unknown holographic batch failure';
+  const messageDescriptor = Object.getOwnPropertyDescriptor(cause, 'message');
+  if (
+    !messageDescriptor ||
+    'get' in messageDescriptor ||
+    'set' in messageDescriptor ||
+    typeof messageDescriptor.value !== 'string' ||
+    messageDescriptor.value.length === 0
+  ) {
+    return 'holographic renderer failure';
+  }
+  return messageDescriptor.value;
+}
+
 export class HolographicBatchDispatchError extends Error {
   constructor({ session, phase, failedIndex, failedDevice, dispatches, cause }) {
-    const reason = cause instanceof Error ? cause.message : 'unknown holographic batch failure';
+    const reason = safeFailureReason(cause);
     super(`holographic batch ${phase} failed: ${reason}`);
     this.name = 'HolographicBatchDispatchError';
     this.phase = phase;
