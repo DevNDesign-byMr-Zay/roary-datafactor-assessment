@@ -15,8 +15,9 @@ export function createTransform({ x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, s
   });
 }
 
-export function createScene({ id, version = 1, nodes = [], metadata = {} } = {}) {
-  if (typeof id !== 'string' || !id.trim()) throw new TypeError('Scene id is required.');
+export function createScene({ id, sceneId, version = 1, nodes = [], metadata = {} } = {}) {
+  const normalizedId = typeof id === 'string' && id.trim() ? id.trim() : typeof sceneId === 'string' ? sceneId.trim() : '';
+  if (!normalizedId) throw new TypeError('Scene id is required.');
   if (!Number.isInteger(version) || version < 1) throw new TypeError('Scene version must be a positive integer.');
   if (!Array.isArray(nodes)) throw new TypeError('Scene nodes must be an array.');
   const normalizedNodes = nodes.map((node, index) => {
@@ -31,14 +32,14 @@ export function createScene({ id, version = 1, nodes = [], metadata = {} } = {})
       data: Object.freeze({ ...(node.data ?? {}) }),
     });
   });
-  return Object.freeze({ id: id.trim(), version, nodes: Object.freeze(normalizedNodes), metadata: Object.freeze({ ...metadata }) });
+  return Object.freeze({ id: normalizedId, version, nodes: Object.freeze(normalizedNodes), metadata: Object.freeze({ ...metadata }) });
 }
 
 export function createDeviceDescriptor({ id, type, capabilities = [], simulated = true } = {}) {
-  if (typeof id !== 'string' || !id.trim()) throw new TypeError('Device id is required.');
+  const normalizedId = typeof id === 'string' && id.trim() ? id.trim() : `${type ?? 'holographic'}-simulated`;
   if (!DEVICE_TYPES.includes(type)) throw new TypeError(`Unsupported holographic device type: ${type}`);
   if (!Array.isArray(capabilities)) throw new TypeError('Device capabilities must be an array.');
-  return Object.freeze({ id: id.trim(), type, capabilities: Object.freeze([...new Set(capabilities.map(String))]), simulated: Boolean(simulated) });
+  return Object.freeze({ id: normalizedId, type, capabilities: Object.freeze([...new Set(capabilities.map(String))]), simulated: Boolean(simulated) });
 }
 
 export function validateSceneForDevice(scene, device) {
