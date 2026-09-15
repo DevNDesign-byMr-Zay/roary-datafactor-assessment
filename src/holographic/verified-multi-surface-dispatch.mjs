@@ -1,6 +1,9 @@
 import { createDeviceDescriptor } from './contracts.mjs';
 import { validateDisplaySession } from './display-session.mjs';
-import { dispatchHolographicSurface } from './surface-dispatch.mjs';
+import {
+  dispatchHolographicSurface,
+  HOLOGRAPHIC_SURFACE_OPERATIONS,
+} from './surface-dispatch.mjs';
 import {
   createHolographicDispatchBatchReceipt,
   validateHolographicDispatchBatchReceipt,
@@ -17,6 +20,30 @@ function adapterDevice(adapter, index) {
   return createDeviceDescriptor(descriptor.value);
 }
 
+function resolveAdapterOperation(adapter, operation, index) {
+  const ownDescriptor = Object.getOwnPropertyDescriptor(adapter, operation);
+  if (ownDescriptor) {
+    if ('get' in ownDescriptor || 'set' in ownDescriptor || typeof ownDescriptor.value !== 'function') {
+      throw new TypeError(`adapter ${index} operation not supported: ${operation}`);
+    }
+    return;
+  }
+
+  const prototype = Object.getPrototypeOf(adapter);
+  if (!prototype || prototype === Object.prototype || prototype.constructor === Object) {
+    throw new TypeError(`adapter ${index} operation not supported: ${operation}`);
+  }
+  const prototypeDescriptor = Object.getOwnPropertyDescriptor(prototype, operation);
+  if (
+    !prototypeDescriptor ||
+    'get' in prototypeDescriptor ||
+    'set' in prototypeDescriptor ||
+    typeof prototypeDescriptor.value !== 'function'
+  ) {
+    throw new TypeError(`adapter ${index} operation not supported: ${operation}`);
+  }
+}
+
 function preflightAdapters(adapters) {
   if (!Array.isArray(adapters) || adapters.length === 0) {
     throw new TypeError('at least one holographic adapter is required');
@@ -24,7 +51,13 @@ function preflightAdapters(adapters) {
 
   const deviceIds = new Set();
   for (let index = 0; index < adapters.length; index += 1) {
-    const device = adapterDevice(adapters[index], index);
+    const adapter = adapters[index];
+    const device = adapterDevice(adapter, index);
+    const operation = HOLOGRAPHIC_SURFACE_OPERATIONS[device.type];
+    if (!operation) {
+      throw new TypeError(`unsupported holographic surface: ${device.type}`);
+    }
+    resolveAdapterOperation(adapter, operation, index);
     if (deviceIds.has(device.id)) {
       throw new TypeError(`duplicate holographic device identity: ${device.id}`);
     }
