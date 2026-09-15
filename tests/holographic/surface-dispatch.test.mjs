@@ -3,9 +3,16 @@ import assert from 'node:assert/strict';
 import { createScene } from '../../src/holographic/contracts.mjs';
 import { createDisplaySession } from '../../src/holographic/display-session.mjs';
 import { dispatchHolographicSurface } from '../../src/holographic/surface-dispatch.mjs';
-import { SimulatedHoloMatAdapter, SimulatedProjectorAdapter, SimulatedThreeDPlatformAdapter } from '../../src/holographic/adapters.mjs';
+import {
+  SimulatedHoloMatAdapter,
+  SimulatedProjectorAdapter,
+  SimulatedThreeDPlatformAdapter,
+} from '../../src/holographic/adapters.mjs';
 
-const scene = createScene({ id: 'surface-scene', nodes: [{ id: 'node-1', label: 'Grid', transform: { x: 1, y: 2, z: 3 } }] });
+const scene = createScene({
+  id: 'surface-scene',
+  nodes: [{ id: 'node-1', label: 'Grid', transform: { x: 1, y: 2, z: 3 } }],
+});
 
 for (const [name, Adapter, expected] of [
   ['holo-mat', SimulatedHoloMatAdapter, 'mapScene'],
@@ -25,5 +32,57 @@ for (const [name, Adapter, expected] of [
 
 test('unknown surface types fail closed', async () => {
   const session = createDisplaySession({ scene, sessionId: 'session-unknown' });
-  await assert.rejects(() => dispatchHolographicSurface({ session, adapter: { device: { type: 'unknown' } } }), /unsupported holographic surface/);
+  await assert.rejects(
+    () => dispatchHolographicSurface({ session, adapter: { device: { type: 'unknown' } } }),
+    /unsupported holographic surface/,
+  );
+});
+
+test('surface routing rejects accessor-backed adapter devices without evaluating getters', async () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-device-accessor' });
+  let getterReads = 0;
+  const adapter = {};
+  Object.defineProperty(adapter, 'device', {
+    enumerable: true,
+    get() {
+      getterReads += 1;
+      return { type: 'holomat' };
+    },
+  });
+
+  await assert.rejects(
+    () => dispatchHolographicSurface({ session, adapter }),
+    /adapter\.device must not use accessors/,
+  );
+  assert.equal(getterReads, 0);
+});
+
+test('surface routing rejects accessor-backed device types without evaluating getters', async () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-type-accessor' });
+  let getterReads = 0;
+  const device = {};
+  Object.defineProperty(device, 'type', {
+    enumerable: true,
+    get() {
+      getterReads += 1;
+      return 'holomat';
+    },
+  });
+  const adapter = { device };
+
+  await assert.rejects(
+    () => dispatchHolographicSurface({ session, adapter }),
+    /adapter\.device\.type must not use accessors/,
+  );
+  assert.equal(getterReads, 0);
+});
+
+test('surface routing requires device identity to be own data', async () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-inherited-device' });
+  const adapter = Object.create({ device: { type: 'holomat' } });
+
+  await assert.rejects(
+    () => dispatchHolographicSurface({ session, adapter }),
+    /unsupported holographic surface: unknown/,
+  );
 });
