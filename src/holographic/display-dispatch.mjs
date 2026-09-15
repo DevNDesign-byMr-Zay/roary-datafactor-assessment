@@ -39,10 +39,12 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
 
 export function verifyHolographicDispatchFingerprint(dispatch) {
   try {
-    if (!dispatch || typeof dispatch !== 'object' || typeof dispatch.dispatchFingerprint !== 'string') return false;
-    if (!/^[a-f0-9]{64}$/.test(dispatch.sessionFingerprint)) return false;
+    if (!dispatch || typeof dispatch !== 'object' || Array.isArray(dispatch) || Object.getPrototypeOf(dispatch) !== Object.prototype || typeof dispatch.dispatchFingerprint !== 'string') return false;
+    if (!Object.hasOwn(dispatch, 'sessionFingerprint') || !/^[a-f0-9]{64}$/.test(dispatch.sessionFingerprint)) return false;
+    if (!Object.hasOwn(dispatch, 'safety') || !dispatch.safety || typeof dispatch.safety !== 'object' || Array.isArray(dispatch.safety) || Object.getPrototypeOf(dispatch.safety) !== Object.prototype) return false;
+    if (!Object.hasOwn(dispatch.safety, 'authoritative') || !Object.hasOwn(dispatch.safety, 'physicalActuation') || !Object.hasOwn(dispatch.safety, 'advisoryOnly')) return false;
     if (dispatch.surfaceType !== null && typeof dispatch.surfaceType !== 'string') return false;
-    if (!dispatch.safety || dispatch.safety.authoritative !== false || dispatch.safety.physicalActuation !== false || dispatch.safety.advisoryOnly !== true) return false;
+    if (dispatch.safety.authoritative !== false || dispatch.safety.physicalActuation !== false || dispatch.safety.advisoryOnly !== true) return false;
     const body = Object.fromEntries(Object.entries(dispatch).filter(([key]) => key !== 'dispatchFingerprint'));
     return /^[a-f0-9]{64}$/.test(dispatch.dispatchFingerprint) && dispatch.dispatchFingerprint === fingerprintDispatch(body);
   } catch {
