@@ -11,6 +11,6 @@ test('display dispatch maps logical coordinates through calibration before adapt
   const session = createDisplaySession({ scene, calibrationProfile: profile, sessionId: 'session-calibrated' });
   const result = await dispatchHolographicDisplaySession({ session, adapter });
   assert.equal(result.calibrated, true);
-  assert.deepEqual(received.nodes[0].transform, { x: 20, y: 32, z: 8 });
+  assert.deepEqual(received.nodes[0].transform, { x: 20, y: 32, z: 8, rx: 0, ry: 0, rz: 0, scale: 1 });
   assert.equal(result.safety.physicalActuation, false);
 });
