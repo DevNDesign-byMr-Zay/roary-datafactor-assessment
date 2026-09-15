@@ -6,7 +6,6 @@ import {
   createDisplaySession,
   createHolographicInteractionEvent,
   createScene,
-  mapSceneToDisplay,
   validateDisplaySession,
 } from '../../src/holographic/index.mjs';
 
@@ -24,7 +23,6 @@ test('builds a calibrated interaction-aware display session without mutating the
     scaleY: 3,
     depthScale: 4,
   });
-  const displayScene = mapSceneToDisplay(scene, calibration);
   const event = createHolographicInteractionEvent({
     sceneId: scene.id,
     nodeId: 'focus-node',
@@ -32,18 +30,20 @@ test('builds a calibrated interaction-aware display session without mutating the
     source: 'test-harness',
   });
   const session = createDisplaySession({
-    scene: displayScene,
+    scene,
     calibrationProfile: calibration,
     interactionEvents: [event],
     sessionId: 'session-001',
   });
 
   assert.equal(session.sceneId, scene.id);
+  assert.equal(session.packet.scene.id, scene.id);
+  assert.equal(session.packet.scene.nodes[0].transform.x, 2);
   assert.equal(session.packet.calibrationProfile.scaleX, 2);
   assert.equal(session.packet.interactionEvents[0].action, 'focus');
   assert.equal(session.packet.safety.physicalActuation, false);
   assert.equal(validateDisplaySession(session), true);
-  assert.deepEqual(scene.nodes[0].transform, { x: 2, y: 3, z: 4 });
+  assert.deepEqual(scene.nodes[0].transform, { x: 2, y: 3, z: 4, rx: 0, ry: 0, rz: 0, scale: 1 });
 });
 
 test('rejects a session whose packet identity has been tampered with', () => {
