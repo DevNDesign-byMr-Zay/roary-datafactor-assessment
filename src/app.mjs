@@ -1,15 +1,47 @@
-import cors from 'cors';
-import express from 'express';
 import { randomUUID } from 'node:crypto';
 
-import { createChatDeadlineBudget, runWithChatDeadline } from './chat-deadline.mjs';
-import { ChatAbortError, ChatTimeoutError } from './errors.mjs';
-import { createHistoryStore } from './history-store.mjs';
-import { createModel } from './model.mjs';
-import { createRequestLogger } from './request-logger.mjs';
+import cors from 'cors';
+import express from 'express';
 
-function requestErrorBody(requestId, { code, message }) {
-  return { error: { code, message, requestId } };
+import {
+  ChatAbortError,
+  ChatTimeoutError,
+  createChatDeadlineBudget,
+  runWithChatDeadline,
+} from './chat-deadline.mjs';
+import { createHistoryStore } from './history-store.mjs';
+import { extractModelText } from './model-response.mjs';
+import { parseChatRequest } from './validation.mjs';
+
+const SYSTEM_INSTRUCTION = `You are a concise, helpful conversational assistant.
+- Keep answers short unless asked.
+- If you do not know, say so and offer next steps.
+- Avoid sensitive or personal data unless explicitly requested.`;
+
+function sanitizeFailureMetadata(error) {
+  const metadata = { event: 'chat.failed' };
+
+  if (typeof error?.name === 'string' && error.name) metadata.errorName = error.name;
+  if (typeof error?.code === 'string' && error.code) metadata.errorCode = error.code;
+
+  return metadata;
+}
+
+function normalizeRequestId(value) {
+  const requestId = typeof value === 'string' ? value.trim() : '';
+  if (!requestId || requestId.length > 128) {
+    throw new TypeError('requestIdFactory must return a non-empty string up to 128 characters.');
+  }
+  return requestId;
+}
+
+function requestErrorBody(requestId, error) {
+  return {
+    error: {
+      ...error,
+      requestId,
+    },
+  };
 }
 
 function assertChatActive(signal, deadline) {
@@ -17,53 +49,135 @@ function assertChatActive(signal, deadline) {
   deadline.remainingMs();
 }
 
-export function createApp({ db, model, historyStore, advisoryCoordinator, logger } = {}) {
+export function createApp({
+  vertexClient,
+  db,
+  logger,
+  project = 'assessment-project',
+  location = 'us-central1',
+  modelName = 'gemini-2.5-flash',
+  historyLimit = 12,
+  requestIdFactory = randomUUID,
+  chatTimeoutMs = 15_000,
+  setTimeoutFn = setTimeout,
+  clearTimeoutFn = clearTimeout,
+  nowFn = Date.now,
+  advisoryCoordinator = null,
+} = {}) {
+  if (!vertexClient?.getGenerativeModel) {
+    throw new TypeError('A Vertex AI-compatible client is required.');
+  }
+  if (!db) throw new TypeError('A Firestore-compatible database is required.');
+  if (!logger) throw new TypeError('A structured logger is required.');
+  if (typeof requestIdFactory !== 'function') {
+    throw new TypeError('requestIdFactory must be a function.');
+  }
+  if (!Number.isFinite(chatTimeoutMs) || chatTimeoutMs <= 0) {
+    throw new TypeError('chatTimeoutMs must be a positive finite number.');
+  }
+  if (typeof setTimeoutFn !== 'function' || typeof clearTimeoutFn !== 'function') {
+    throw new TypeError('timer functions must be functions.');
+  }
+  if (typeof nowFn !== 'function') throw new TypeError('nowFn must be a function.');
+  if (advisoryCoordinator !== null && typeof advisoryCoordinator !== 'function') {
+    throw new TypeError('advisoryCoordinator must be a function when provided.');
+  }
+
   const app = express();
-  const resolvedHistoryStore = historyStore ?? createHistoryStore(db);
-  const resolvedModel = model ?? createModel();
-  const resolvedLogger = logger ?? createRequestLogger();
+  const historyStore = createHistoryStore(db, { historyLimit });
+  const model = vertexClient.getGenerativeModel({
+    model: modelName,
+    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+  });
 
   app.disable('x-powered-by');
   app.use(cors());
   app.use((req, res, next) => {
-    req.requestId = randomUUID();
-    res.setHeader('X-Request-ID', req.requestId);
-    next();
+    try {
+      req.requestId = normalizeRequestId(requestIdFactory());
+      res.set('X-Request-Id', req.requestId);
+      return next();
+    } catch (error) {
+      return next(error);
+    }
   });
   app.use(express.json({ limit: '64kb' }));
 
-  app.post('/api/chat', async (req, res) => {
-    const requestId = req.requestId;
-    const { message: text, sessionId = requestId } = req.body ?? {};
-    const abortController = new AbortController();
-    const deadline = createChatDeadlineBudget();
-    const handleRequestAbort = () => abortController.abort();
+  app.get('/health', (_req, res) => {
+    res.status(200).json({ ok: true, project, location, model: modelName });
+  });
 
-    req.on('aborted', handleRequestAbort);
+  app.get('/', (_req, res) => {
+    res.status(200).send('Conversational AI service is live');
+  });
+
+  app.post('/chat', async (req, res) => {
+    const { requestId } = req;
+
+    if (!req.is('application/json')) {
+      logger.warn(
+        { event: 'request.unsupported_media_type', requestId },
+        'Rejected non-JSON chat request',
+      );
+      return res.status(415).json(
+        requestErrorBody(requestId, {
+          code: 'UNSUPPORTED_MEDIA_TYPE',
+          message: 'Chat requests must use application/json.',
+        }),
+      );
+    }
+
+    const parsed = parseChatRequest(req.body);
+    if (!parsed.ok) {
+      logger.warn(
+        { event: 'chat.validation_failed', requestId },
+        'Rejected invalid chat request',
+      );
+      return res.status(400).json(requestErrorBody(requestId, parsed.error));
+    }
+
+    const { text, sessionId } = parsed.value;
+    const abortController = new globalThis.AbortController();
+    const handleRequestAbort = () => abortController.abort();
+    req.once('aborted', handleRequestAbort);
 
     try {
-      if (typeof text !== 'string' || !text.trim()) {
-        return res.status(400).json(requestErrorBody(requestId, {
-          code: 'INVALID_MESSAGE',
-          message: 'A non-empty message is required.',
-        }));
-      }
-
+      const deadline = createChatDeadlineBudget(chatTimeoutMs, { nowFn });
       const history = await runWithChatDeadline(
-        () => resolvedHistoryStore.load(sessionId, { signal: abortController.signal }),
+        () => historyStore.load(sessionId, { signal: abortController.signal }),
         {
           timeoutMs: deadline.remainingMs(),
           signal: abortController.signal,
+          setTimeoutFn,
+          clearTimeoutFn,
         },
       );
+      const result = await runWithChatDeadline(
+        () =>
+          model.generateContent({
+            contents: [...history, { role: 'user', parts: [{ text }] }],
+          }),
+        {
+          timeoutMs: deadline.remainingMs(),
+          signal: abortController.signal,
+          setTimeoutFn,
+          clearTimeoutFn,
+        },
+      );
+      const reply = extractModelText(result);
 
-      const reply = await runWithChatDeadline(
-        () => resolvedModel.generate({ text, history, signal: abortController.signal }),
-        {
-          timeoutMs: deadline.remainingMs(),
-          signal: abortController.signal,
-        },
-      );
+      if (!reply) {
+        logger.error(
+          { event: 'chat.empty_model_response', requestId, sessionId },
+          'Model returned no text',
+        );
+        return res.status(502).json(
+          requestErrorBody(requestId, {
+            code: 'EMPTY_MODEL_RESPONSE',
+            message: 'The model returned no text.',
+          }),
+        );
+      }
 
       if (advisoryCoordinator) {
         const advisoryContext = Object.freeze({
@@ -75,11 +189,13 @@ export function createApp({ db, model, historyStore, advisoryCoordinator, logger
         await runWithChatDeadline(() => advisoryCoordinator(advisoryContext), {
           timeoutMs: deadline.remainingMs(),
           signal: abortController.signal,
+          setTimeoutFn,
+          clearTimeoutFn,
         });
       }
 
       assertChatActive(abortController.signal, deadline);
-      await resolvedHistoryStore.append(sessionId, [
+      await historyStore.append(sessionId, [
         { role: 'user', text },
         { role: 'assistant', text: reply },
       ], { signal: abortController.signal });
@@ -175,11 +291,4 @@ export function createApp({ db, model, historyStore, advisoryCoordinator, logger
   });
 
   return app;
-}
-
-function sanitizeFailureMetadata(error) {
-  return {
-    errorName: error?.name ?? 'Error',
-    errorMessage: typeof error?.message === 'string' ? error.message.slice(0, 240) : 'Unknown error',
-  };
 }
