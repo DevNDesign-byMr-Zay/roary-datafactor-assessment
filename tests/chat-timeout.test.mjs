@@ -70,7 +70,11 @@ function buildLateModelApp() {
   const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
   const model = {
     generateContent: jest.fn(
-      () => new Promise((resolve) => setTimeout(() => resolve({ response: { text: () => 'late reply' } }), 30)),
+      () => {
+        return new Promise((resolve) => {
+          setTimeout(() => resolve({ response: { text: () => 'late reply' } }), 30);
+        });
+      },
     ),
   };
   const vertexClient = { getGenerativeModel: jest.fn(() => model) };
