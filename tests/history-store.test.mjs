@@ -71,6 +71,17 @@ describe('history store', () => {
     ]);
   });
 
+  test('rejects an aborted load before touching the database', async () => {
+    const { db, spies } = makeDb();
+    const store = createHistoryStore(db);
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(store.load('session-aborted', { signal: controller.signal }))
+      .rejects.toMatchObject({ name: 'AbortError' });
+    expect(spies.rootCollection).not.toHaveBeenCalled();
+  });
+
   test('uses one Firestore batch for the complete chat turn', async () => {
     const { db, spies } = makeDb();
     const store = createHistoryStore(db);
@@ -93,6 +104,23 @@ describe('history store', () => {
       { role: 'user', text: 'question' },
       { role: 'assistant', text: 'answer' },
     ]);
+  });
+
+  test('does not construct or commit a batch after abort', async () => {
+    const { db, spies } = makeDb();
+    const store = createHistoryStore(db);
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(
+      store.append('session-aborted', [
+        { role: 'user', text: 'question' },
+        { role: 'assistant', text: 'answer' },
+      ], { signal: controller.signal }),
+    ).rejects.toMatchObject({ name: 'AbortError' });
+    expect(spies.batchFactory).not.toHaveBeenCalled();
+    expect(spies.batchCommit).not.toHaveBeenCalled();
+    expect(spies.add).not.toHaveBeenCalled();
   });
 
   test('propagates batch commit failures without falling back to per-message writes', async () => {
