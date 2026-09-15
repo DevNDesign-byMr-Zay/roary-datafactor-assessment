@@ -34,3 +34,8 @@ export {
   createVerifiedHolographicDispatchRecord,
   validateVerifiedHolographicDispatchRecord,
 } from './verified-dispatch-record.mjs';
+export {
+  HOLOGRAPHIC_DISPATCH_BATCH_VERSION,
+  createHolographicDispatchBatchReceipt,
+  validateHolographicDispatchBatchReceipt,
+} from './dispatch-batch-receipt.mjs';
