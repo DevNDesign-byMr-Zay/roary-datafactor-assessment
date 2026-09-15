@@ -17,7 +17,9 @@ export function createHolographicScenePacket({ scene, calibrationProfile = null,
   if (!scene || typeof scene !== 'object') throw new TypeError('scene is required.');
   const normalizedScene = createScene(scene);
   if (!Array.isArray(interactionEvents)) throw new TypeError('interactionEvents must be an array.');
-  const normalizedCalibration = calibrationProfile == null ? null : createCalibrationProfile(calibrationProfile);
+  const normalizedCalibration = calibrationProfile === null || calibrationProfile === undefined
+    ? null
+    : createCalibrationProfile(calibrationProfile);
   const payload = {
     packetVersion: PACKET_VERSION,
     scene: normalizedScene,
