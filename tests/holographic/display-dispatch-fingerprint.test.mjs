@@ -53,3 +53,27 @@ test('surface dispatch refuses inherited adapter operations', async () => {
     /adapter operation not supported: mapScene/,
   );
 });
+
+test('rejects a dispatch whose safety policy is inherited from a prototype', async () => {
+  const scene = createScene({ id: 'dispatch-prototype-safety-scene', nodes: [] });
+  const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-prototype-safety-session' });
+  const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
+  const forgedSafety = Object.create({ authoritative: false, physicalActuation: false, advisoryOnly: true });
+  assert.equal(verifyHolographicDispatchFingerprint({ ...dispatch, safety: forgedSafety }), false);
+});
+
+test('rejects a dispatch whose safety object is missing an own invariant flag', async () => {
+  const scene = createScene({ id: 'dispatch-missing-safety-scene', nodes: [] });
+  const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-missing-safety-session' });
+  const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
+  const partialSafety = { authoritative: false, physicalActuation: false };
+  assert.equal(verifyHolographicDispatchFingerprint({ ...dispatch, safety: partialSafety }), false);
+});
+
+test('rejects a prototype-backed dispatch envelope', async () => {
+  const scene = createScene({ id: 'dispatch-prototype-envelope-scene', nodes: [] });
+  const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-prototype-envelope-session' });
+  const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
+  const forgedDispatch = Object.create(dispatch);
+  assert.equal(verifyHolographicDispatchFingerprint(forgedDispatch), false);
+});
