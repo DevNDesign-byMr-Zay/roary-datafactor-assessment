@@ -25,3 +25,13 @@ test('tampering a dispatch result invalidates its fingerprint', async () => {
   const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
   assert.equal(verifyHolographicDispatchFingerprint({ ...dispatch, operation: 'render' }), false);
 });
+
+test('tampering the dispatch safety policy invalidates its fingerprint', async () => {
+  const scene = createScene({ sceneId: 'dispatch-safety-scene', nodes: [] });
+  const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-safety-session' });
+  const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
+  assert.equal(verifyHolographicDispatchFingerprint({
+    ...dispatch,
+    safety: { ...dispatch.safety, physicalActuation: true },
+  }), false);
+});
