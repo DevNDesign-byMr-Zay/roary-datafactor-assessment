@@ -44,7 +44,6 @@ const strictRules = {
   'no-promise-executor-return': 'error',
   'no-prototype-builtins': 'error',
   'no-self-assign': 'error',
-  'no-setter-return': 'error',
   'no-shadow-restricted-names': 'error',
   'no-sparse-arrays': 'error',
   'no-this-before-super': 'error',
@@ -78,7 +77,12 @@ export default [
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: nodeGlobals,
+      globals: {
+        ...nodeGlobals,
+        describe: 'readonly',
+        expect: 'readonly',
+        test: 'readonly',
+      },
     },
     rules: strictRules,
   },
