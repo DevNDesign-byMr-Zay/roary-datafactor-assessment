@@ -24,3 +24,12 @@ test('rejects a tampered session packet', () => {
   assert.equal(validateDisplaySession({ ...session, sceneId: 'other' }), false);
   assert.equal(validateDisplaySession({ ...session, safety: { ...session.safety, physicalActuation: true } }), false);
 });
+
+test('rejects calibration drift even when the scene identity is unchanged', () => {
+  const session = createDisplaySession({ scene, calibrationProfile, sessionId: 'session-1' });
+  const tamperedPacket = {
+    ...session.packet,
+    calibrationProfile: { ...session.packet.calibrationProfile, scaleX: 99 },
+  };
+  assert.equal(validateDisplaySession({ ...session, packet: tamperedPacket }), false);
+});
