@@ -128,7 +128,7 @@ export async function dispatchHolographicDisplaySession({
 } = {}) {
   if (!validateDisplaySession(session)) throw new TypeError('invalid holographic display session');
   if (!adapter || typeof adapter !== 'object') throw new TypeError('adapter must be an object');
-  if (typeof adapter[operation] !== 'function') {
+  if (!Object.hasOwn(adapter, operation) || typeof adapter[operation] !== 'function') {
     throw new TypeError(`adapter operation not supported: ${operation}`);
   }
   if (surfaceType !== undefined && (typeof surfaceType !== 'string' || !surfaceType.trim())) {
