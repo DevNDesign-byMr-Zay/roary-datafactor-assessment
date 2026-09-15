@@ -7,8 +7,12 @@ const OPERATIONS = Object.freeze({
   'three-d-platform': 'stage',
 });
 
-/** Route a validated renderer-neutral session or scene to a simulated surface operation. */
+/** Route one validated renderer-neutral session or scene to a simulated surface operation. */
 export async function dispatchHolographicSurface({ session, scene, adapter, operation } = {}) {
+  if (session && scene) {
+    throw new TypeError('surface dispatch requires either session or scene, not both');
+  }
+
   const type = adapter?.device?.type;
   const defaultOperation = OPERATIONS[type];
   if (!defaultOperation) throw new TypeError(`unsupported holographic surface: ${type ?? 'unknown'}`);
@@ -25,6 +29,10 @@ export async function dispatchHolographicSurface({ session, scene, adapter, oper
       scene,
       sessionId: `surface:${sceneId.trim()}`,
     });
+  }
+
+  if (!displaySession) {
+    throw new TypeError('surface dispatch requires a validated session or scene');
   }
 
   return dispatchHolographicDisplaySession({
