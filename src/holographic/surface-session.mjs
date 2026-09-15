@@ -11,7 +11,7 @@ export async function dispatchHolographicSurfaceSession({ session, adapter } = {
   if (!validateHolographicInteractionSession(session)) {
     throw new TypeError('invalid holographic surface session');
   }
-  const result = await dispatchHolographicSurface({ session, adapter });
+  const result = await dispatchHolographicSurface({ session: session.displaySession, adapter });
   return Object.freeze({
     ...result,
     sessionId: session.sessionId,
