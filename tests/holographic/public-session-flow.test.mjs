@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from '@jest/globals';
 import {
   createScene,
   createHolographicInteractionSession,
@@ -9,7 +9,7 @@ import {
 describe('public holographic session flow', () => {
   it('creates and resolves an advisory interaction without mutating the scene', () => {
     const scene = createScene({
-      sceneId: 'scene-1',
+      id: 'scene-1',
       nodes: [{ id: 'node-1', label: 'Transformer', transform: { x: 1, y: 2, z: 3, scale: 1 } }],
     });
     const session = createHolographicInteractionSession({ scene, sessionId: 'session-1' });
