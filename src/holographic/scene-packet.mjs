@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { createScene } from './contracts.mjs';
+import { createCalibrationProfile, validateCalibrationProfile } from './calibration.mjs';
 
 const PACKET_VERSION = 1;
 
@@ -16,10 +17,11 @@ export function createHolographicScenePacket({ scene, calibrationProfile = null,
   if (!scene || typeof scene !== 'object') throw new TypeError('scene is required.');
   const normalizedScene = createScene(scene);
   if (!Array.isArray(interactionEvents)) throw new TypeError('interactionEvents must be an array.');
+  const normalizedCalibration = calibrationProfile == null ? null : createCalibrationProfile(calibrationProfile);
   const payload = {
     packetVersion: PACKET_VERSION,
     scene: normalizedScene,
-    calibrationProfile: calibrationProfile ?? null,
+    calibrationProfile: normalizedCalibration,
     interactionEvents: interactionEvents.map((event) => ({ ...event, advisoryOnly: true, physicalActuation: false })),
     safety: { authoritative: false, physicalActuation: false, advisoryOnly: true },
   };
@@ -30,6 +32,7 @@ export function validateHolographicScenePacket(packet) {
   try {
     if (!packet || typeof packet !== 'object' || packet.packetVersion !== PACKET_VERSION) return false;
     if (!packet.scene || typeof packet.scene.id !== 'string' || !Array.isArray(packet.scene.nodes)) return false;
+    if (packet.calibrationProfile !== null && !validateCalibrationProfile(packet.calibrationProfile)) return false;
     if (!Array.isArray(packet.interactionEvents)) return false;
     if (packet.interactionEvents.some((event) => event.advisoryOnly !== true || event.physicalActuation !== false)) return false;
     if (packet.safety?.authoritative !== false || packet.safety?.physicalActuation !== false || packet.safety?.advisoryOnly !== true) return false;
