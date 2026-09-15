@@ -1,10 +1,9 @@
 import { createHash } from 'node:crypto';
 import { validateDisplaySession } from './display-session.mjs';
 import {
-  verifyHolographicDispatchAgainstAdapter,
-  verifyHolographicDispatchAgainstSession,
-  verifyHolographicDispatchFingerprint,
-} from './display-dispatch.mjs';
+  createVerifiedHolographicDispatchRecord,
+  validateVerifiedHolographicDispatchRecord,
+} from './verified-dispatch-record.mjs';
 
 const DISPATCH_BATCH_VERSION = 1;
 const RECEIPT_KEYS = Object.freeze([
@@ -20,6 +19,7 @@ const RECEIPT_KEYS = Object.freeze([
   'batchFingerprint',
 ]);
 const ENTRY_KEYS = Object.freeze([
+  'recordFingerprint',
   'dispatchFingerprint',
   'deviceId',
   'deviceType',
@@ -94,15 +94,14 @@ function safetyPolicy() {
   return Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true });
 }
 
-function dispatchEntry(dispatch) {
-  if (!dispatch.adapterDevice) throw new TypeError('batch dispatches must be device-bound');
-  const surfaceType = dispatch.surfaceType === undefined ? null : dispatch.surfaceType;
+function recordEntry(record) {
   return Object.freeze({
-    dispatchFingerprint: dispatch.dispatchFingerprint,
-    deviceId: dispatch.adapterDevice.id,
-    deviceType: dispatch.adapterDevice.type,
-    operation: dispatch.operation,
-    surfaceType,
+    recordFingerprint: record.recordFingerprint,
+    dispatchFingerprint: record.dispatchFingerprint,
+    deviceId: record.adapterDevice.id,
+    deviceType: record.adapterDevice.type,
+    operation: record.operation,
+    surfaceType: record.surfaceType,
   });
 }
 
@@ -116,28 +115,28 @@ function validatedEntries({ session, dispatches, adapters }) {
   }
 
   const entries = [];
+  const recordFingerprints = new Set();
   const dispatchFingerprints = new Set();
   const deviceIds = new Set();
   for (let index = 0; index < dispatches.length; index += 1) {
     const dispatch = dispatches[index];
     const adapter = adapters[index];
-    if (!verifyHolographicDispatchFingerprint(dispatch)) {
-      throw new TypeError(`dispatch ${index} failed fingerprint validation`);
-    }
-    if (!verifyHolographicDispatchAgainstSession(dispatch, session)) {
-      throw new TypeError(`dispatch ${index} does not belong to the session`);
-    }
-    if (!verifyHolographicDispatchAgainstAdapter(dispatch, adapter)) {
-      throw new TypeError(`dispatch ${index} does not belong to the adapter`);
+    const record = createVerifiedHolographicDispatchRecord({ dispatch, session, adapter });
+    if (!validateVerifiedHolographicDispatchRecord(record, { dispatch, session, adapter })) {
+      throw new TypeError(`dispatch ${index} failed verified record validation`);
     }
 
-    const entry = dispatchEntry(dispatch);
+    const entry = recordEntry(record);
+    if (recordFingerprints.has(entry.recordFingerprint)) {
+      throw new TypeError('duplicate dispatch records are not allowed');
+    }
     if (dispatchFingerprints.has(entry.dispatchFingerprint)) {
       throw new TypeError('duplicate dispatch fingerprints are not allowed');
     }
     if (deviceIds.has(entry.deviceId)) {
       throw new TypeError('duplicate device identities are not allowed');
     }
+    recordFingerprints.add(entry.recordFingerprint);
     dispatchFingerprints.add(entry.dispatchFingerprint);
     deviceIds.add(entry.deviceId);
     entries.push(entry);
@@ -176,7 +175,10 @@ export function validateHolographicDispatchBatchReceipt(
     if (values.version !== DISPATCH_BATCH_VERSION) return false;
     if (values.interpretation !== 'verified-multi-surface-dispatch-batch') return false;
     if (!Number.isInteger(values.dispatchCount) || values.dispatchCount <= 0) return false;
-    if (typeof values.batchFingerprint !== 'string' || !/^[a-f0-9]{64}$/.test(values.batchFingerprint)) {
+    if (
+      typeof values.batchFingerprint !== 'string' ||
+      !/^[a-f0-9]{64}$/.test(values.batchFingerprint)
+    ) {
       return false;
     }
 
@@ -195,13 +197,16 @@ export function validateHolographicDispatchBatchReceipt(
     for (const storedEntry of storedEntries) {
       const entry = readExactDataObject(storedEntry, ENTRY_KEYS);
       if (!entry) return false;
-      if (typeof entry.dispatchFingerprint !== 'string' || !/^[a-f0-9]{64}$/.test(entry.dispatchFingerprint)) {
-        return false;
+      for (const candidate of [entry.recordFingerprint, entry.dispatchFingerprint]) {
+        if (typeof candidate !== 'string' || !/^[a-f0-9]{64}$/.test(candidate)) return false;
       }
       if (typeof entry.deviceId !== 'string' || !entry.deviceId.trim()) return false;
       if (typeof entry.deviceType !== 'string' || !entry.deviceType.trim()) return false;
       if (typeof entry.operation !== 'string' || !entry.operation.trim()) return false;
-      if (entry.surfaceType !== null && (typeof entry.surfaceType !== 'string' || !entry.surfaceType.trim())) {
+      if (
+        entry.surfaceType !== null &&
+        (typeof entry.surfaceType !== 'string' || !entry.surfaceType.trim())
+      ) {
         return false;
       }
     }
@@ -209,7 +214,10 @@ export function validateHolographicDispatchBatchReceipt(
     const expectedEntries = validatedEntries({ session, dispatches, adapters });
     if (expectedEntries.length !== storedEntries.length) return false;
     for (let index = 0; index < expectedEntries.length; index += 1) {
-      if (JSON.stringify(canonical(storedEntries[index])) !== JSON.stringify(canonical(expectedEntries[index]))) {
+      if (
+        JSON.stringify(canonical(storedEntries[index])) !==
+        JSON.stringify(canonical(expectedEntries[index]))
+      ) {
         return false;
       }
     }
