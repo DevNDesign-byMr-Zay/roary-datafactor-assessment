@@ -23,6 +23,11 @@ test('public surface dispatcher fails closed for unsupported operations', async 
   await assert.rejects(() => dispatchHolographicSurface({ session: displaySession, adapter: new SimulatedProjectorAdapter(), operation: 'stage' }), /operation not supported/);
 });
 
+test('public surface dispatcher rejects malformed operation selectors', async () => {
+  await assert.rejects(() => dispatchHolographicSurface({ session: displaySession, adapter: new SimulatedProjectorAdapter(), operation: {} }), /operation must be a string/);
+  await assert.rejects(() => dispatchHolographicSurface({ session: displaySession, adapter: new SimulatedProjectorAdapter(), operation: Symbol('render') }), /operation must be a string/);
+});
+
 test('dispatch evidence rejects tampered provenance and safety fields', async () => {
   const dispatch = await dispatchHolographicSurface({
     session: displaySession,
