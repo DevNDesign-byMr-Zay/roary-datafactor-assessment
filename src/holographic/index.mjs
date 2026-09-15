@@ -29,3 +29,8 @@ export {
   verifyHolographicDispatchAgainstSession,
   verifyHolographicDispatchFingerprint,
 } from './display-dispatch.mjs';
+export {
+  VERIFIED_DISPATCH_RECORD_VERSION,
+  createVerifiedHolographicDispatchRecord,
+  validateVerifiedHolographicDispatchRecord,
+} from './verified-dispatch-record.mjs';
