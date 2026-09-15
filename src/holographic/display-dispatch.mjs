@@ -23,7 +23,15 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
   const scene = session.packet.calibrationProfile ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile) : session.packet.scene;
   const result = await adapter[operation](scene);
   const safety = safetyPolicy();
-  const dispatch = { sessionId: session.sessionId, sceneId: session.sceneId, operation, result, calibrated: Boolean(session.packet.calibrationProfile), safety };
+  const dispatch = {
+    sessionId: session.sessionId,
+    sessionFingerprint: session.sessionFingerprint,
+    sceneId: session.sceneId,
+    operation,
+    result,
+    calibrated: Boolean(session.packet.calibrationProfile),
+    safety,
+  };
   const dispatchFingerprint = fingerprintDispatch(dispatch);
   return Object.freeze({ ...dispatch, dispatchFingerprint });
 }
@@ -31,6 +39,7 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
 export function verifyHolographicDispatchFingerprint(dispatch) {
   try {
     if (!dispatch || typeof dispatch !== 'object' || typeof dispatch.dispatchFingerprint !== 'string') return false;
+    if (!/^[a-f0-9]{64}$/.test(dispatch.sessionFingerprint)) return false;
     if (!dispatch.safety || dispatch.safety.authoritative !== false || dispatch.safety.physicalActuation !== false || dispatch.safety.advisoryOnly !== true) return false;
     const body = Object.fromEntries(Object.entries(dispatch).filter(([key]) => key !== 'dispatchFingerprint'));
     return /^[a-f0-9]{64}$/.test(dispatch.dispatchFingerprint) && dispatch.dispatchFingerprint === fingerprintDispatch(body);
