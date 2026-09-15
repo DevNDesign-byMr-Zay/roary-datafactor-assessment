@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 import { createScene } from '../../src/holographic/contracts.mjs';
 import { createCalibrationProfile, mapLogicalTransform, mapSceneToDisplay } from '../../src/holographic/calibration.mjs';
+import { SimulatedProjectorAdapter } from '../../src/holographic/adapters.mjs';
 
 describe('holographic display calibration', () => {
   const profile = { width: 1920, height: 1080, originX: 100, originY: 50, scaleX: 2, scaleY: 3, depthScale: 4 };
@@ -22,6 +23,14 @@ describe('holographic display calibration', () => {
     expect(display.nodes[0].transform.x).toBe(104);
     expect(display.nodes[0].transform.y).toBe(59);
     expect(scene.nodes[0].transform.x).toBe(2);
+  });
+
+  test('preserves capability requirements for downstream device validation', () => {
+    const scene = createScene({ id: 'capability-demo', nodes: [{ id: 'depth-node', data: { requires: ['depth'] }, transform: { x: 1 } }] });
+    const display = mapSceneToDisplay(scene, profile);
+    const adapter = new SimulatedProjectorAdapter({ id: 'projector-no-depth' });
+    expect(adapter.device.capabilities).not.toContain('depth');
+    expect(() => adapter.render(display)).rejects.toThrow('Scene requires unsupported capabilities: depth');
   });
 
   test('rejects unsafe calibration dimensions', () => {
