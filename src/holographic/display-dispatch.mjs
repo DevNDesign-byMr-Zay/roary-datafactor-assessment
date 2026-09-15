@@ -14,6 +14,22 @@ function canonical(value) {
   return value;
 }
 
+function safetyPolicy() {
+  return Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true });
+}
+
+function hasExactSafetyPolicy(safety) {
+  return Boolean(
+    safety &&
+      typeof safety === 'object' &&
+      !Array.isArray(safety) &&
+      safety.authoritative === false &&
+      safety.physicalActuation === false &&
+      safety.advisoryOnly === true &&
+      Object.keys(safety).length === 3,
+  );
+}
+
 function snapshotDispatchArray(value, path, seen) {
   if (Object.getOwnPropertySymbols(value).length > 0) {
     throw new TypeError(`${path} must not contain symbol properties`);
@@ -112,7 +128,7 @@ export async function dispatchHolographicDisplaySession({
     ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile)
     : session.packet.scene;
   const result = snapshotDispatchEvidence(await adapter[operation](scene));
-  const safety = Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true });
+  const safety = safetyPolicy();
   const dispatch = {
     sessionId: session.sessionId,
     sceneId: scene.id ?? scene.sceneId,
@@ -130,15 +146,15 @@ export async function dispatchHolographicDisplaySession({
 }
 
 export function verifyHolographicDispatchFingerprint(dispatch) {
-  if (!dispatch || typeof dispatch !== 'object' || typeof dispatch.dispatchFingerprint !== 'string') {
+  try {
+    const normalized = snapshotDispatchEvidence(dispatch, 'dispatch');
+    if (typeof normalized.dispatchFingerprint !== 'string') return false;
+    if (!/^[a-f0-9]{64}$/.test(normalized.dispatchFingerprint)) return false;
+    if (!hasExactSafetyPolicy(normalized.safety)) return false;
+
+    const { dispatchFingerprint, ...body } = normalized;
+    return dispatchFingerprint === fingerprintDispatch(body);
+  } catch {
     return false;
   }
-
-  const body = Object.fromEntries(
-    Object.entries(dispatch).filter(([key]) => key !== 'dispatchFingerprint'),
-  );
-  return (
-    /^[a-f0-9]{64}$/.test(dispatch.dispatchFingerprint) &&
-    dispatch.dispatchFingerprint === fingerprintDispatch(body)
-  );
 }
