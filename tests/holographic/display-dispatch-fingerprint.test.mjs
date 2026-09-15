@@ -28,6 +28,25 @@ test('tampering a dispatch result invalidates its fingerprint', async () => {
   assert.equal(verifyHolographicDispatchFingerprint({ ...dispatch, operation: 'render' }), false);
 });
 
+test('tampering the dispatch safety policy invalidates its fingerprint', async () => {
+  const scene = createScene({ sceneId: 'dispatch-safety-scene', nodes: [] });
+  const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-safety-session' });
+  const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
+
+  assert.equal(verifyHolographicDispatchFingerprint({
+    ...dispatch,
+    safety: { ...dispatch.safety, physicalActuation: true },
+  }), false);
+  assert.equal(verifyHolographicDispatchFingerprint({
+    ...dispatch,
+    safety: { ...dispatch.safety, authoritative: true },
+  }), false);
+  assert.equal(verifyHolographicDispatchFingerprint({
+    ...dispatch,
+    safety: { ...dispatch.safety, extraAuthority: true },
+  }), false);
+});
+
 test('dispatch snapshots adapter evidence before fingerprinting', async () => {
   const scene = createScene({ sceneId: 'dispatch-isolation-scene', nodes: [] });
   const session = createDisplaySession({ scene, sessionId: 'dispatch-isolation-session' });
@@ -124,4 +143,23 @@ test('dispatch rejects hidden and accessor-backed evidence without evaluating ge
     }),
     /symbol properties/,
   );
+});
+
+test('dispatch verifier rejects accessor-backed receipts without evaluating getters', async () => {
+  const scene = createScene({ sceneId: 'dispatch-verifier-accessor-scene', nodes: [] });
+  const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-verifier-accessor-session' });
+  const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
+
+  let getterReads = 0;
+  const deceptive = { ...dispatch };
+  Object.defineProperty(deceptive, 'dispatchFingerprint', {
+    enumerable: true,
+    get() {
+      getterReads += 1;
+      return dispatch.dispatchFingerprint;
+    },
+  });
+
+  assert.equal(verifyHolographicDispatchFingerprint(deceptive), false);
+  assert.equal(getterReads, 0);
 });
