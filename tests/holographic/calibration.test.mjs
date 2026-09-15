@@ -14,7 +14,7 @@ describe('holographic display calibration', () => {
   test('projects a complete scene without changing its logical source', () => {
     const scene = createScene({ id: 'grid-demo', nodes: [{ id: 'solar', transform: { x: 2, y: 3, z: 1 } }] });
     const display = mapSceneToDisplay(scene, profile);
-    expect(display.sceneId).toBe('grid-demo');
+    expect(display.id).toBe('grid-demo');
     expect(display.nodes[0].transform.x).toBe(104);
     expect(display.nodes[0].transform.y).toBe(59);
     expect(scene.nodes[0].transform.x).toBe(2);
