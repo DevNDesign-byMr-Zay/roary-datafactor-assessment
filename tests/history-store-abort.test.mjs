@@ -29,7 +29,7 @@ describe('history-store abort boundary', () => {
   test('rejects an aborted load before touching Firestore', async () => {
     const { db, spies } = makeDb();
     const store = createHistoryStore(db);
-    const controller = new AbortController();
+    const controller = new globalThis.AbortController();
     controller.abort();
 
     await expect(store.load('session-aborted', { signal: controller.signal })).rejects.toMatchObject({
@@ -41,7 +41,7 @@ describe('history-store abort boundary', () => {
   test('does not construct or commit a write after abort', async () => {
     const { db, spies } = makeDb();
     const store = createHistoryStore(db);
-    const controller = new AbortController();
+    const controller = new globalThis.AbortController();
     controller.abort();
 
     await expect(
