@@ -131,6 +131,8 @@ export async function dispatchHolographicDisplaySession({
   const safety = safetyPolicy();
   const dispatch = {
     sessionId: session.sessionId,
+    sessionFingerprint: session.sessionFingerprint,
+    sourcePacketFingerprint: session.packet.fingerprint,
     sceneId: scene.id ?? scene.sceneId,
     operation,
     result,
@@ -150,10 +152,31 @@ export function verifyHolographicDispatchFingerprint(dispatch) {
     const normalized = snapshotDispatchEvidence(dispatch, 'dispatch');
     if (typeof normalized.dispatchFingerprint !== 'string') return false;
     if (!/^[a-f0-9]{64}$/.test(normalized.dispatchFingerprint)) return false;
+    if (typeof normalized.sessionFingerprint !== 'string') return false;
+    if (!/^[a-f0-9]{64}$/.test(normalized.sessionFingerprint)) return false;
+    if (typeof normalized.sourcePacketFingerprint !== 'string') return false;
+    if (!/^[a-f0-9]{64}$/.test(normalized.sourcePacketFingerprint)) return false;
     if (!hasExactSafetyPolicy(normalized.safety)) return false;
 
     const { dispatchFingerprint, ...body } = normalized;
     return dispatchFingerprint === fingerprintDispatch(body);
+  } catch {
+    return false;
+  }
+}
+
+export function verifyHolographicDispatchAgainstSession(dispatch, session) {
+  try {
+    if (!verifyHolographicDispatchFingerprint(dispatch)) return false;
+    if (!validateDisplaySession(session)) return false;
+    const normalized = snapshotDispatchEvidence(dispatch, 'dispatch');
+
+    return (
+      normalized.sessionId === session.sessionId &&
+      normalized.sceneId === session.sceneId &&
+      normalized.sessionFingerprint === session.sessionFingerprint &&
+      normalized.sourcePacketFingerprint === session.packet.fingerprint
+    );
   } catch {
     return false;
   }
