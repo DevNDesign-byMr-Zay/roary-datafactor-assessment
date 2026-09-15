@@ -44,6 +44,11 @@ function requestErrorBody(requestId, error) {
   };
 }
 
+function assertChatActive(signal, deadline) {
+  if (signal?.aborted) throw new ChatAbortError();
+  deadline.remainingMs();
+}
+
 export function createApp({
   vertexClient,
   db,
@@ -138,7 +143,15 @@ export function createApp({
 
     try {
       const deadline = createChatDeadlineBudget(chatTimeoutMs, { nowFn });
-      const history = await historyStore.load(sessionId);
+      const history = await runWithChatDeadline(
+        () => historyStore.load(sessionId),
+        {
+          timeoutMs: deadline.remainingMs(),
+          signal: abortController.signal,
+          setTimeoutFn,
+          clearTimeoutFn,
+        },
+      );
       const result = await runWithChatDeadline(
         () =>
           model.generateContent({
@@ -181,7 +194,7 @@ export function createApp({
         });
       }
 
-      deadline.remainingMs();
+      assertChatActive(abortController.signal, deadline);
       await historyStore.append(sessionId, [
         { role: 'user', text },
         { role: 'assistant', text: reply },
