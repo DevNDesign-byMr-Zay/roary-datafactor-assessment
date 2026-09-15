@@ -25,6 +25,7 @@ export { dispatchHolographicSurface, HOLOGRAPHIC_SURFACE_OPERATIONS } from './su
 export { createHolographicSurfaceSession, dispatchHolographicSurfaceSession } from './surface-session.mjs';
 export {
   dispatchHolographicDisplaySession,
+  verifyHolographicDispatchAgainstAdapter,
   verifyHolographicDispatchAgainstSession,
   verifyHolographicDispatchFingerprint,
 } from './display-dispatch.mjs';
