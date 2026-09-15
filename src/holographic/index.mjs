@@ -43,3 +43,8 @@ export {
   HolographicBatchDispatchError,
   dispatchAndSealHolographicSurfaces,
 } from './verified-multi-surface-dispatch.mjs';
+export {
+  HOLOGRAPHIC_BATCH_FAILURE_EVIDENCE_VERSION,
+  createHolographicBatchFailureEvidence,
+  validateHolographicBatchFailureEvidence,
+} from './batch-failure-evidence.mjs';
