@@ -20,4 +20,15 @@ describe('holographic scene packets', () => {
   it('rejects malformed interaction collections', () => {
     expect(() => createHolographicScenePacket({ scene, interactionEvents: {} })).toThrow();
   });
+
+  it('rejects malformed calibration profiles at creation and validation boundaries', () => {
+    expect(() => createHolographicScenePacket({ scene, calibrationProfile: { width: 0, height: 1080 } })).toThrow('width must be greater than zero');
+
+    const packet = createHolographicScenePacket({ scene });
+    const tampered = {
+      ...packet,
+      calibrationProfile: { width: 1920, height: 1080, scaleX: -1 },
+    };
+    expect(validateHolographicScenePacket(tampered)).toBe(false);
+  });
 });
