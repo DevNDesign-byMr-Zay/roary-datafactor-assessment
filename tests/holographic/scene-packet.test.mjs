@@ -11,6 +11,22 @@ describe('holographic scene packets', () => {
     expect(packet.interactionEvents[0]).toMatchObject({ advisoryOnly: true, physicalActuation: false });
   });
 
+  it('normalizes interaction events at packet creation', () => {
+    const packet = createHolographicScenePacket({
+      scene,
+      interactionEvents: [{ sceneId: 'scene-001', nodeId: 'node-1', action: ' inspect ', source: ' operator ' }],
+    });
+    expect(packet.interactionEvents[0]).toEqual({
+      schemaVersion: 1,
+      sceneId: 'scene-001',
+      nodeId: 'node-1',
+      action: 'inspect',
+      source: 'operator',
+      advisoryOnly: true,
+      physicalActuation: false,
+    });
+  });
+
   it('detects packet tampering', () => {
     const packet = createHolographicScenePacket({ scene });
     const tampered = { ...packet, scene: { ...packet.scene, id: 'scene-tampered' } };
@@ -19,6 +35,16 @@ describe('holographic scene packets', () => {
 
   it('rejects malformed interaction collections', () => {
     expect(() => createHolographicScenePacket({ scene, interactionEvents: {} })).toThrow();
+    expect(() => createHolographicScenePacket({ scene, interactionEvents: [{ sceneId: 'scene-001', nodeId: 'node-1', action: 'unknown' }] })).toThrow('Unsupported holographic action');
+  });
+
+  it('rejects malformed interaction events during validation', () => {
+    const packet = createHolographicScenePacket({ scene });
+    const tampered = {
+      ...packet,
+      interactionEvents: [{ sceneId: 'scene-001', nodeId: 'node-1', action: 'unknown', advisoryOnly: true, physicalActuation: false }],
+    };
+    expect(validateHolographicScenePacket(tampered)).toBe(false);
   });
 
   it('rejects malformed calibration profiles at creation and validation boundaries', () => {
