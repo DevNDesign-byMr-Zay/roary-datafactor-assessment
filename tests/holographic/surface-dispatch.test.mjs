@@ -26,3 +26,12 @@ test('unknown surface types fail closed', async () => {
   const session = createDisplaySession({ scene, sessionId: 'session-unknown' });
   await assert.rejects(() => dispatchHolographicSurface({ session, adapter: { device: { type: 'unknown' } } }), /unsupported holographic surface/);
 });
+
+test('non-string explicit operations fail closed', async () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-invalid-operation' });
+  const adapter = new SimulatedProjectorAdapter({ id: 'projector-invalid-operation' });
+  await assert.rejects(
+    () => dispatchHolographicSurface({ session, adapter, operation: { render: true } }),
+    /holographic surface operation must be a string/,
+  );
+});
