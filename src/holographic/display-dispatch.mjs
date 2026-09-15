@@ -16,7 +16,7 @@ function safetyPolicy() {
   return Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true });
 }
 
-export async function dispatchHolographicDisplaySession({ session, adapter, operation = 'render' } = {}) {
+export async function dispatchHolographicDisplaySession({ session, adapter, operation = 'render', surfaceType } = {}) {
   if (!validateDisplaySession(session)) throw new TypeError('invalid holographic display session');
   if (!adapter || typeof adapter !== 'object') throw new TypeError('adapter must be an object');
   if (!Object.hasOwn(adapter, operation) || typeof adapter[operation] !== 'function') throw new TypeError(`adapter operation not supported: ${operation}`);
@@ -30,6 +30,7 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
     operation,
     result,
     calibrated: Boolean(session.packet.calibrationProfile),
+    ...(surfaceType ? { surfaceType } : {}),
     safety,
   };
   const dispatchFingerprint = fingerprintDispatch(dispatch);
