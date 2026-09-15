@@ -1,3 +1,5 @@
+import { shouldPreferRenewableExecution } from './renewable-policy.mjs';
+
 export {
   createRenewablePolicy,
   shouldPreferRenewableExecution,
