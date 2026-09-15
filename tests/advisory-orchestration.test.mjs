@@ -71,8 +71,8 @@ describe('request-scoped advisory orchestration', () => {
     );
   });
 
-  test('shares one shrinking deadline across model and advisory work', async () => {
-    const readings = [1_000, 1_020, 1_065, 1_070];
+  test('shares one shrinking deadline across history, model, and advisory work', async () => {
+    const readings = [1_000, 1_010, 1_020, 1_065, 1_070];
     const nowFn = jest.fn(() => readings.shift());
     const setTimeoutFn = jest.fn((_callback, timeoutMs) => `timer-${timeoutMs}`);
     const clearTimeoutFn = jest.fn();
@@ -90,7 +90,7 @@ describe('request-scoped advisory orchestration', () => {
       .send({ text: 'share one budget', sessionId: 'session-budget' });
 
     expect(response.status).toBe(200);
-    expect(setTimeoutFn.mock.calls.map(([, timeoutMs]) => timeoutMs)).toEqual([80, 35]);
+    expect(setTimeoutFn.mock.calls.map(([, timeoutMs]) => timeoutMs)).toEqual([90, 80, 35]);
     expect(advisoryCoordinator).toHaveBeenCalledTimes(1);
     expect(add).toHaveBeenCalledTimes(2);
   });
@@ -162,7 +162,7 @@ describe('request-scoped advisory orchestration', () => {
     let timerCalls = 0;
     const setTimeoutFn = jest.fn((callback) => {
       timerCalls += 1;
-      if (timerCalls === 2) globalThis.queueMicrotask(callback);
+      if (timerCalls === 3) globalThis.queueMicrotask(callback);
       return timerCalls;
     });
     const clearTimeoutFn = jest.fn();
