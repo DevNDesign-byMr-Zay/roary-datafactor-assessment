@@ -42,3 +42,14 @@ test('tampering the bound session fingerprint invalidates the dispatch', async (
   const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
   assert.equal(verifyHolographicDispatchFingerprint({ ...dispatch, sessionFingerprint: '0'.repeat(64) }), false);
 });
+
+test('surface dispatch refuses inherited adapter operations', async () => {
+  const scene = createScene({ id: 'dispatch-inherited-operation-scene', nodes: [] });
+  const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-inherited-operation-session' });
+  const adapter = Object.create({ mapScene: () => ({ forged: true }) });
+  adapter.device = { type: 'holomat' };
+  await assert.rejects(
+    () => dispatchHolographicSurfaceSession({ session, adapter }),
+    /adapter operation not supported: mapScene/,
+  );
+});
