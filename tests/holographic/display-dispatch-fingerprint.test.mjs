@@ -82,3 +82,46 @@ test('dispatch rejects non-serializable or circular adapter evidence', async () 
     /circular references/,
   );
 });
+
+test('dispatch rejects hidden and accessor-backed evidence without evaluating getters', async () => {
+  const scene = createScene({ sceneId: 'dispatch-hidden-evidence-scene', nodes: [] });
+  const session = createDisplaySession({ scene, sessionId: 'dispatch-hidden-evidence-session' });
+
+  const hidden = { status: 'rendered' };
+  Object.defineProperty(hidden, 'secret', { value: 'hidden', enumerable: false });
+  await assert.rejects(
+    () => dispatchHolographicDisplaySession({
+      session,
+      adapter: { async render() { return hidden; } },
+    }),
+    /enumerable evidence/,
+  );
+
+  let getterReads = 0;
+  const accessor = { status: 'rendered' };
+  Object.defineProperty(accessor, 'dynamic', {
+    enumerable: true,
+    get() {
+      getterReads += 1;
+      return 'unsafe';
+    },
+  });
+  await assert.rejects(
+    () => dispatchHolographicDisplaySession({
+      session,
+      adapter: { async render() { return accessor; } },
+    }),
+    /must not use accessors/,
+  );
+  assert.equal(getterReads, 0);
+
+  const symbolic = { status: 'rendered' };
+  symbolic[Symbol('hidden')] = 'secret';
+  await assert.rejects(
+    () => dispatchHolographicDisplaySession({
+      session,
+      adapter: { async render() { return symbolic; } },
+    }),
+    /symbol properties/,
+  );
+});
