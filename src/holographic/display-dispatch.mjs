@@ -20,19 +20,10 @@ export async function dispatchHolographicDisplaySession({ session, adapter, oper
   if (!validateDisplaySession(session)) throw new TypeError('invalid holographic display session');
   if (!adapter || typeof adapter !== 'object') throw new TypeError('adapter must be an object');
   if (typeof adapter[operation] !== 'function') throw new TypeError(`adapter operation not supported: ${operation}`);
-  const scene = session.packet.calibrationProfile
-    ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile)
-    : session.packet.scene;
+  const scene = session.packet.calibrationProfile ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile) : session.packet.scene;
   const result = await adapter[operation](scene);
   const safety = safetyPolicy();
-  const dispatch = {
-    sessionId: session.sessionId,
-    sceneId: session.sceneId,
-    operation,
-    result,
-    calibrated: Boolean(session.packet.calibrationProfile),
-    safety,
-  };
+  const dispatch = { sessionId: session.sessionId, sceneId: session.sceneId, operation, result, calibrated: Boolean(session.packet.calibrationProfile), safety };
   const dispatchFingerprint = fingerprintDispatch(dispatch);
   return Object.freeze({ ...dispatch, dispatchFingerprint });
 }
@@ -41,7 +32,7 @@ export function verifyHolographicDispatchFingerprint(dispatch) {
   try {
     if (!dispatch || typeof dispatch !== 'object' || typeof dispatch.dispatchFingerprint !== 'string') return false;
     if (!dispatch.safety || dispatch.safety.authoritative !== false || dispatch.safety.physicalActuation !== false || dispatch.safety.advisoryOnly !== true) return false;
-    const { dispatchFingerprint: _dispatchFingerprint, ...body } = dispatch;
+    const body = Object.fromEntries(Object.entries(dispatch).filter(([key]) => key !== 'dispatchFingerprint'));
     return /^[a-f0-9]{64}$/.test(dispatch.dispatchFingerprint) && dispatch.dispatchFingerprint === fingerprintDispatch(body);
   } catch {
     return false;
