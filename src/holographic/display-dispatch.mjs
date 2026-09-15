@@ -111,10 +111,12 @@ function fingerprintDispatch(value) {
 }
 
 function normalizeAdapterDevice(adapter) {
-  if (!Object.prototype.hasOwnProperty.call(adapter, 'device') && adapter.device === undefined) {
-    return null;
+  const descriptor = Object.getOwnPropertyDescriptor(adapter, 'device');
+  if (!descriptor) return null;
+  if ('get' in descriptor || 'set' in descriptor) {
+    throw new TypeError('adapter.device must not use accessors');
   }
-  const evidence = snapshotDispatchEvidence(adapter.device, 'adapter.device');
+  const evidence = snapshotDispatchEvidence(descriptor.value, 'adapter.device');
   return createDeviceDescriptor(evidence);
 }
 
