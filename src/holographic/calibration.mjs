@@ -21,6 +21,16 @@ export function createCalibrationProfile({ width, height, originX = 0, originY =
   });
 }
 
+export function validateCalibrationProfile(profile) {
+  if (!profile || typeof profile !== 'object' || Array.isArray(profile)) return false;
+  try {
+    createCalibrationProfile(profile);
+    return Object.keys(profile).every((key) => ['width', 'height', 'originX', 'originY', 'scaleX', 'scaleY', 'depthScale'].includes(key));
+  } catch {
+    return false;
+  }
+}
+
 export function mapLogicalTransform(transform, profile) {
   const source = transform ?? {};
   const calibration = createCalibrationProfile(profile);
