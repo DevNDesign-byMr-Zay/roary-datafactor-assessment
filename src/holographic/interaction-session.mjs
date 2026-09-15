@@ -1,4 +1,5 @@
 import { createHolographicInteractionEvent, resolveHolographicInteraction } from './interaction.mjs';
+import { createScene } from './contracts.mjs';
 import { createDisplaySession, validateDisplaySession } from './display-session.mjs';
 
 export function createHolographicInteractionSession({ scene, calibrationProfile = null, events = [], sessionId } = {}) {
@@ -30,6 +31,10 @@ export function validateHolographicInteractionSession(session) {
 
 export function resolveInteractionSessionEvent({ scene, session, event } = {}) {
   if (!validateHolographicInteractionSession(session)) throw new TypeError('invalid holographic interaction session');
+  const canonicalScene = createScene(scene);
+  if (JSON.stringify(canonicalScene) !== JSON.stringify(session.displaySession.packet.scene)) {
+    throw new TypeError('scene must match the session scene');
+  }
   const normalized = createHolographicInteractionEvent(event);
-  return resolveHolographicInteraction(scene, normalized);
+  return resolveHolographicInteraction(session.displaySession.packet.scene, normalized);
 }
