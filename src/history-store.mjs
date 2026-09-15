@@ -15,7 +15,7 @@ export function createHistoryStore(db, { historyLimit = 12 } = {}) {
 
   function assertWriteActive(signal) {
     if (signal?.aborted) {
-      throw new DOMException('The operation was aborted.', 'AbortError');
+      throw new globalThis.DOMException('The operation was aborted.', 'AbortError');
     }
   }
 
