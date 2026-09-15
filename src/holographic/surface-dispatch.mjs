@@ -11,6 +11,7 @@ export async function dispatchHolographicSurface({ session, adapter, operation }
   const type = adapter?.device?.type;
   const defaultOperation = OPERATIONS[type];
   if (!defaultOperation) throw new TypeError(`unsupported holographic surface: ${type ?? 'unknown'}`);
+  if (operation !== undefined && typeof operation !== 'string') throw new TypeError('holographic surface operation must be a string');
   const selectedOperation = operation ?? defaultOperation;
   const result = await dispatchHolographicDisplaySession({ session, adapter, operation: selectedOperation });
   return Object.freeze({ ...result, surfaceType: type });
