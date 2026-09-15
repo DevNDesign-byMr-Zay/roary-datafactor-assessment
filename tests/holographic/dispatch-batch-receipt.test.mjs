@@ -74,6 +74,9 @@ it('seals a complete multi-surface dispatch batch to one session and exact devic
     'batch-projector',
     'batch-three-d',
   ]);
+  expect(receipt.dispatches.every((entry) => /^[a-f0-9]{64}$/.test(entry.recordFingerprint))).toBe(
+    true,
+  );
   expect(receipt.batchFingerprint).toMatch(/^[a-f0-9]{64}$/);
   expect(Object.isFrozen(receipt)).toBe(true);
   expect(Object.isFrozen(receipt.dispatches)).toBe(true);
@@ -138,7 +141,7 @@ it('rejects duplicate dispatches and duplicate device identities before sealing'
       dispatches: [dispatches[0], dispatches[0]],
       adapters: [adapters[0], adapters[0]],
     }),
-  ).toThrow(/duplicate dispatch fingerprints/);
+  ).toThrow(/duplicate dispatch records/);
 
   const duplicateDeviceAdapter = new SimulatedProjectorAdapter({
     id: 'batch-mat',
