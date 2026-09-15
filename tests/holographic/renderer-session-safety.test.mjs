@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from '@jest/globals';
 import { createScene, createTransform } from '../../src/holographic/index.mjs';
 import { createDisplaySession } from '../../src/holographic/display-session.mjs';
 import { dispatchHolographicDisplaySession } from '../../src/holographic/display-dispatch.mjs';
