@@ -19,6 +19,14 @@ test('surface dispatch returns a deterministic integrity fingerprint bound to th
   assert.equal(dispatch.safety.physicalActuation, false);
 });
 
+test('surface-session wrapper preserves the dispatch integrity contract', async () => {
+  const scene = createScene({ id: 'dispatch-wrapper-scene', nodes: [] });
+  const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-wrapper-session' });
+  const dispatch = await dispatchHolographicSurfaceSession({ session, adapter: new SimulatedHoloMatAdapter({ id: 'holo-mat-test' }) });
+  assert.equal(verifyHolographicDispatchFingerprint(dispatch), true);
+  assert.equal(Object.isFrozen(dispatch), true);
+});
+
 test('tampering a dispatch result invalidates its fingerprint', async () => {
   const scene = createScene({ id: 'dispatch-tamper-scene', nodes: [] });
   const session = createHolographicSurfaceSession({ scene, sessionId: 'dispatch-tamper-session' });
