@@ -65,7 +65,9 @@ test('rejects deceptive session descriptors without executing getters', () => {
 test('rejects prototype-backed session and safety envelopes', () => {
   const session = createDisplaySession({ scene, sessionId: 'session-1' });
   const inheritedSafety = Object.create(session.safety);
-  const forgedSession = Object.create(session);
-  Object.assign(forgedSession, { safety: inheritedSafety, sessionFingerprint: session.sessionFingerprint });
-  assert.equal(validateDisplaySession(forgedSession), false);
+  const safetyForgedSession = { ...session, safety: inheritedSafety };
+  const prototypeForgedSession = Object.create(session);
+
+  assert.equal(validateDisplaySession(safetyForgedSession), false);
+  assert.equal(validateDisplaySession(prototypeForgedSession), false);
 });
