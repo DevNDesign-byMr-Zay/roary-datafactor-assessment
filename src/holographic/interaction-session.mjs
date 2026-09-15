@@ -8,6 +8,7 @@ export function createHolographicInteractionSession({ scene, calibrationProfile 
     sessionVersion: 1,
     sessionId: displaySession.sessionId,
     displaySession,
+    packet: displaySession.packet,
     events: normalizedEvents,
     safety: { advisoryOnly: true, authoritative: false, physicalActuation: false },
   });

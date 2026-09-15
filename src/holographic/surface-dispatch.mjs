@@ -7,12 +7,13 @@ const OPERATIONS = Object.freeze({
 });
 
 /** Route a validated renderer-neutral session to a simulated surface operation. */
-export async function dispatchHolographicSurface({ session, adapter } = {}) {
+export async function dispatchHolographicSurface({ session, adapter, operation } = {}) {
   const type = adapter?.device?.type;
-  const operation = OPERATIONS[type];
-  if (!operation) throw new TypeError(`unsupported holographic surface: ${type ?? 'unknown'}`);
+  const defaultOperation = OPERATIONS[type];
+  if (!defaultOperation) throw new TypeError(`unsupported holographic surface: ${type ?? 'unknown'}`);
+  const selectedOperation = operation ?? defaultOperation;
   const displaySession = session?.displaySession ?? session;
-  const result = await dispatchHolographicDisplaySession({ session: displaySession, adapter, operation });
+  const result = await dispatchHolographicDisplaySession({ session: displaySession, adapter, operation: selectedOperation });
   return Object.freeze({ ...result, surfaceType: type === 'holomat' ? 'holo-mat' : type });
 }
 

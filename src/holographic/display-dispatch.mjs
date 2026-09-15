@@ -36,7 +36,7 @@ export async function dispatchHolographicDisplaySession({
   const result = await adapter[operation](scene);
   const dispatch = {
     sessionId: session.sessionId,
-    sceneId: session.sceneId,
+    sceneId: scene.id,
     operation,
     result,
     calibrated: Boolean(session.packet.calibrationProfile),
