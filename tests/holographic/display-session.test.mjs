@@ -24,3 +24,11 @@ test('rejects a tampered session packet', () => {
   assert.equal(validateDisplaySession({ ...session, sceneId: 'other' }), false);
   assert.equal(validateDisplaySession({ ...session, safety: { ...session.safety, physicalActuation: true } }), false);
 });
+
+test('rejects prototype-backed session and safety envelopes', () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-1' });
+  const inheritedSafety = Object.create(session.safety);
+  const forgedSession = Object.create(session);
+  Object.assign(forgedSession, { safety: inheritedSafety, sessionFingerprint: session.sessionFingerprint });
+  assert.equal(validateDisplaySession(forgedSession), false);
+});
