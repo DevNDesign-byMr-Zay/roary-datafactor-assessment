@@ -1,13 +1,16 @@
 import { createHolographicInteractionEvent, resolveHolographicInteraction } from './interaction.mjs';
 import { createDisplaySession, validateDisplaySession } from './display-session.mjs';
 
-export function createHolographicInteractionSession({ scene, calibrationProfile = null, events = [], sessionId } = {}) {
-  const normalizedEvents = events.map((event) => createHolographicInteractionEvent(event));
-  const displaySession = createDisplaySession({ scene, calibrationProfile, interactionEvents: normalizedEvents, sessionId });
+export function createHolographicInteractionSession({ scene, calibrationProfile = null, events = [], interactionEvents, sessionId } = {}) {
+  const sourceEvents = interactionEvents ?? events;
+  const normalizedEvents = sourceEvents.map((event) => createHolographicInteractionEvent(event));
+  const normalizedSessionId = sessionId ?? `session-${scene?.id ?? 'holographic'}`;
+  const displaySession = createDisplaySession({ scene, calibrationProfile, interactionEvents: normalizedEvents, sessionId: normalizedSessionId });
   return Object.freeze({
     sessionVersion: 1,
     sessionId: displaySession.sessionId,
     displaySession,
+    packet: displaySession.packet,
     events: normalizedEvents,
     safety: { advisoryOnly: true, authoritative: false, physicalActuation: false },
   });
