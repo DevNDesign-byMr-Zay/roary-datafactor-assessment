@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { validateDisplaySession } from './display-session.mjs';
 import { HolographicBatchDispatchError } from './verified-multi-surface-dispatch.mjs';
 
 const FAILURE_EVIDENCE_VERSION = 1;
@@ -207,6 +208,17 @@ export function validateHolographicBatchFailureEvidence(evidence) {
       safety,
     };
     return data.failureFingerprint === fingerprint(body);
+  } catch {
+    return false;
+  }
+}
+
+export function validateHolographicBatchFailureEvidenceAgainstSession(evidence, session) {
+  try {
+    if (!validateHolographicBatchFailureEvidence(evidence)) return false;
+    if (!validateDisplaySession(session)) return false;
+    const data = readExactDataObject(evidence, FAILURE_KEYS);
+    return data?.sessionFingerprint === session.sessionFingerprint;
   } catch {
     return false;
   }
