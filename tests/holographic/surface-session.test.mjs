@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from '@jest/globals';
 import assert from 'node:assert/strict';
 import { createScene, createCalibrationProfile, createHolographicInteractionEvent, SimulatedHoloMatAdapter } from '../../src/holographic/index.mjs';
 import { createHolographicSurfaceSession, dispatchHolographicSurfaceSession } from '../../src/holographic/surface-session.mjs';
@@ -22,7 +22,7 @@ test('surface session preserves calibration and advisory interaction state', asy
   assert.equal(result.result.sceneId, scene.id);
   assert.equal(result.calibrated, true);
   assert.deepEqual(result.safety, { authoritative: false, physicalActuation: false, advisoryOnly: true });
-  assert.equal(session.packet.scene.nodes[0].transform.x, 2);
+  assert.equal(session.displaySession.packet.scene.nodes[0].transform.x, 2);
   assert.equal(session.events[0].action, 'inspect');
 });
 
