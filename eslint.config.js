@@ -83,6 +83,14 @@ export default [
     rules: strictRules,
   },
   {
+    files: ['tests/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        test: 'readonly',
+      },
+    },
+  },
+  {
     files: [
       'Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs',
       'Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs',
