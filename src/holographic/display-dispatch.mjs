@@ -120,6 +120,29 @@ function normalizeAdapterDevice(adapter) {
   return createDeviceDescriptor(evidence);
 }
 
+function resolveAdapterOperation(adapter, operation) {
+  const ownDescriptor = Object.getOwnPropertyDescriptor(adapter, operation);
+  if (ownDescriptor) {
+    if ('get' in ownDescriptor || 'set' in ownDescriptor || typeof ownDescriptor.value !== 'function') {
+      return null;
+    }
+    return ownDescriptor.value;
+  }
+
+  const prototype = Object.getPrototypeOf(adapter);
+  if (!prototype || prototype === Object.prototype || prototype.constructor === Object) return null;
+  const prototypeDescriptor = Object.getOwnPropertyDescriptor(prototype, operation);
+  if (
+    !prototypeDescriptor ||
+    'get' in prototypeDescriptor ||
+    'set' in prototypeDescriptor ||
+    typeof prototypeDescriptor.value !== 'function'
+  ) {
+    return null;
+  }
+  return prototypeDescriptor.value;
+}
+
 export async function dispatchHolographicDisplaySession({
   session,
   adapter,
@@ -128,9 +151,8 @@ export async function dispatchHolographicDisplaySession({
 } = {}) {
   if (!validateDisplaySession(session)) throw new TypeError('invalid holographic display session');
   if (!adapter || typeof adapter !== 'object') throw new TypeError('adapter must be an object');
-  if (!Object.hasOwn(adapter, operation) || typeof adapter[operation] !== 'function') {
-    throw new TypeError(`adapter operation not supported: ${operation}`);
-  }
+  const operationFn = resolveAdapterOperation(adapter, operation);
+  if (!operationFn) throw new TypeError(`adapter operation not supported: ${operation}`);
   if (surfaceType !== undefined && (typeof surfaceType !== 'string' || !surfaceType.trim())) {
     throw new TypeError('surfaceType must be a non-empty string when provided');
   }
@@ -139,7 +161,7 @@ export async function dispatchHolographicDisplaySession({
   const scene = session.packet.calibrationProfile
     ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile)
     : session.packet.scene;
-  const result = snapshotDispatchEvidence(await adapter[operation](scene));
+  const result = snapshotDispatchEvidence(await operationFn.call(adapter, scene));
   const safety = safetyPolicy();
   const dispatch = {
     sessionId: session.sessionId,
