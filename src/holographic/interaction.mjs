@@ -38,6 +38,8 @@ export function resolveHolographicInteraction(scene, event) {
     action: interaction.action,
     nodeId: interaction.nodeId,
     node: node ?? null,
+    advisoryOnly: true,
+    physicalActuation: false,
     safety: Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true }),
   });
 }
