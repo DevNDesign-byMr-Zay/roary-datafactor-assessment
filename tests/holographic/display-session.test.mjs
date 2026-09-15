@@ -61,3 +61,11 @@ test('rejects deceptive session descriptors without executing getters', () => {
   symbolic[Symbol('authority')] = true;
   assert.equal(validateDisplaySession(symbolic), false);
 });
+
+test('rejects prototype-backed session and safety envelopes', () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-1' });
+  const inheritedSafety = Object.create(session.safety);
+  const forgedSession = Object.create(session);
+  Object.assign(forgedSession, { safety: inheritedSafety, sessionFingerprint: session.sessionFingerprint });
+  assert.equal(validateDisplaySession(forgedSession), false);
+});
