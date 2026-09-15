@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from '@jest/globals';
 import assert from 'node:assert/strict';
 import { createScene, createTransform } from '../../src/holographic/contracts.mjs';
 import { createHolographicInteractionEvent } from '../../src/holographic/interaction.mjs';

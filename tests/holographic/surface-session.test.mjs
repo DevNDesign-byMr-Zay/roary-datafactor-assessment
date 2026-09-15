@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from '@jest/globals';
 import assert from 'node:assert/strict';
 import { createScene, createCalibrationProfile, createHolographicInteractionEvent, SimulatedHoloMatAdapter } from '../../src/holographic/index.mjs';
 import { createHolographicSurfaceSession, dispatchHolographicSurfaceSession } from '../../src/holographic/surface-session.mjs';

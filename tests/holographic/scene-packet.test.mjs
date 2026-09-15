@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from '@jest/globals';
 import { createHolographicScenePacket, validateHolographicScenePacket } from '../../src/holographic/scene-packet.mjs';
 
 describe('holographic scene packets', () => {
