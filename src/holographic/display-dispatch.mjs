@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { validateDisplaySession } from './display-session.mjs';
 import { mapSceneToDisplay } from './calibration.mjs';
+import { createDeviceDescriptor } from './contracts.mjs';
 
 function canonical(value) {
   if (Array.isArray(value)) return value.map(canonical);
@@ -109,6 +110,14 @@ function fingerprintDispatch(value) {
     .digest('hex');
 }
 
+function normalizeAdapterDevice(adapter) {
+  if (!Object.prototype.hasOwnProperty.call(adapter, 'device') && adapter.device === undefined) {
+    return null;
+  }
+  const evidence = snapshotDispatchEvidence(adapter.device, 'adapter.device');
+  return createDeviceDescriptor(evidence);
+}
+
 export async function dispatchHolographicDisplaySession({
   session,
   adapter,
@@ -124,6 +133,7 @@ export async function dispatchHolographicDisplaySession({
     throw new TypeError('surfaceType must be a non-empty string when provided');
   }
 
+  const adapterDevice = normalizeAdapterDevice(adapter);
   const scene = session.packet.calibrationProfile
     ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile)
     : session.packet.scene;
@@ -135,6 +145,7 @@ export async function dispatchHolographicDisplaySession({
     sourcePacketFingerprint: session.packet.fingerprint,
     sceneId: scene.id ?? scene.sceneId,
     operation,
+    adapterDevice,
     result,
     calibrated: Boolean(session.packet.calibrationProfile),
     ...(surfaceType === undefined ? {} : { surfaceType: surfaceType.trim() }),
@@ -156,6 +167,7 @@ export function verifyHolographicDispatchFingerprint(dispatch) {
     if (!/^[a-f0-9]{64}$/.test(normalized.sessionFingerprint)) return false;
     if (typeof normalized.sourcePacketFingerprint !== 'string') return false;
     if (!/^[a-f0-9]{64}$/.test(normalized.sourcePacketFingerprint)) return false;
+    if (normalized.adapterDevice !== null) createDeviceDescriptor(normalized.adapterDevice);
     if (!hasExactSafetyPolicy(normalized.safety)) return false;
 
     const { dispatchFingerprint, ...body } = normalized;
@@ -177,6 +189,20 @@ export function verifyHolographicDispatchAgainstSession(dispatch, session) {
       normalized.sessionFingerprint === session.sessionFingerprint &&
       normalized.sourcePacketFingerprint === session.packet.fingerprint
     );
+  } catch {
+    return false;
+  }
+}
+
+export function verifyHolographicDispatchAgainstAdapter(dispatch, adapter) {
+  try {
+    if (!verifyHolographicDispatchFingerprint(dispatch)) return false;
+    if (!adapter || typeof adapter !== 'object') return false;
+    const expectedDevice = normalizeAdapterDevice(adapter);
+    if (!expectedDevice) return false;
+    const normalized = snapshotDispatchEvidence(dispatch, 'dispatch');
+    if (!normalized.adapterDevice) return false;
+    return JSON.stringify(canonical(normalized.adapterDevice)) === JSON.stringify(canonical(expectedDevice));
   } catch {
     return false;
   }
