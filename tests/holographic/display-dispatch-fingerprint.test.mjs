@@ -90,6 +90,32 @@ test('dispatch snapshots adapter evidence before fingerprinting', async () => {
   assert.equal(verifyHolographicDispatchAgainstAdapter(dispatch, adapter), false);
 });
 
+test('adapter execution receives an isolated frozen scene snapshot', async () => {
+  const scene = createScene({ sceneId: 'dispatch-scene-isolation', nodes: [] });
+  const session = createDisplaySession({ scene, sessionId: 'dispatch-scene-isolation-session' });
+  let observedScene;
+  const adapter = {
+    async render(receivedScene) {
+      observedScene = receivedScene;
+      assert.equal(Object.isFrozen(receivedScene), true);
+      assert.equal(Object.isFrozen(receivedScene.nodes), true);
+      try {
+        receivedScene.nodes.push({ id: 'adapter-injected-node' });
+      } catch {
+        // Frozen execution snapshots must reject adapter-side mutation attempts.
+      }
+      return { status: 'rendered', observedNodeCount: receivedScene.nodes.length };
+    },
+  };
+
+  const dispatch = await dispatchHolographicDisplaySession({ session, adapter });
+
+  assert.equal(observedScene === session.packet.scene, false);
+  assert.equal(session.packet.scene.nodes.length, 0);
+  assert.equal(dispatch.result.observedNodeCount, 0);
+  assert.equal(verifyHolographicDispatchAgainstSession(dispatch, session), true);
+});
+
 test('dispatch lineage rejects a different but otherwise valid session', async () => {
   const scene = createScene({ sceneId: 'dispatch-lineage-scene', nodes: [] });
   const session = createDisplaySession({ scene, sessionId: 'dispatch-lineage-session-a' });
