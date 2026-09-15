@@ -47,4 +47,5 @@ export {
   HOLOGRAPHIC_BATCH_FAILURE_EVIDENCE_VERSION,
   createHolographicBatchFailureEvidence,
   validateHolographicBatchFailureEvidence,
+  validateHolographicBatchFailureEvidenceAgainstSession,
 } from './batch-failure-evidence.mjs';
