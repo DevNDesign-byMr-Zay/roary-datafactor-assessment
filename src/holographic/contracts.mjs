@@ -32,7 +32,9 @@ export function createScene({ id, sceneId, version = 1, nodes = [], metadata = {
       data: Object.freeze({ ...(node.data ?? {}) }),
     });
   });
-  return Object.freeze({ id: normalizedId, version, nodes: Object.freeze(normalizedNodes), metadata: Object.freeze({ ...metadata }) });
+  const scene = { id: normalizedId, version, nodes: Object.freeze(normalizedNodes), metadata: Object.freeze({ ...metadata }) };
+  Object.defineProperty(scene, 'sceneId', { value: normalizedId, enumerable: false, writable: false, configurable: false });
+  return Object.freeze(scene);
 }
 
 export function createDeviceDescriptor({ id, type, capabilities = [], simulated = true } = {}) {
