@@ -89,3 +89,71 @@ it('rejects transported tampering and deceptive top-level accessors without exec
   expect(validateHolographicBatchFailureEvidence(deceptive)).toBe(false);
   expect(getterReads).toBe(0);
 });
+
+it('rejects malformed failure metadata and widened safety after transport', async () => {
+  const evidence = JSON.parse(
+    JSON.stringify(createHolographicBatchFailureEvidence(await failureFixture())),
+  );
+  const mutations = [
+    { version: 2 },
+    { phase: 'retry' },
+    { sessionFingerprint: 'not-a-fingerprint' },
+    { failedIndex: -1 },
+    { failedDeviceId: '' },
+    { failedDeviceType: '' },
+    { failureReason: '' },
+    { interpretation: 'sealed-success' },
+    { failureFingerprint: 'bad' },
+  ];
+
+  for (const mutation of mutations) {
+    expect(validateHolographicBatchFailureEvidence({ ...evidence, ...mutation })).toBe(false);
+  }
+
+  expect(
+    validateHolographicBatchFailureEvidence({
+      ...evidence,
+      safety: { ...evidence.safety, automaticRetry: true },
+    }),
+  ).toBe(false);
+  expect(
+    validateHolographicBatchFailureEvidence({
+      ...evidence,
+      safety: { ...evidence.safety, sealedSuccess: true },
+    }),
+  ).toBe(false);
+});
+
+it('rejects malformed or decorated partial dispatch evidence', async () => {
+  const evidence = JSON.parse(
+    JSON.stringify(createHolographicBatchFailureEvidence(await failureFixture())),
+  );
+  const partial = evidence.partialDispatches[0];
+
+  for (const mutation of [
+    { dispatchFingerprint: 'bad' },
+    { deviceId: '' },
+    { deviceType: '' },
+    { operation: '' },
+    { surfaceType: '' },
+  ]) {
+    expect(
+      validateHolographicBatchFailureEvidence({
+        ...evidence,
+        partialDispatches: [{ ...partial, ...mutation }],
+      }),
+    ).toBe(false);
+  }
+
+  const decorated = [...evidence.partialDispatches];
+  decorated.shadow = true;
+  expect(
+    validateHolographicBatchFailureEvidence({ ...evidence, partialDispatches: decorated }),
+  ).toBe(false);
+});
+
+it('requires the existing typed batch error before projecting transport evidence', () => {
+  expect(() => createHolographicBatchFailureEvidence(new Error('untyped'))).toThrow(
+    /typed holographic batch failure/,
+  );
+});
