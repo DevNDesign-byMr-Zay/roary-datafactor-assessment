@@ -1,5 +1,7 @@
 const nodeGlobals = {
+  AbortController: 'readonly',
   Buffer: 'readonly',
+  DOMException: 'readonly',
   URL: 'readonly',
   clearInterval: 'readonly',
   clearTimeout: 'readonly',
