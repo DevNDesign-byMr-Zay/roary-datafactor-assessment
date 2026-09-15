@@ -19,7 +19,7 @@ export function createDisplaySession({ scene, calibrationProfile = null, interac
   if (typeof sessionId !== 'string' || !sessionId.trim()) throw new TypeError('sessionId must be a non-empty string');
   const packet = createHolographicScenePacket({ scene, calibrationProfile, interactionEvents });
   const normalizedSessionId = sessionId.trim();
-  const sceneId = packet.scene.sceneId;
+  const sceneId = packet.scene.id;
   const safety = Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true });
   const sessionFingerprint = fingerprintSession({ sessionVersion: 1, sessionId: normalizedSessionId, sceneId, packet, safety });
   return Object.freeze({ sessionVersion: 1, sessionId: normalizedSessionId, sceneId, packet, safety, sessionFingerprint });
@@ -31,7 +31,7 @@ export function validateDisplaySession(session) {
     if (session.sessionVersion !== 1 || typeof session.sessionId !== 'string' || !session.sessionId.trim()) return false;
     if (!/^[a-f0-9]{64}$/.test(session.sessionFingerprint)) return false;
     if (session.safety?.authoritative !== false || session.safety?.physicalActuation !== false || session.safety?.advisoryOnly !== true) return false;
-    if (!validateHolographicScenePacket(session.packet) || session.sceneId !== session.packet.scene.sceneId) return false;
+    if (!validateHolographicScenePacket(session.packet) || session.sceneId !== session.packet.scene.id) return false;
     return session.sessionFingerprint === fingerprintSession({
       sessionVersion: session.sessionVersion,
       sessionId: session.sessionId,

@@ -40,6 +40,7 @@ export function resolveHolographicInteraction(scene, event) {
     node: node ?? null,
     advisoryOnly: true,
     physicalActuation: false,
+    safety: Object.freeze({ authoritative: false, physicalActuation: false, advisoryOnly: true }),
   });
 }
 
