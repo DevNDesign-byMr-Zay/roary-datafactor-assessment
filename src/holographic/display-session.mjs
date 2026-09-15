@@ -27,10 +27,14 @@ export function createDisplaySession({ scene, calibrationProfile = null, interac
 
 export function validateDisplaySession(session) {
   try {
-    if (!session || typeof session !== 'object' || Array.isArray(session)) return false;
+    if (!session || typeof session !== 'object' || Array.isArray(session) || Object.getPrototypeOf(session) !== Object.prototype) return false;
+    if (!Object.hasOwn(session, 'sessionVersion') || !Object.hasOwn(session, 'sessionId') || !Object.hasOwn(session, 'sessionFingerprint') || !Object.hasOwn(session, 'safety') || !Object.hasOwn(session, 'packet') || !Object.hasOwn(session, 'sceneId')) return false;
     if (session.sessionVersion !== 1 || typeof session.sessionId !== 'string' || !session.sessionId.trim()) return false;
     if (!/^[a-f0-9]{64}$/.test(session.sessionFingerprint)) return false;
-    if (session.safety?.authoritative !== false || session.safety?.physicalActuation !== false || session.safety?.advisoryOnly !== true) return false;
+    const safety = session.safety;
+    if (!safety || typeof safety !== 'object' || Array.isArray(safety) || Object.getPrototypeOf(safety) !== Object.prototype) return false;
+    if (!Object.hasOwn(safety, 'authoritative') || !Object.hasOwn(safety, 'physicalActuation') || !Object.hasOwn(safety, 'advisoryOnly')) return false;
+    if (safety.authoritative !== false || safety.physicalActuation !== false || safety.advisoryOnly !== true) return false;
     if (!validateHolographicScenePacket(session.packet) || session.sceneId !== session.packet.scene.sceneId) return false;
     return session.sessionFingerprint === fingerprintSession({
       sessionVersion: session.sessionVersion,
