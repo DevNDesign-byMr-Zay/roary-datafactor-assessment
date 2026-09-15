@@ -12,9 +12,13 @@ describe('holographic display calibration', () => {
   });
 
   test('projects a complete scene without changing its logical source', () => {
-    const scene = createScene({ id: 'grid-demo', nodes: [{ id: 'solar', transform: { x: 2, y: 3, z: 1 } }] });
+    const scene = createScene({ id: 'grid-demo', version: 2, metadata: { purpose: 'test' }, nodes: [{ id: 'solar', type: 'mesh', data: { requires: ['depth'] }, transform: { x: 2, y: 3, z: 1 } }] });
     const display = mapSceneToDisplay(scene, profile);
     expect(display.id).toBe('grid-demo');
+    expect(display.version).toBe(2);
+    expect(display.metadata).toEqual({ purpose: 'test' });
+    expect(display.nodes[0].type).toBe('mesh');
+    expect(display.nodes[0].data).toEqual({ requires: ['depth'] });
     expect(display.nodes[0].transform.x).toBe(104);
     expect(display.nodes[0].transform.y).toBe(59);
     expect(scene.nodes[0].transform.x).toBe(2);
