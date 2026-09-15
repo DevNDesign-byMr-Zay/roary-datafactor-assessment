@@ -20,4 +20,22 @@ describe('public holographic session flow', () => {
     expect(result.safety.physicalActuation).toBe(false);
     expect(scene.nodes[0].transform.z).toBe(3);
   });
+
+  it('rejects a same-id scene with different content at session resolution', () => {
+    const scene = createScene({
+      id: 'scene-identity',
+      nodes: [{ id: 'node-1', transform: { x: 1, y: 2, z: 3, scale: 1 } }],
+    });
+    const session = createHolographicInteractionSession({ scene, sessionId: 'scene-identity-session' });
+    const swappedScene = createScene({
+      id: 'scene-identity',
+      nodes: [{ id: 'node-2', transform: { x: 9, y: 8, z: 7, scale: 1 } }],
+    });
+
+    expect(() => resolveInteractionSessionEvent({
+      scene: swappedScene,
+      session,
+      event: { sceneId: 'scene-identity', nodeId: 'node-2', action: 'inspect', source: 'operator' },
+    })).toThrow('scene must match the session scene');
+  });
 });
