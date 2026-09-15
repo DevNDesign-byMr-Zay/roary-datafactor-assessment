@@ -6,9 +6,10 @@ import {
   createScene,
   dispatchAndSealHolographicSurfaces,
   validateHolographicBatchFailureEvidence,
+  validateHolographicBatchFailureEvidenceAgainstSession,
 } from '../../src/holographic/index.mjs';
 
-function sessionFixture() {
+function sessionFixture(sessionId = 'failure-evidence-session') {
   return createDisplaySession({
     scene: createScene({
       id: 'failure-evidence-scene',
@@ -21,7 +22,7 @@ function sessionFixture() {
         },
       ],
     }),
-    sessionId: 'failure-evidence-session',
+    sessionId,
   });
 }
 
@@ -44,13 +45,13 @@ async function failureFixture() {
     await dispatchAndSealHolographicSurfaces({ session, adapters: [first, second] });
   } catch (error) {
     expect(error).toBeInstanceOf(HolographicBatchDispatchError);
-    return error;
+    return { error, session };
   }
   throw new Error('expected holographic batch failure');
 }
 
 it('projects typed batch failure into deterministic transport-safe evidence', async () => {
-  const failure = await failureFixture();
+  const { error: failure } = await failureFixture();
   const evidence = createHolographicBatchFailureEvidence(failure);
   const transported = JSON.parse(JSON.stringify(evidence));
 
@@ -70,8 +71,25 @@ it('projects typed batch failure into deterministic transport-safe evidence', as
   expect(Object.isFrozen(evidence.partialDispatches)).toBe(true);
 });
 
+it('binds transported failure evidence to the exact validated display session', async () => {
+  const { error: failure, session } = await failureFixture();
+  const evidence = JSON.parse(JSON.stringify(createHolographicBatchFailureEvidence(failure)));
+  const otherSession = sessionFixture('other-failure-session');
+
+  expect(validateHolographicBatchFailureEvidenceAgainstSession(evidence, session)).toBe(true);
+  expect(validateHolographicBatchFailureEvidenceAgainstSession(evidence, otherSession)).toBe(false);
+  expect(validateHolographicBatchFailureEvidenceAgainstSession(evidence, {})).toBe(false);
+  expect(
+    validateHolographicBatchFailureEvidenceAgainstSession(
+      { ...evidence, sessionFingerprint: otherSession.sessionFingerprint },
+      otherSession,
+    ),
+  ).toBe(false);
+});
+
 it('rejects transported tampering and deceptive top-level accessors without executing getters', async () => {
-  const evidence = createHolographicBatchFailureEvidence(await failureFixture());
+  const { error: failure } = await failureFixture();
+  const evidence = createHolographicBatchFailureEvidence(failure);
   const tampered = JSON.parse(JSON.stringify(evidence));
   tampered.failedDeviceId = 'other-device';
   expect(validateHolographicBatchFailureEvidence(tampered)).toBe(false);
@@ -91,9 +109,8 @@ it('rejects transported tampering and deceptive top-level accessors without exec
 });
 
 it('rejects malformed failure metadata and widened safety after transport', async () => {
-  const evidence = JSON.parse(
-    JSON.stringify(createHolographicBatchFailureEvidence(await failureFixture())),
-  );
+  const { error: failure } = await failureFixture();
+  const evidence = JSON.parse(JSON.stringify(createHolographicBatchFailureEvidence(failure)));
   const mutations = [
     { version: 2 },
     { phase: 'retry' },
@@ -125,9 +142,8 @@ it('rejects malformed failure metadata and widened safety after transport', asyn
 });
 
 it('rejects malformed or decorated partial dispatch evidence', async () => {
-  const evidence = JSON.parse(
-    JSON.stringify(createHolographicBatchFailureEvidence(await failureFixture())),
-  );
+  const { error: failure } = await failureFixture();
+  const evidence = JSON.parse(JSON.stringify(createHolographicBatchFailureEvidence(failure)));
   const partial = evidence.partialDispatches[0];
 
   for (const mutation of [
