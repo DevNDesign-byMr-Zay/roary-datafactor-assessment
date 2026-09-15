@@ -2,7 +2,7 @@ import { createDeviceDescriptor, validateSceneForDevice } from './contracts.mjs'
 
 export class SimulatedProjectorAdapter {
   constructor(descriptor = {}) {
-    this.device = createDeviceDescriptor({ type: 'projector', simulated: true, ...descriptor });
+    this.device = createDeviceDescriptor({ id: 'simulated-projector', type: 'projector', simulated: true, ...descriptor });
   }
 
   async connect() {
@@ -22,7 +22,7 @@ export class SimulatedProjectorAdapter {
 
 export class SimulatedHoloMatAdapter {
   constructor(descriptor = {}) {
-    this.device = createDeviceDescriptor({ type: 'holomat', simulated: true, ...descriptor });
+    this.device = createDeviceDescriptor({ id: 'simulated-holomat', type: 'holomat', simulated: true, ...descriptor });
   }
 
   async connect() {
@@ -38,7 +38,7 @@ export class SimulatedHoloMatAdapter {
 
 export class SimulatedThreeDPlatformAdapter {
   constructor(descriptor = {}) {
-    this.device = createDeviceDescriptor({ type: 'three-d-platform', simulated: true, ...descriptor });
+    this.device = createDeviceDescriptor({ id: 'simulated-three-d-platform', type: 'three-d-platform', simulated: true, ...descriptor });
   }
 
   async connect() {

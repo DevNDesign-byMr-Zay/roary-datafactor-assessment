@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from '@jest/globals';
 import assert from 'node:assert/strict';
 
 import {
@@ -45,7 +45,7 @@ test('builds a calibrated interaction-aware display session without mutating the
   assert.equal(session.packet.interactionEvents[0].action, 'focus');
   assert.equal(session.packet.safety.physicalActuation, false);
   assert.equal(validateDisplaySession(session), true);
-  assert.deepEqual(scene.nodes[0].transform, { x: 2, y: 3, z: 4 });
+  assert.deepEqual(scene.nodes[0].transform, { x: 2, y: 3, z: 4, rx: 0, ry: 0, rz: 0, scale: 1 });
 });
 
 test('rejects a session whose packet identity has been tampered with', () => {

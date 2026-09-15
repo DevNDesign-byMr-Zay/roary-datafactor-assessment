@@ -1,3 +1,4 @@
+import { test } from '@jest/globals';
 import assert from 'node:assert/strict';
 import { createScene } from '../../src/holographic/contracts.mjs';
 import { createDisplaySession } from '../../src/holographic/display-session.mjs';
@@ -7,7 +8,7 @@ import { SimulatedHoloMatAdapter, SimulatedProjectorAdapter, SimulatedThreeDPlat
 const scene = createScene({ id: 'surface-scene', nodes: [{ id: 'node-1', label: 'Grid', transform: { x: 1, y: 2, z: 3 } }] });
 
 for (const [name, Adapter, expected] of [
-  ['holomat', SimulatedHoloMatAdapter, 'mapScene'],
+  ['holo-mat', SimulatedHoloMatAdapter, 'mapScene'],
   ['projector', SimulatedProjectorAdapter, 'render'],
   ['three-d-platform', SimulatedThreeDPlatformAdapter, 'stage'],
 ]) {

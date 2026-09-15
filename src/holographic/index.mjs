@@ -15,8 +15,37 @@ export {
 export { createCalibrationProfile, mapLogicalTransform, mapSceneToDisplay } from './calibration.mjs';
 export { ACTIONS, createHolographicInteractionEvent, resolveHolographicInteraction } from './interaction.mjs';
 export { PACKET_VERSION, createHolographicScenePacket, validateHolographicScenePacket } from './scene-packet.mjs';
-export { createDisplaySession, validateDisplaySession } from './display-session.mjs';
+export {
+  DISPLAY_SESSION_VERSION,
+  createDisplaySession,
+  validateDisplaySession,
+} from './display-session.mjs';
 export { createHolographicInteractionSession, validateHolographicInteractionSession, resolveInteractionSessionEvent } from './interaction-session.mjs';
 export { dispatchHolographicSurface, HOLOGRAPHIC_SURFACE_OPERATIONS } from './surface-dispatch.mjs';
 export { createHolographicSurfaceSession, dispatchHolographicSurfaceSession } from './surface-session.mjs';
-export { dispatchHolographicDisplaySession, verifyHolographicDispatchFingerprint } from './display-dispatch.mjs';
+export {
+  dispatchHolographicDisplaySession,
+  verifyHolographicDispatchAgainstAdapter,
+  verifyHolographicDispatchAgainstSession,
+  verifyHolographicDispatchFingerprint,
+} from './display-dispatch.mjs';
+export {
+  VERIFIED_DISPATCH_RECORD_VERSION,
+  createVerifiedHolographicDispatchRecord,
+  validateVerifiedHolographicDispatchRecord,
+} from './verified-dispatch-record.mjs';
+export {
+  HOLOGRAPHIC_DISPATCH_BATCH_VERSION,
+  createHolographicDispatchBatchReceipt,
+  validateHolographicDispatchBatchReceipt,
+} from './dispatch-batch-receipt.mjs';
+export {
+  HolographicBatchDispatchError,
+  dispatchAndSealHolographicSurfaces,
+} from './verified-multi-surface-dispatch.mjs';
+export {
+  HOLOGRAPHIC_BATCH_FAILURE_EVIDENCE_VERSION,
+  createHolographicBatchFailureEvidence,
+  validateHolographicBatchFailureEvidence,
+  validateHolographicBatchFailureEvidenceAgainstSession,
+} from './batch-failure-evidence.mjs';

@@ -1,4 +1,7 @@
-import { createHolographicInteractionSession, validateHolographicInteractionSession } from './interaction-session.mjs';
+import {
+  createHolographicInteractionSession,
+  validateHolographicInteractionSession,
+} from './interaction-session.mjs';
 import { dispatchHolographicSurface } from './surface-dispatch.mjs';
 
 /** Create a calibrated, interaction-aware session ready for a typed surface adapter. */

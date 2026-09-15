@@ -9,7 +9,7 @@ import {
 describe('public holographic session flow', () => {
   it('creates and resolves an advisory interaction without mutating the scene', () => {
     const scene = createScene({
-      id: 'scene-1',
+      sceneId: 'scene-1',
       nodes: [{ id: 'node-1', label: 'Transformer', transform: { x: 1, y: 2, z: 3, scale: 1 } }],
     });
     const session = createHolographicInteractionSession({ scene, sessionId: 'session-1' });
