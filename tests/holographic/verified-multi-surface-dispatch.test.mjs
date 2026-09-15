@@ -162,3 +162,35 @@ it('carries immutable partial provenance when a renderer rejects after preflight
   expect(firstCalls).toBe(1);
   expect(secondCalls).toBe(1);
 });
+
+it('does not execute a deceptive renderer error message getter', async () => {
+  const session = sessionFixture();
+  let getterReads = 0;
+  const deceptiveError = new Error();
+  Object.defineProperty(deceptiveError, 'message', {
+    configurable: true,
+    get() {
+      getterReads += 1;
+      return 'deceptive renderer message';
+    },
+  });
+  const adapter = {
+    device: { id: 'mat-deceptive-error', type: 'holomat', capabilities: ['topology'] },
+    async mapScene() {
+      throw deceptiveError;
+    },
+  };
+
+  let failure;
+  try {
+    await dispatchAndSealHolographicSurfaces({ session, adapters: [adapter] });
+  } catch (error) {
+    failure = error;
+  }
+
+  expect(failure).toBeInstanceOf(HolographicBatchDispatchError);
+  expect(failure.failureReason).toBe('holographic renderer failure');
+  expect(failure.failedDeviceId).toBe('mat-deceptive-error');
+  expect(failure.partialDispatches).toHaveLength(0);
+  expect(getterReads).toBe(0);
+});
