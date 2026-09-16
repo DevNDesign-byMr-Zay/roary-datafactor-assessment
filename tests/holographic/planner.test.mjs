@@ -61,4 +61,24 @@ describe('holographic scene planner', () => {
       device: { id: 'projector-invalid', type: 'projector', capabilities: ['depth', 42] },
     })).toThrow('Device capabilities[1] must be a non-empty string');
   });
+
+  test('rejects malformed asset requirements instead of silently dropping them', () => {
+    const device = createDeviceDescriptor({ id: 'projector-1', type: 'projector', capabilities: ['depth'] });
+
+    expect(() => planHolographicScene({
+      intent: 'Invalid Requirements',
+      assets: [{ id: 'demo', requires: 'depth' }],
+      device,
+    })).toThrow('Asset 0 requirements must be an array');
+  });
+
+  test('rejects non-object assets before property access', () => {
+    const device = createDeviceDescriptor({ id: 'projector-1', type: 'projector' });
+
+    expect(() => planHolographicScene({
+      intent: 'Invalid Asset',
+      assets: [null],
+      device,
+    })).toThrow('Asset 0 must be an object');
+  });
 });
