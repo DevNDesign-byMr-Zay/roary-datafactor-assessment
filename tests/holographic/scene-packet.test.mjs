@@ -33,6 +33,18 @@ describe('holographic scene packets', () => {
     expect(validateHolographicScenePacket(tampered)).toBe(false);
   });
 
+  it('rejects non-canonical scene structure during validation', () => {
+    const packet = createHolographicScenePacket({ scene });
+    const tampered = {
+      ...packet,
+      scene: {
+        ...packet.scene,
+        nodes: [{ ...packet.scene.nodes[0], unexpected: 'field' }],
+      },
+    };
+    expect(validateHolographicScenePacket(tampered)).toBe(false);
+  });
+
   it('rejects malformed interaction collections', () => {
     expect(() => createHolographicScenePacket({ scene, interactionEvents: {} })).toThrow();
     expect(() => createHolographicScenePacket({ scene, interactionEvents: [{ sceneId: 'scene-001', nodeId: 'node-1', action: 'unknown' }] })).toThrow('Unsupported holographic action');
