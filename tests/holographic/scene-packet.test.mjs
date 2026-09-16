@@ -64,6 +64,24 @@ describe('holographic scene packets', () => {
     expect(validateHolographicScenePacket(widened)).toBe(false);
   });
 
+  it('keeps prototype-named evidence inside signed validation', () => {
+    const packet = createHolographicScenePacket({
+      scene,
+      calibrationProfile: { width: 1920, height: 1080 },
+    });
+    const unsignedPrototypeField = JSON.parse('{"__proto__":{"unsigned":true}}');
+    const tampered = {
+      ...packet,
+      calibrationProfile: {
+        ...packet.calibrationProfile,
+        ...unsignedPrototypeField,
+      },
+    };
+
+    expect(Object.hasOwn(tampered.calibrationProfile, '__proto__')).toBe(true);
+    expect(validateHolographicScenePacket(tampered)).toBe(false);
+  });
+
   it('rejects malformed interaction collections', () => {
     expect(() => createHolographicScenePacket({ scene, interactionEvents: {} })).toThrow();
   });
