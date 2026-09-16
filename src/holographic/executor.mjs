@@ -6,6 +6,12 @@ const METHODS = Object.freeze({
   'three-d-platform': 'stage',
 });
 
+const EXPECTED_STATUSES = Object.freeze({
+  render: 'rendered',
+  mapScene: 'mapped',
+  stage: 'staged',
+});
+
 export async function executeHolographicScene({ scene, adapter, executionId } = {}) {
   if (!scene || typeof scene !== 'object') throw new TypeError('A holographic scene is required.');
   if (!adapter || typeof adapter !== 'object' || !adapter.device) throw new TypeError('A holographic adapter is required.');
@@ -24,6 +30,11 @@ export async function executeHolographicScene({ scene, adapter, executionId } = 
 
   const startedAt = new Date().toISOString();
   const result = await adapter[method](normalizedScene);
+  const expectedStatus = EXPECTED_STATUSES[method];
+  if (!result || typeof result !== 'object' || result.status !== expectedStatus) {
+    throw new TypeError(`Adapter ${method} result must report status ${expectedStatus}.`);
+  }
+
   return Object.freeze({
     executionId: executionId ?? `${normalizedScene.id}:${device.id}`,
     sceneId: normalizedScene.id,
