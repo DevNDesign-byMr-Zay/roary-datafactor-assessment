@@ -29,14 +29,15 @@ test('public surface dispatcher routes supported simulated surfaces', async () =
   }
 });
 
-test('public surface dispatcher fails closed for unsupported operations', async () => {
+test('public surface dispatcher fails closed for renderer identity mismatches', async () => {
   await assert.rejects(
-    () => dispatchHolographicSurface({
-      scene,
-      adapter: new SimulatedProjectorAdapter(),
-      operation: 'stage',
-    }),
-    /operation not supported/,
+    () =>
+      dispatchHolographicSurface({
+        scene,
+        adapter: new SimulatedProjectorAdapter(),
+        operation: 'stage',
+      }),
+    /surface operation does not match renderer identity: projector requires render/,
   );
 });
 
@@ -45,11 +46,12 @@ test('public surface dispatcher rejects ambiguous session and scene sources', as
   const shadowScene = createScene({ id: 'shadow-scene', nodes: [] });
 
   await assert.rejects(
-    () => dispatchHolographicSurface({
-      session,
-      scene: shadowScene,
-      adapter: new SimulatedProjectorAdapter(),
-    }),
+    () =>
+      dispatchHolographicSurface({
+        session,
+        scene: shadowScene,
+        adapter: new SimulatedProjectorAdapter(),
+      }),
     /either session or scene, not both/,
   );
 });
