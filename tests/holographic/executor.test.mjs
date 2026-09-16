@@ -51,4 +51,17 @@ describe('holographic scene executor', () => {
       adapter,
     })).rejects.toThrow('depth');
   });
+
+  test('rejects an invalid device descriptor before adapter execution', async () => {
+    const render = jest.fn(async () => ({ status: 'rendered' }));
+
+    await expect(executeHolographicScene({
+      scene: createScene({ id: 'invalid-device' }),
+      adapter: {
+        device: { id: 'device-1', type: 'projector', capabilities: 'depth', simulated: true },
+        render,
+      },
+    })).rejects.toThrow('Device capabilities must be an array');
+    expect(render).not.toHaveBeenCalled();
+  });
 });
