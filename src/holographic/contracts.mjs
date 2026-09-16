@@ -5,6 +5,16 @@ function finiteNumber(value, name) {
   return value;
 }
 
+function normalizeCapabilities(capabilities, name) {
+  if (!Array.isArray(capabilities)) throw new TypeError(`${name} must be an array.`);
+  return Object.freeze([...new Set(capabilities.map((capability, index) => {
+    if (typeof capability !== 'string' || !capability.trim()) {
+      throw new TypeError(`${name}[${index}] must be a non-empty string.`);
+    }
+    return capability.trim();
+  }))]);
+}
+
 export function createTransform({ x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, scale = 1 } = {}) {
   const normalizedScale = finiteNumber(scale, 'scale');
   if (normalizedScale <= 0) throw new RangeError('scale must be greater than zero.');
@@ -37,14 +47,17 @@ export function createScene({ id, version = 1, nodes = [], metadata = {} } = {})
 export function createDeviceDescriptor({ id, type, capabilities = [], simulated = true } = {}) {
   if (typeof id !== 'string' || !id.trim()) throw new TypeError('Device id is required.');
   if (!DEVICE_TYPES.includes(type)) throw new TypeError(`Unsupported holographic device type: ${type}`);
-  if (!Array.isArray(capabilities)) throw new TypeError('Device capabilities must be an array.');
-  return Object.freeze({ id: id.trim(), type, capabilities: Object.freeze([...new Set(capabilities.map(String))]), simulated: Boolean(simulated) });
+  return Object.freeze({ id: id.trim(), type, capabilities: normalizeCapabilities(capabilities, 'Device capabilities'), simulated: Boolean(simulated) });
 }
 
 export function validateSceneForDevice(scene, device) {
   const descriptor = createDeviceDescriptor(device);
   if (!scene || typeof scene !== 'object' || !Array.isArray(scene.nodes)) throw new TypeError('A valid holographic scene is required.');
-  const requires = scene.nodes.flatMap((node) => node.data?.requires ?? []).map(String);
+  const requires = scene.nodes.flatMap((node, index) => {
+    const requested = node.data?.requires;
+    if (requested === undefined) return [];
+    return normalizeCapabilities(requested, `Scene node ${index} requirements`);
+  });
   const missing = [...new Set(requires)].filter((capability) => !descriptor.capabilities.includes(capability));
   return Object.freeze({ compatible: missing.length === 0, missing });
 }
