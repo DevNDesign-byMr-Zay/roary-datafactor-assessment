@@ -22,6 +22,28 @@ describe('holographic scene planner', () => {
     expect(result.compatibility).toEqual({ compatible: true, missing: [] });
   });
 
+  test('canonicalizes the returned device descriptor', () => {
+    const result = planHolographicScene({
+      intent: 'Canonical Device',
+      assets: [],
+      device: {
+        id: 'projector-raw',
+        type: 'projector',
+        capabilities: [' depth ', 'depth'],
+        simulated: false,
+        ignored: 'discarded',
+      },
+    });
+
+    expect(result.device).toEqual({
+      id: 'projector-raw',
+      type: 'projector',
+      capabilities: ['depth'],
+      simulated: false,
+    });
+    expect(Object.isFrozen(result.device)).toBe(true);
+  });
+
   test('rejects plans that exceed device capabilities', () => {
     const device = createDeviceDescriptor({ id: 'basic', type: 'projector', capabilities: [] });
 
@@ -30,5 +52,13 @@ describe('holographic scene planner', () => {
       assets: [{ id: 'demo', requires: ['depth'] }],
       device,
     })).toThrow('depth');
+  });
+
+  test('rejects malformed device capabilities before planning', () => {
+    expect(() => planHolographicScene({
+      intent: 'Invalid Device',
+      assets: [],
+      device: { id: 'projector-invalid', type: 'projector', capabilities: ['depth', 42] },
+    })).toThrow('Device capabilities[1] must be a non-empty string');
   });
 });
