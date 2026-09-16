@@ -24,7 +24,7 @@ function readAdapterSurfaceType(adapter) {
   return typeof typeDescriptor.value === 'string' ? typeDescriptor.value : null;
 }
 
-/** Route one validated renderer-neutral session or scene to a simulated surface operation. */
+/** Route one validated renderer-neutral session or scene to its typed simulated surface operation. */
 export async function dispatchHolographicSurface({ session, scene, adapter, operation } = {}) {
   if (session && scene) {
     throw new TypeError('surface dispatch requires either session or scene, not both');
@@ -34,6 +34,12 @@ export async function dispatchHolographicSurface({ session, scene, adapter, oper
   const defaultOperation = OPERATIONS[type];
   if (!defaultOperation) throw new TypeError(`unsupported holographic surface: ${type ?? 'unknown'}`);
   const selectedOperation = operation ?? defaultOperation;
+  if (selectedOperation !== defaultOperation) {
+    throw new TypeError(
+      `surface operation does not match renderer identity: ${type} requires ${defaultOperation}`,
+    );
+  }
+
   const canonicalSurfaceType = type === 'holomat' ? 'holo-mat' : type;
 
   let displaySession = session?.displaySession ?? session;
