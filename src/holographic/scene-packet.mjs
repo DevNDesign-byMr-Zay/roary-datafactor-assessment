@@ -35,6 +35,8 @@ export function validateHolographicScenePacket(packet) {
   try {
     if (!packet || typeof packet !== 'object' || packet.packetVersion !== PACKET_VERSION) return false;
     if (!packet.scene || typeof packet.scene.id !== 'string' || !Array.isArray(packet.scene.nodes)) return false;
+    const normalizedScene = createScene(packet.scene);
+    if (JSON.stringify(canonical(normalizedScene)) !== JSON.stringify(canonical(packet.scene))) return false;
     if (packet.calibrationProfile !== null && !validateCalibrationProfile(packet.calibrationProfile)) return false;
     if (!Array.isArray(packet.interactionEvents)) return false;
     if (packet.interactionEvents.some((event) => {
