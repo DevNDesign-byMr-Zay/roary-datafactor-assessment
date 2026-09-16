@@ -19,15 +19,19 @@ function safetyPolicy() {
 export async function dispatchHolographicDisplaySession({ session, adapter, operation = 'render', surfaceType = null } = {}) {
   if (!validateDisplaySession(session)) throw new TypeError('invalid holographic display session');
   if (!adapter || typeof adapter !== 'object') throw new TypeError('adapter must be an object');
-  if (!Object.hasOwn(adapter, operation) || typeof adapter[operation] !== 'function') throw new TypeError(`adapter operation not supported: ${operation}`);
+  if (typeof operation !== 'string' || !operation.trim()) throw new TypeError('adapter operation must be a non-empty string');
+  const selectedOperation = operation.trim();
+  if (!Object.hasOwn(adapter, selectedOperation) || typeof adapter[selectedOperation] !== 'function') {
+    throw new TypeError(`adapter operation not supported: ${selectedOperation}`);
+  }
   const scene = session.packet.calibrationProfile ? mapSceneToDisplay(session.packet.scene, session.packet.calibrationProfile) : session.packet.scene;
-  const result = await adapter[operation](scene);
+  const result = await adapter[selectedOperation](scene);
   const safety = safetyPolicy();
   const dispatch = {
     sessionId: session.sessionId,
     sessionFingerprint: session.sessionFingerprint,
     sceneId: session.sceneId,
-    operation,
+    operation: selectedOperation,
     surfaceType,
     result,
     calibrated: Boolean(session.packet.calibrationProfile),
