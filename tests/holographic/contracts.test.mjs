@@ -43,4 +43,16 @@ describe('holographic contracts', () => {
       missing: ['calibrated-projection'],
     });
   });
+
+  test('rejects malformed capability lists instead of coercing values', () => {
+    expect(() => createDeviceDescriptor({ id: 'bad-device', type: 'projector', capabilities: 'depth' })).toThrow('Device capabilities must be an array');
+    expect(() => createDeviceDescriptor({ id: 'bad-entry', type: 'projector', capabilities: ['depth', 42] })).toThrow('Device capabilities[1] must be a non-empty string');
+
+    const scene = createScene({ id: 'bad-scene', nodes: [{ id: 'hero', data: { requires: ['depth'] } }] });
+    expect(() => validateSceneForDevice(scene, { id: 'device', type: 'projector', capabilities: ['depth'] })).not.toThrow();
+    expect(() => validateSceneForDevice(
+      createScene({ id: 'bad-requirements', nodes: [{ id: 'hero', data: { requires: 'depth' } }] }),
+      { id: 'device', type: 'projector', capabilities: ['depth'] },
+    )).toThrow('Scene node 0 requirements must be an array');
+  });
 });
