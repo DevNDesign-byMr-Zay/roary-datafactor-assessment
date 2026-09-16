@@ -88,7 +88,12 @@ function snapshotSessionEvidence(value, path = 'session', seen = new WeakSet()) 
       if ('get' in descriptor || 'set' in descriptor) {
         throw new TypeError(`${path}.${key} must not use accessors`);
       }
-      copy[key] = snapshotSessionEvidence(descriptor.value, `${path}.${key}`, seen);
+      Object.defineProperty(copy, key, {
+        value: snapshotSessionEvidence(descriptor.value, `${path}.${key}`, seen),
+        enumerable: true,
+        configurable: true,
+        writable: true,
+      });
     }
   }
 
