@@ -38,6 +38,16 @@ test('unknown surface types fail closed', async () => {
   );
 });
 
+test('surface routing rejects operation identity swaps', async () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-operation-swap' });
+  const adapter = new SimulatedHoloMatAdapter({ id: 'holomat-swap' });
+
+  await assert.rejects(
+    () => dispatchHolographicSurface({ session, adapter, operation: 'render' }),
+    /surface operation does not match renderer identity: holomat requires mapScene/,
+  );
+});
+
 test('surface routing rejects accessor-backed adapter devices without evaluating getters', async () => {
   const session = createDisplaySession({ scene, sessionId: 'session-device-accessor' });
   let getterReads = 0;
