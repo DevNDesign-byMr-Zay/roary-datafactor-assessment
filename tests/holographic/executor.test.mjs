@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+/* global describe, expect, jest, test */
 
 import {
   SimulatedHoloMatAdapter,
@@ -63,5 +63,18 @@ describe('holographic scene executor', () => {
       },
     })).rejects.toThrow('Device capabilities must be an array');
     expect(render).not.toHaveBeenCalled();
+  });
+
+  test('rejects an adapter result with the wrong operation status', async () => {
+    const render = jest.fn(async () => ({ status: 'staged' }));
+
+    await expect(executeHolographicScene({
+      scene: createScene({ id: 'status-contract' }),
+      adapter: {
+        device: { id: 'device-1', type: 'projector', capabilities: [], simulated: true },
+        render,
+      },
+    })).rejects.toThrow('status rendered');
+    expect(render).toHaveBeenCalledTimes(1);
   });
 });
