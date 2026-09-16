@@ -2,7 +2,7 @@ import { createDeviceDescriptor, validateSceneForDevice } from './contracts.mjs'
 
 export class SimulatedProjectorAdapter {
   constructor(descriptor = {}) {
-    this.device = createDeviceDescriptor({ type: 'projector', simulated: true, ...descriptor });
+    this.device = createDeviceDescriptor({ ...descriptor, type: 'projector', simulated: true });
     this.render = this.render.bind(this);
   }
 
@@ -23,7 +23,7 @@ export class SimulatedProjectorAdapter {
 
 export class SimulatedHoloMatAdapter {
   constructor(descriptor = {}) {
-    this.device = createDeviceDescriptor({ type: 'holomat', simulated: true, ...descriptor });
+    this.device = createDeviceDescriptor({ ...descriptor, type: 'holomat', simulated: true });
     this.mapScene = this.mapScene.bind(this);
   }
 
@@ -36,11 +36,15 @@ export class SimulatedHoloMatAdapter {
     if (!compatibility.compatible) throw new Error(`Scene requires unsupported capabilities: ${compatibility.missing.join(', ')}`);
     return Object.freeze({ deviceId: this.device.id, sceneId: scene.id, status: 'mapped', simulated: true });
   }
+
+  async disconnect() {
+    return { deviceId: this.device.id, status: 'disconnected' };
+  }
 }
 
 export class SimulatedThreeDPlatformAdapter {
   constructor(descriptor = {}) {
-    this.device = createDeviceDescriptor({ type: 'three-d-platform', simulated: true, ...descriptor });
+    this.device = createDeviceDescriptor({ ...descriptor, type: 'three-d-platform', simulated: true });
     this.stage = this.stage.bind(this);
   }
 
@@ -52,5 +56,9 @@ export class SimulatedThreeDPlatformAdapter {
     const compatibility = validateSceneForDevice(scene, this.device);
     if (!compatibility.compatible) throw new Error(`Scene requires unsupported capabilities: ${compatibility.missing.join(', ')}`);
     return Object.freeze({ deviceId: this.device.id, sceneId: scene.id, status: 'staged', simulated: true });
+  }
+
+  async disconnect() {
+    return { deviceId: this.device.id, status: 'disconnected' };
   }
 }
