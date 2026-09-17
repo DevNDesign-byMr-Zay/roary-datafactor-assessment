@@ -38,6 +38,15 @@ test('rejects tampered session identity, packet lineage, safety, and fingerprint
   );
 });
 
+test('rejects prototype-named session evidence instead of dropping it', () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-1' });
+  const prototypeNamed = JSON.parse('{"__proto__":{"hiddenAuthority":true}}');
+  const tampered = { ...session, ...prototypeNamed };
+
+  assert.equal(Object.hasOwn(tampered, '__proto__'), true);
+  assert.equal(validateDisplaySession(tampered), false);
+});
+
 test('rejects deceptive session descriptors without executing getters', () => {
   const session = createDisplaySession({ scene, sessionId: 'session-1' });
   let getterReads = 0;
