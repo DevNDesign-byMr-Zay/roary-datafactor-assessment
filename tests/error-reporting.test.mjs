@@ -59,7 +59,7 @@ describe('unhandled error reporting', () => {
     });
 
     report(new Error('request failed'), { scope: 'http' });
-    await new Promise((resolve) => setImmediate(resolve));
+    await Promise.resolve();
 
     expect(log.warn).toHaveBeenCalledWith(
       {
