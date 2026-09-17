@@ -56,6 +56,22 @@ npm start
 
 Default port: `8080`.
 
+### Container startup
+
+The existing Dockerfile and Compose definition provide a one-command startup path from a fresh checkout:
+
+```bash
+docker compose up --build
+```
+
+The service is available at `http://127.0.0.1:8080` by default. Set `HOST_PORT` to expose a different host port without changing the container's runtime port.
+
+The Compose healthcheck and CI smoke test exercise `GET /health` without cloud credentials. Authenticated `/chat` calls still require Google Application Default Credentials or an equivalent deployment identity supplied externally; credentials are never copied into the image or stored in this repository.
+
+```bash
+curl --fail http://127.0.0.1:8080/health
+```
+
 ## Production error reporting
 
 `startServer()` accepts an optional `onUnhandledError(error, context)` hook for wiring an external error tracker or alerting sink. The hook runs only for otherwise-unhandled HTTP errors that reach the final server boundary; normal validation failures, timeouts, client aborts, and the service's expected sanitized failure responses keep their existing behavior.
@@ -108,9 +124,12 @@ npm ci --ignore-scripts
 npm audit --audit-level=moderate
 npm run lint
 npm run test:coverage
+docker compose config --quiet
+docker compose up --build --detach
+curl --fail http://127.0.0.1:8080/health
 ```
 
-The same checks run weekly so dependency/security state is re-evaluated against current advisories. Dependabot is configured for npm and GitHub Actions dependencies. Static analysis is also maintained separately through CodeQL. Drive-corpus import and verification workflows remain separate maintenance concerns.
+The same checks run weekly so dependency/security and container startup state are re-evaluated against current code and advisories. Dependabot is configured for npm and GitHub Actions dependencies. Static analysis is also maintained separately through CodeQL. Drive-corpus import and verification workflows remain separate maintenance concerns.
 
 ## Privacy and IP scope
 
