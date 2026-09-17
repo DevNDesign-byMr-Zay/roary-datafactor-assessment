@@ -44,6 +44,16 @@ describe('history store', () => {
     expect(() => createHistoryStore()).toThrow(TypeError);
   });
 
+  test('rejects a non-positive or non-integer history limit at construction', () => {
+    const { db } = makeDb();
+
+    for (const historyLimit of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+      expect(() => createHistoryStore(db, { historyLimit })).toThrow(
+        'historyLimit must be a positive integer.',
+      );
+    }
+  });
+
   test('loads descending Firestore rows as chronological model history', async () => {
     const { db, spies } = makeDb([
       { role: 'assistant', text: 'latest answer' },
