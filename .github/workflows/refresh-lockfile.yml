@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: npm-lockfile-refresh-main
@@ -18,30 +19,61 @@ concurrency:
 jobs:
   lockfile:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
-      - name: Refresh package-lock.json
-        run: |
-          npm install --package-lock-only --ignore-scripts
-          npm audit fix --package-lock-only --ignore-scripts || true
-      - name: Report remaining dependency findings
-        run: npm audit || true
-      - name: Commit refreshed lockfile
+      - name: Generate package-lock.json
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Detect lockfile changes
+        id: changes
         shell: bash
         run: |
           set -euo pipefail
+          if git diff --quiet -- package-lock.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Lockfile already current."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Verify generated dependency graph
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          npm ci --ignore-scripts
+          npm audit --audit-level=moderate
+          npm run lint
+          npm run verify:integrity
+          npm run test:coverage
+          npm run demo:renewable-evidence
+      - name: Verify generated lockfile in container build
+        if: steps.changes.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker compose build
+      - name: Open verified lockfile pull request
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch="automation/refresh-npm-lock-${GITHUB_RUN_ID}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
           git add package-lock.json
-          if git diff --cached --quiet; then
-            echo "Lockfile already current."
-            exit 0
-          fi
-          git commit -m "build: refresh npm lockfile [skip ci]"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          git commit -m "build: refresh verified npm lockfile"
+          git push --set-upstream origin "$branch"
+          gh pr create \
+            --base main \
+            --head "$branch" \
+            --title "build: refresh verified npm lockfile" \
+            --body "Regenerates the npm lockfile from the current package manifest. Before opening this PR, the refresh workflow completed a clean install, dependency audit, lint, promoted-corpus integrity verification, enforced coverage, the renewable evidence demo, and a container build. Normal CI and security analysis should still validate this exact PR head before merge."
