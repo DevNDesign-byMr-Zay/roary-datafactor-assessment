@@ -29,14 +29,14 @@ test('public surface dispatcher routes supported simulated surfaces', async () =
   }
 });
 
-test('public surface dispatcher fails closed for unsupported operations', async () => {
+test('public surface dispatcher fails closed for renderer-operation identity mismatches', async () => {
   await assert.rejects(
     () => dispatchHolographicSurface({
       scene,
       adapter: new SimulatedProjectorAdapter(),
       operation: 'stage',
     }),
-    /operation not supported/,
+    /surface operation does not match renderer identity: projector requires render/,
   );
 });
 
