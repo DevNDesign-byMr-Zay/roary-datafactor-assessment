@@ -56,6 +56,24 @@ npm start
 
 Default port: `8080`.
 
+## Production error reporting
+
+`startServer()` accepts an optional `onUnhandledError(error, context)` hook for wiring an external error tracker or alerting sink. The hook runs only for otherwise-unhandled HTTP errors that reach the final server boundary; normal validation failures, timeouts, client aborts, and the service's expected sanitized failure responses keep their existing behavior.
+
+The callback receives the original error plus frozen, bounded context containing the failure scope and request ID. Reporter failures are isolated and logged as bounded metadata so an unavailable telemetry provider cannot change the HTTP result or create a second unhandled rejection.
+
+```js
+import { startServer } from './src/server.mjs';
+
+startServer({
+  onUnhandledError(error, context) {
+    return captureException(error, { context });
+  },
+});
+```
+
+`captureException` represents the deployment's chosen monitoring integration and is intentionally not bundled into the service.
+
 ## API
 
 ### `GET /health`
