@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^9.0.1",
-    "@google/genai": "^2.19.0",
+    "@google/genai": "^2.22.0",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "pino": "^9.9.0",
