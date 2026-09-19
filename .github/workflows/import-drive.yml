@@ -59,7 +59,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$branch"
           git commit -m "chore: refresh mirrored code corpus"
-          git push --force origin HEAD:"$branch"
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+            git fetch origin "$branch"
+          fi
+          git push --force-with-lease origin HEAD:"$branch"
 
           pr_number="$(gh pr list --head "$branch" --base main --state open --json number --jq '.[0].number // empty')"
           body="Automated corpus refresh completed only after every selected source/configuration file downloaded successfully. The importer is transactional, so blocked downloads leave the current corpus untouched. Maintained install, dependency audit, lint, integrity checks, and coverage passed before this branch was published. Normal pull-request CI and CodeQL must still pass before merge."
