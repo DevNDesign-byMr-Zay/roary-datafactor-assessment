@@ -7,6 +7,33 @@ const OPERATIONS = Object.freeze({
   'three-d-platform': 'stage',
 });
 
+function readSceneIdentity(scene) {
+  if (!scene || typeof scene !== 'object' || Array.isArray(scene)) {
+    throw new TypeError('scene must be an object for surface dispatch');
+  }
+  const idDescriptor = Object.getOwnPropertyDescriptor(scene, 'id');
+  if (idDescriptor) {
+    if ('get' in idDescriptor || 'set' in idDescriptor) {
+      throw new TypeError('scene.id must not use accessors');
+    }
+    if (typeof idDescriptor.value === 'string' && idDescriptor.value.trim()) {
+      return idDescriptor.value.trim();
+    }
+  }
+
+  const sceneIdDescriptor = Object.getOwnPropertyDescriptor(scene, 'sceneId');
+  if (sceneIdDescriptor) {
+    if ('get' in sceneIdDescriptor || 'set' in sceneIdDescriptor) {
+      throw new TypeError('scene.sceneId must not use accessors');
+    }
+    if (typeof sceneIdDescriptor.value === 'string' && sceneIdDescriptor.value.trim()) {
+      return sceneIdDescriptor.value.trim();
+    }
+  }
+
+  throw new TypeError('scene identity is required for surface dispatch');
+}
+
 function readAdapterSurfaceType(adapter) {
   if (!adapter || typeof adapter !== 'object') return null;
   const deviceDescriptor = Object.getOwnPropertyDescriptor(adapter, 'device');
@@ -44,13 +71,10 @@ export async function dispatchHolographicSurface({ session, scene, adapter, oper
 
   let displaySession = session?.displaySession ?? session;
   if (!displaySession && scene) {
-    const sceneId = scene.id ?? scene.sceneId;
-    if (typeof sceneId !== 'string' || !sceneId.trim()) {
-      throw new TypeError('scene identity is required for surface dispatch');
-    }
+    const sceneId = readSceneIdentity(scene);
     displaySession = createDisplaySession({
       scene,
-      sessionId: `surface:${sceneId.trim()}`,
+      sessionId: `surface:${sceneId}`,
     });
   }
 
