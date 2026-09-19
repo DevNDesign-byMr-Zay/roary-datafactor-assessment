@@ -1,14 +1,12 @@
-# Importer revision: direct-https-32
+# Importer revision: transactional-pr-v1
 name: Import Drive code corpus
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/import-drive.yml"
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: drive-code-import
@@ -19,27 +17,55 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - name: Check out repository
+      - name: Check out current main
         uses: actions/checkout@v7
         with:
-          fetch-depth: 1
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
 
       - name: Install Drive importer dependency
         run: python3 -m pip install --disable-pip-version-check --no-cache-dir "gdown==6.1.0"
 
-      - name: Import Software Engineering & AI Tooling
+      - name: Import complete code corpus transactionally
         run: python3 .github/scripts/import_drive.py
 
-      - name: Commit mirrored code corpus
+      - name: Verify maintained quality surface
+        run: |
+          npm ci --ignore-scripts
+          npm audit --audit-level=moderate
+          npm run check
+
+      - name: Publish reviewed corpus refresh
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          branch="automation/drive-corpus-refresh"
+
           git add -- "Software Engineering & AI Tooling" IMPORT_REPORT.md IMPORT_FAILURES.json
           if git diff --cached --quiet; then
             echo "Drive corpus already matches the repository."
             exit 0
           fi
-          git commit -m "Import Software Engineering & AI Tooling code corpus [skip ci]"
-          git push origin HEAD:main
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git commit -m "chore: refresh mirrored code corpus"
+          git push --force origin HEAD:"$branch"
+
+          pr_number="$(gh pr list --head "$branch" --base main --state open --json number --jq '.[0].number // empty')"
+          body="Automated corpus refresh completed only after every selected source/configuration file downloaded successfully. The importer is transactional, so blocked downloads leave the current corpus untouched. Maintained install, dependency audit, lint, integrity checks, and coverage passed before this branch was published. Normal pull-request CI and CodeQL must still pass before merge."
+
+          if [ -n "$pr_number" ]; then
+            gh pr edit "$pr_number" --title "Review complete corpus refresh" --body "$body"
+          else
+            gh pr create --base main --head "$branch" --title "Review complete corpus refresh" --body "$body"
+          fi
