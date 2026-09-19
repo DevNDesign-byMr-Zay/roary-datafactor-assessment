@@ -96,3 +96,41 @@ test('surface routing requires device identity to be own data', async () => {
     /unsupported holographic surface: unknown/,
   );
 });
+
+
+test('surface routing rejects accessor-backed scene identity without evaluating getters', async () => {
+  const session = createDisplaySession({ scene, sessionId: 'session-scene-id-accessor' });
+  let getterReads = 0;
+  const deceptiveScene = { ...scene };
+  Object.defineProperty(deceptiveScene, 'id', {
+    enumerable: true,
+    get() {
+      getterReads += 1;
+      return scene.id;
+    },
+  });
+
+  await assert.rejects(
+    () => dispatchHolographicSurface({
+      scene: deceptiveScene,
+      adapter: new SimulatedHoloMatAdapter({ id: 'scene-id-accessor' }),
+    }),
+    /scene\.id must not use accessors/,
+  );
+  assert.equal(getterReads, 0);
+  assert.equal(session.sessionId, 'session-scene-id-accessor');
+});
+
+test('surface routing rejects inherited scene identity', async () => {
+  const inheritedScene = Object.create({ id: scene.id });
+  Object.assign(inheritedScene, scene);
+  delete inheritedScene.id;
+
+  await assert.rejects(
+    () => dispatchHolographicSurface({
+      scene: inheritedScene,
+      adapter: new SimulatedHoloMatAdapter({ id: 'inherited-scene-id' }),
+    }),
+    /scene identity is required for surface dispatch/,
+  );
+});
