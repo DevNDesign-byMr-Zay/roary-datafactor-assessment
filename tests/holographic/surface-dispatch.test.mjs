@@ -125,6 +125,7 @@ test('surface routing rejects inherited scene identity', async () => {
   const inheritedScene = Object.create({ id: scene.id });
   Object.assign(inheritedScene, scene);
   delete inheritedScene.id;
+  delete inheritedScene.sceneId;
 
   await assert.rejects(
     () => dispatchHolographicSurface({
