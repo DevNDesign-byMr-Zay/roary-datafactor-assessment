@@ -2,39 +2,60 @@ name: Verify live Drive corpus
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/verify-drive.yml"
 
 permissions:
   contents: write
+  pull-requests: write
+
+concurrency:
+  group: drive-corpus-verification
+  cancel-in-progress: true
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Check out repository
+      - name: Check out current main
         uses: actions/checkout@v7
         with:
-          fetch-depth: 1
+          ref: main
+          fetch-depth: 0
 
       - name: Install Drive probe dependency
         run: python3 -m pip install --disable-pip-version-check --no-cache-dir "gdown==6.1.0"
 
-      - name: Verify live Drive against GitHub corpus
+      - name: Verify live Drive against repository corpus
         run: python3 .github/scripts/verify_drive.py
 
-      - name: Commit verification report
+      - name: Publish reviewed verification report
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          branch="automation/drive-verification-report"
+
           git add -- VERIFY_REPORT.md VERIFY_REPORT.json
           if git diff --cached --quiet; then
             echo "Verification report unchanged."
             exit 0
           fi
-          git commit -m "Verify live Drive corpus against GitHub [skip ci]"
-          git push origin HEAD:main
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git commit -m "docs: refresh live corpus verification report"
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+            git fetch origin "$branch"
+          fi
+          git push --force-with-lease origin HEAD:"$branch"
+
+          pr_number="$(gh pr list --head "$branch" --base main --state open --json number --jq '.[0].number // empty')"
+          body="Automated live-corpus verification completed with an exact match. The changed verification report is submitted through normal review so assessment CI and CodeQL validate the exact report branch before merge. Verification mismatches fail before this publication step and leave main untouched."
+
+          if [ -n "$pr_number" ]; then
+            gh pr edit "$pr_number" --title "Refresh live corpus verification report" --body "$body"
+          else
+            gh pr create --base main --head "$branch" --title "Refresh live corpus verification report" --body "$body"
+          fi
