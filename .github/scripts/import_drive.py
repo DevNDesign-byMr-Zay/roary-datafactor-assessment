@@ -7,6 +7,7 @@ import json
 import re
 import shutil
 import subprocess
+import tempfile
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path, PurePosixPath
@@ -39,7 +40,7 @@ SOURCE_BASENAMES = {
     "requirements.txt", "pipfile", "package.json", "package-lock.json",
     "pnpm-lock.yaml", "yarn.lock", "composer.json", "cargo.toml", "go.mod", "go.sum",
 }
-USER_AGENT = "Mozilla/5.0 (compatible; DatafactorCorpusImporter/1.0)"
+USER_AGENT = "Mozilla/5.0 (compatible; CorpusMirror/2.0)"
 
 
 def probe() -> list[dict[str, str]]:
@@ -165,9 +166,9 @@ def main() -> int:
 
     counts = Counter(str(e["rel"]).casefold() for e in entries)
     collisions = {path for path, count in counts.items() if count > 1}
-    if STAGING_ROOT.exists():
-        shutil.rmtree(STAGING_ROOT)
-    STAGING_ROOT.mkdir(parents=True, exist_ok=True)
+    transaction_root = Path(tempfile.mkdtemp(prefix=".drive-import-", dir=REPO_ROOT))
+    download_root = transaction_root / STAGING_ROOT.name
+    download_root.mkdir(parents=True, exist_ok=True)
 
     used: set[str] = set()
     planned: list[dict[str, object]] = []
@@ -194,7 +195,7 @@ def main() -> int:
     def worker(item: dict[str, object]) -> tuple[dict[str, object], bool, str]:
         target_rel = item["target_rel"]
         assert isinstance(target_rel, PurePosixPath)
-        target = STAGING_ROOT.joinpath(*target_rel.parts)
+        target = download_root.joinpath(*target_rel.parts)
         ok, error = download(str(item["id"]), target)
         return item, ok, error
 
@@ -232,11 +233,30 @@ def main() -> int:
         f"- Files in duplicate-path groups preserved with Drive-ID suffixes: **{collision_files}**",
         f"- Direct-download workers: **{WORKERS}**",
         "",
-        "Every duplicate-path Drive entry receives a distinct repository path. Files that cannot be fetched through direct shared-link download are recorded in `IMPORT_FAILURES.json` for authenticated Drive recovery rather than silently omitted.",
+        "Every duplicate-path Drive entry receives a distinct repository path. The live corpus is replaced only after every selected file downloads successfully; any blocked fetch aborts the transaction and leaves the previously verified repository corpus untouched.",
         "",
     ]
     REPORT_PATH.write_text("\n".join(report), encoding="utf-8")
     print("\n".join(report), flush=True)
+
+    if failures:
+        shutil.rmtree(transaction_root, ignore_errors=True)
+        raise RuntimeError(
+            f"Drive import aborted with {len(failures)} blocked download(s); existing corpus left unchanged"
+        )
+
+    backup_root = transaction_root / "previous-corpus"
+    try:
+        if STAGING_ROOT.exists():
+            STAGING_ROOT.rename(backup_root)
+        download_root.rename(STAGING_ROOT)
+    except Exception:
+        if not STAGING_ROOT.exists() and backup_root.exists():
+            backup_root.rename(STAGING_ROOT)
+        raise
+    finally:
+        shutil.rmtree(transaction_root, ignore_errors=True)
+
     return 0
 
 
