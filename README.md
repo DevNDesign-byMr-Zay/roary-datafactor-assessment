@@ -33,7 +33,7 @@ The quality surface is deliberately broader than the reference service. In addit
 - **API Foundations** — `Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs`
 - **Storage & File Services** — `Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs`
 
-These corpus tests cover authorization success/failure, fail-closed configuration, preflight behavior, CORS allow/deny/error propagation, signed-read URL generation, validation, missing configuration, and signing failures. The historical/versioned corpus remains provenance material and is not bulk-rewritten or falsely labeled as maintained production code.
+These corpus tests cover authorization success/failure, fail-closed configuration, preflight behavior, CORS allow/deny/error propagation, signed-read URL generation, validation, missing configuration, and signing failures. The historical/versioned corpus remains provenance material and is not bulk-rewritten or falsely labeled as maintained production code. `ARCHIVE.md` defines and regression-protects this boundary, including the exact promoted corpus paths that participate in maintained lint and coverage.
 
 ## Fresh-clone setup
 

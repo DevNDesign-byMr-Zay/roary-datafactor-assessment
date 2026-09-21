@@ -15,6 +15,8 @@ This assessment repository is maintained as a sequence of small, reviewable engi
 
 Do not manually delete, rename, or overwrite files under `Software Engineering & AI Tooling/`. Use the Drive import and verification workflows and require `VERIFY_REPORT.md` to remain an exact live match.
 
+`ARCHIVE.md` defines the maintained-versus-historical boundary. When intentionally promoting a historical artifact into the maintained quality surface, add behavior-focused tests and list the exact source path in lint/coverage configuration. Do not bulk-promote the corpus with a wildcard.
+
 ## Security and privacy
 
 Never commit credentials, API keys, access tokens, private user records, production identifiers, or client/customer PII. Use `.env.example` only for non-secret variable names and placeholders.
