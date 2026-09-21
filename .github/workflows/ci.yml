@@ -62,3 +62,18 @@ jobs:
           docker compose ps
           docker compose logs --no-color
           exit 1
+
+  maintenance-scripts:
+    name: Corpus maintenance script syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Compile maintenance scripts
+        run: python -m py_compile .github/scripts/import_drive.py .github/scripts/verify_drive.py
+
