@@ -175,10 +175,10 @@ export function createApp({
 
         logger.warn(
           {
+            ...sanitizeFailureMetadata(error),
             event: providerFailure.event,
             requestId,
             sessionId,
-            ...sanitizeFailureMetadata(error),
           },
           'Model provider request failed',
         );
