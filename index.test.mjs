@@ -128,6 +128,72 @@ describe('assessment service', () => {
     expect(logger.error).toHaveBeenCalled();
   });
 
+  test('POST /chat returns a correlated sanitized 429 for provider rate limits', async () => {
+    const { db } = makeDb();
+    const providerFailure = Object.assign(new Error('quota account details must not leak'), {
+      code: 'RESOURCE_EXHAUSTED',
+    });
+    const { vertexClient } = makeVertex(async () => {
+      throw providerFailure;
+    });
+    const logger = makeLogger();
+    const app = createApp({
+      vertexClient,
+      db,
+      logger,
+      requestIdFactory: () => 'request-rate-limited',
+    });
+
+    const response = await request(app)
+      .post('/chat')
+      .send({ text: 'Try the provider', sessionId: 'session-123' });
+
+    expect(response.status).toBe(429);
+    expect(response.headers['x-request-id']).toBe('request-rate-limited');
+    expect(response.body).toEqual({
+      error: {
+        code: 'UPSTREAM_RATE_LIMITED',
+        message: 'The model provider is temporarily rate limited.',
+        requestId: 'request-rate-limited',
+      },
+    });
+    expect(JSON.stringify(response.body)).not.toContain('quota account details');
+    expect(logger.warn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'chat.provider_rate_limited',
+        requestId: 'request-rate-limited',
+        sessionId: 'session-123',
+        errorCode: 'RESOURCE_EXHAUSTED',
+      }),
+      'Model provider request failed',
+    );
+  });
+
+  test('POST /chat keeps unknown model failures on the generic sanitized 500 contract', async () => {
+    const { db } = makeDb();
+    const { vertexClient } = makeVertex(async () => {
+      throw new Error('unknown provider secret');
+    });
+    const app = createApp({
+      vertexClient,
+      db,
+      logger: makeLogger(),
+      requestIdFactory: () => 'request-provider-unknown',
+    });
+
+    const response = await request(app)
+      .post('/chat')
+      .send({ text: 'Trigger unknown failure', sessionId: 'session-123' });
+
+    expect(response.status).toBe(500);
+    expect(response.body.error).toEqual({
+      code: 'CHAT_REQUEST_FAILED',
+      message: 'Unable to complete the chat request.',
+      requestId: 'request-provider-unknown',
+    });
+    expect(JSON.stringify(response.body)).not.toContain('unknown provider secret');
+  });
+
   test('POST /chat returns 502 when the provider yields no text', async () => {
     const { db } = makeDb();
     const { vertexClient } = makeVertex(async () => ({ response: { candidates: [] } }));

@@ -11,6 +11,7 @@ import {
 } from './chat-deadline.mjs';
 import { createHistoryStore } from './history-store.mjs';
 import { extractModelText } from './model-response.mjs';
+import { classifyProviderFailure } from './provider-failure.mjs';
 import { parseChatRequest } from './validation.mjs';
 
 const SYSTEM_INSTRUCTION = `You are a concise, helpful conversational assistant.
@@ -152,18 +153,42 @@ export function createApp({
           clearTimeoutFn,
         },
       );
-      const result = await runWithChatDeadline(
-        () =>
-          model.generateContent({
-            contents: [...history, { role: 'user', parts: [{ text }] }],
+      let result;
+      try {
+        result = await runWithChatDeadline(
+          () =>
+            model.generateContent({
+              contents: [...history, { role: 'user', parts: [{ text }] }],
+            }),
+          {
+            timeoutMs: deadline.remainingMs(),
+            signal: abortController.signal,
+            setTimeoutFn,
+            clearTimeoutFn,
+          },
+        );
+      } catch (error) {
+        if (error instanceof ChatAbortError || error instanceof ChatTimeoutError) throw error;
+
+        const providerFailure = classifyProviderFailure(error);
+        if (!providerFailure) throw error;
+
+        logger.warn(
+          {
+            ...sanitizeFailureMetadata(error),
+            event: providerFailure.event,
+            requestId,
+            sessionId,
+          },
+          'Model provider request failed',
+        );
+        return res.status(providerFailure.status).json(
+          requestErrorBody(requestId, {
+            code: providerFailure.code,
+            message: providerFailure.message,
           }),
-        {
-          timeoutMs: deadline.remainingMs(),
-          signal: abortController.signal,
-          setTimeoutFn,
-          clearTimeoutFn,
-        },
-      );
+        );
+      }
       const reply = extractModelText(result);
 
       if (!reply) {
