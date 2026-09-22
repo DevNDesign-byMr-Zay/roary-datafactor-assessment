@@ -131,6 +131,12 @@ curl --fail http://127.0.0.1:8080/health
 
 The same checks run weekly so dependency/security and container startup state are re-evaluated against current code and advisories. Dependabot is configured for npm and GitHub Actions dependencies. Static analysis is also maintained separately through CodeQL. Drive-corpus import and verification workflows remain separate maintenance concerns.
 
+## Release readiness
+
+`npm run verify:release` checks the release metadata and provenance prerequisites that should be true before a semantic release is cut: stable package versioning, required maintained scripts, exact corpus verification, zero unresolved import failures, documented runtime environment keys, pull-request quality gates, container startup proof, and CodeQL coverage.
+
+See `docs/RELEASE_READINESS.md` for the full release discipline. The document intentionally distinguishes a verified release-ready commit from an actual Git tag or hosted release; tags should represent real milestones and should not be manufactured for history.
+
 ## Privacy and IP scope
 
 The assessment material is deidentified. Product names, original cloud identifiers, user/client references, credentials, private user records, and brand-specific application text are excluded or replaced with neutral assessment-safe equivalents. The repository is intended to preserve engineering signal without publishing secrets or client/customer data.
