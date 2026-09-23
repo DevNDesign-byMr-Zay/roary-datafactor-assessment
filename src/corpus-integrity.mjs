@@ -73,14 +73,17 @@ export async function verifyPromotedCorpusIntegrity({
       observed.sha256 !== artifact.sha256 ||
       observed.git_blob_sha1 !== artifact.git_blob_sha1
     ) {
-      const error = new Error(`promoted corpus integrity drift: ${artifact.path}`);
-      error.expected = {
-        bytes: artifact.bytes,
-        sha256: artifact.sha256,
-        git_blob_sha1: artifact.git_blob_sha1,
-      };
-      error.observed = observed;
-      throw error;
+      throw Object.assign(
+        new Error(`promoted corpus integrity drift: ${artifact.path}`),
+        {
+          expected: {
+            bytes: artifact.bytes,
+            sha256: artifact.sha256,
+            git_blob_sha1: artifact.git_blob_sha1,
+          },
+          observed,
+        },
+      );
     }
     verified.push(observed);
   }

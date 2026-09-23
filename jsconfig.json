@@ -15,6 +15,9 @@
     "src/model-response.mjs",
     "src/provider-failure.mjs",
     "src/logger.mjs",
-    "src/chat-deadline.mjs"
+    "src/chat-deadline.mjs",
+    "src/corpus-integrity.mjs",
+    "src/error-reporting.mjs",
+    "src/history-store.mjs"
   ]
 }
