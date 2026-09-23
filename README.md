@@ -35,6 +35,11 @@ The quality surface is deliberately broader than the reference service. In addit
 
 These corpus tests cover authorization success/failure, fail-closed configuration, preflight behavior, CORS allow/deny/error propagation, signed-read URL generation, validation, missing configuration, and signing failures. The historical/versioned corpus remains provenance material and is not bulk-rewritten or falsely labeled as maintained production code. `ARCHIVE.md` defines and regression-protects this boundary, including the exact promoted corpus paths that participate in maintained lint and coverage.
 
+
+### Machine-readable repository surfaces
+
+`config/repository-surfaces.json` declares the active runtime/test roots separately from the preserved historical corpus and lists only the exact historical artifacts intentionally promoted into blocking quality gates. `npm run verify:surface` validates that split in CI, while `npm run typecheck` applies a staged JavaScript type-check gate to maintained runtime modules without treating the historical archive as homogeneous production code.
+
 ## Fresh-clone setup
 
 Requirements: Node.js 22+ and npm.
