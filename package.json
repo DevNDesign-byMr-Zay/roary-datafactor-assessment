@@ -16,7 +16,7 @@
     "verify:surface": "node scripts/verify-surface-boundary.mjs"
   },
   "dependencies": {
-    "@google-cloud/firestore": "^9.1.0",
+    "@google-cloud/firestore": "^9.2.0",
     "@google/genai": "^2.22.0",
     "cors": "^2.8.5",
     "express": "^5.2.1",
