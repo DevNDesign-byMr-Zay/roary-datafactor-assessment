@@ -26,6 +26,10 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Dependency security audit
         run: npm audit --audit-level=moderate
+      - name: Type-check maintained JavaScript
+        run: npm run typecheck
+      - name: Verify maintained and historical surface split
+        run: npm run verify:surface
       - name: Lint maintained service and tests
         run: npm run lint
       - name: Verify promoted corpus integrity
