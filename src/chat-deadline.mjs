@@ -38,6 +38,17 @@ export function createChatDeadlineBudget(timeoutMs, { nowFn = Date.now } = {}) {
   });
 }
 
+/**
+ * Run a task against an explicit request deadline and optional client abort signal.
+ *
+ * @param {() => unknown | Promise<unknown>} task
+ * @param {{
+ *   timeoutMs?: number,
+ *   signal?: AbortSignal,
+ *   setTimeoutFn?: typeof setTimeout,
+ *   clearTimeoutFn?: typeof clearTimeout
+ * }} [options]
+ */
 export async function runWithChatDeadline(
   task,
   {

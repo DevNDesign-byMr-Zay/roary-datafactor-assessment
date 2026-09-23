@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "maintainedRoots": [
+    "src",
+    "tests",
+    "scripts"
+  ],
+  "maintainedEntrypoints": [
+    "index.mjs",
+    "index.test.mjs"
+  ],
+  "historicalCorpusRoot": "Software Engineering & AI Tooling",
+  "promotedHistoricalArtifacts": [
+    "Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs",
+    "Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs",
+    "Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs"
+  ],
+  "classification": {
+    "maintainedRoots": "active-service-and-verification",
+    "maintainedEntrypoints": "active-runtime-entrypoints",
+    "historicalCorpusRoot": "preserved-development-history",
+    "promotedHistoricalArtifacts": "historical-artifacts-under-active-quality-gates"
+  }
+}
