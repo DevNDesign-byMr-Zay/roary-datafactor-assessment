@@ -19,6 +19,8 @@ const REQUIRED_SCRIPTS = Object.freeze([
   'start',
   'lint',
   'verify:integrity',
+  'verify:surface',
+  'typecheck',
   'test:coverage',
   'check',
   'verify:release',
@@ -83,6 +85,8 @@ async function main() {
   assert(/pull_request:/u.test(ci), 'quality workflow must run for pull requests');
   assert(/npm ci --ignore-scripts/u.test(ci), 'quality workflow must use reproducible npm install');
   assert(/npm audit --audit-level=moderate/u.test(ci), 'quality workflow must enforce dependency audit');
+  assert(/npm run typecheck/u.test(ci), 'quality workflow must enforce maintained JavaScript type-checking');
+  assert(/npm run verify:surface/u.test(ci), 'quality workflow must verify the maintained/historical split');
   assert(/npm run test:coverage/u.test(ci), 'quality workflow must enforce coverage');
   assert(/docker compose up --build --detach/u.test(ci), 'quality workflow must prove container startup');
   assert(/pull_request:/u.test(codeql), 'CodeQL must run for pull requests');
