@@ -1,3 +1,10 @@
+/**
+ * @param {{
+ *   workloadClass?: 'critical' | 'flexible',
+ *   renewablePreferred?: boolean,
+ *   reason?: string
+ * }} [options]
+ */
 export function summarizeWorkloadDecision({ workloadClass, renewablePreferred, reason } = {}) {
   if (!['critical', 'flexible'].includes(workloadClass)) {
     throw new Error('Unsupported workload class');
