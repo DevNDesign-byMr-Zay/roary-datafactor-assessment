@@ -72,8 +72,11 @@ jobs:
           git add package-lock.json
           git commit -m "build: refresh verified npm lockfile"
           git push --set-upstream origin "$branch"
-          gh pr create \
+          if ! gh pr create \
             --base main \
             --head "$branch" \
             --title "build: refresh verified npm lockfile" \
-            --body "Regenerates the npm lockfile from the current package manifest. Before opening this PR, the refresh workflow completed a clean install, dependency audit, lint, promoted-corpus integrity verification, enforced coverage, the renewable evidence demo, and a container build. Normal CI and security analysis should still validate this exact PR head before merge."
+            --body "Regenerates the npm lockfile from the current package manifest. Before opening this PR, the refresh workflow completed a clean install, dependency audit, lint, promoted-corpus integrity verification, enforced coverage, the renewable evidence demo, and a container build. Normal CI and security analysis should still validate this exact PR head before merge."; then
+            echo "::notice title=Lockfile branch published::GitHub Actions cannot open pull requests in this repository. Open a PR from $branch to main."
+            echo "Verified lockfile branch $branch was published; repository policy requires a human or connected app to open the PR." >> "$GITHUB_STEP_SUMMARY"
+          fi
