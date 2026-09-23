@@ -23,6 +23,10 @@ export function createHistoryStore(db, { historyLimit = 12 } = {}) {
   }
 
   return {
+    /**
+     * @param {string} sessionId
+     * @param {{ signal?: AbortSignal }} [options]
+     */
     async load(sessionId, { signal } = {}) {
       assertWriteActive(signal);
       const snapshot = await messages(sessionId)
@@ -40,6 +44,11 @@ export function createHistoryStore(db, { historyLimit = 12 } = {}) {
         }));
     },
 
+    /**
+     * @param {string} sessionId
+     * @param {Array<{ role: string, text: string }>} records
+     * @param {{ signal?: AbortSignal }} [options]
+     */
     async append(sessionId, records, { signal } = {}) {
       assertWriteActive(signal);
       const collection = messages(sessionId);
