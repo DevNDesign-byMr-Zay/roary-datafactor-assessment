@@ -17,6 +17,7 @@
 - Release evidence now includes a machine-readable manifest binding the requested tag, package version, and exact commit SHA.
 - Manual release evidence is checksum-verified and retained as a workflow artifact before GitHub publication so failed publication does not discard the verified bundle.
 - Refreshed the current Node dependency set and verified the resulting lockfile through assessment CI and CodeQL.
+- Audited dependency baseline on 2026-09-24: `@google-cloud/firestore@^9.2.0`, `@google/genai@^2.23.0`, `cors@^2.8.5`, `express@^5.2.1`, `pino@^10.3.1`, and `zod@^4.6.5`; the blocking CI audit passed at moderate severity, with weekly npm and GitHub Actions updates enforced through Dependabot.
 - Strengthened the maintained service boundary so release and scoring workflows operate on the current runtime surface without reclassifying preserved historical corpus files.
 
 ### Release policy

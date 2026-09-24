@@ -15,6 +15,7 @@ const REQUIRED_FILES = Object.freeze([
   'IMPORT_FAILURES.json',
   'docs/RELEASE_READINESS.md',
   '.github/workflows/release.yml',
+  '.github/dependabot.yml',
   'SECURITY.md',
   'CONTRIBUTING.md',
   '.github/CODEOWNERS',
@@ -58,7 +59,7 @@ async function main() {
   const root = new URL('../', import.meta.url);
   await Promise.all(REQUIRED_FILES.map((path) => access(new URL(path, root))));
 
-  const [pkg, verify, failures, env, changelog, ci, codeql, release] = await Promise.all([
+  const [pkg, verify, failures, env, changelog, ci, codeql, release, dependabot] = await Promise.all([
     json('package.json'),
     json('VERIFY_REPORT.json'),
     json('IMPORT_FAILURES.json'),
@@ -67,6 +68,7 @@ async function main() {
     text('.github/workflows/ci.yml'),
     text('.github/workflows/codeql.yml'),
     text('.github/workflows/release.yml'),
+    text('.github/dependabot.yml'),
   ]);
 
   assert(/^\d+\.\d+\.\d+$/u.test(pkg.version), 'package version must be stable semantic version');
@@ -103,6 +105,10 @@ async function main() {
   assert(/pull_request:/u.test(ci), 'quality workflow must run for pull requests');
   assert(/npm ci --ignore-scripts/u.test(ci), 'quality workflow must use reproducible npm install');
   assert(/npm audit --audit-level=moderate/u.test(ci), 'quality workflow must enforce dependency audit');
+  assert(/package-ecosystem:\s*npm/u.test(dependabot), 'Dependabot must track npm dependencies');
+  assert(/package-ecosystem:\s*github-actions/u.test(dependabot), 'Dependabot must track GitHub Actions');
+  const weeklySchedules = dependabot.match(/interval:\s*weekly/gu) ?? [];
+  assert(weeklySchedules.length >= 2, 'Dependabot must run weekly for npm and GitHub Actions');
   assert(/npm run typecheck/u.test(ci), 'quality workflow must enforce maintained JavaScript type-checking');
   assert(/npm run verify:surface/u.test(ci), 'quality workflow must verify the maintained/historical split');
   assert(/npm run test:coverage/u.test(ci), 'quality workflow must enforce coverage');
