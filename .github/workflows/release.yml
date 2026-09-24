@@ -1,0 +1,67 @@
+name: release/github
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag matching package.json, for example v1.0.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Reproducible install
+        run: npm ci --ignore-scripts
+
+      - name: Verify maintained release candidate
+        run: |
+          npm audit --audit-level=moderate
+          npm run check
+          docker compose config --quiet
+          docker build --tag roary-release-candidate:${{ github.sha }} .
+
+      - name: Validate requested tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          expected="v${version}"
+          if [ "${{ inputs.tag }}" != "$expected" ]; then
+            echo "Requested tag must equal $expected" >&2
+            exit 1
+          fi
+          if git rev-parse "${{ inputs.tag }}" >/dev/null 2>&1; then
+            echo "Tag already exists: ${{ inputs.tag }}" >&2
+            exit 1
+          fi
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ inputs.tag }}" \
+            --target "$GITHUB_SHA" \
+            --title "${{ inputs.tag }}" \
+            --generate-notes
