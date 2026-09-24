@@ -8,6 +8,7 @@
 - Explicit maintained-vs-historical surface verification and a release-readiness verifier covering semantic package metadata, exact corpus integrity, reproducible CI, container startup, and CodeQL.
 - Broader maintained JavaScript type-check coverage across renewable-policy and workload-decision service modules.
 - Deterministic renewable-evidence demo coverage for the current maintained service path.
+- Reference-only environment placeholders for names found in preserved historical examples, without widening the maintained runtime configuration contract.
 
 ### Changed
 
