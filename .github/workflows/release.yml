@@ -73,7 +73,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ inputs.tag }}" \
-            sbom.cdx.json release-commit.txt release-artifacts.sha256 \ release-manifest.json
+            sbom.cdx.json release-commit.txt release-artifacts.sha256 release-manifest.json \
             --target "$GITHUB_SHA" \
             --title "${{ inputs.tag }}" \
             --generate-notes
