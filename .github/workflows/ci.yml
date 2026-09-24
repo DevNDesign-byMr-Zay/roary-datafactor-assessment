@@ -44,6 +44,12 @@ jobs:
           node scripts/create-release-manifest.mjs "$release_tag" "$GITHUB_SHA" "$RUNNER_TEMP/release-manifest.json"
           test -s "$RUNNER_TEMP/release-manifest.json"
 
+      - name: Run conventional test suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "${GOOGLE_APPLICATION_CREDENTIALS:-}"
+          env -u GOOGLE_APPLICATION_CREDENTIALS npm test
       - name: Run credential-free tests with enforced coverage
         shell: bash
         run: |
