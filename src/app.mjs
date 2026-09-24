@@ -52,6 +52,26 @@ function assertChatActive(signal, deadline) {
   deadline.remainingMs();
 }
 
+/**
+ * @param {{
+ *   vertexClient?: any,
+ *   db?: any,
+ *   logger?: any,
+ *   project?: string,
+ *   location?: string,
+ *   modelName?: string,
+ *   historyLimit?: number,
+ *   requestIdFactory?: () => unknown,
+ *   chatTimeoutMs?: number,
+ *   setTimeoutFn?: any,
+ *   clearTimeoutFn?: any,
+ *   nowFn?: () => number,
+ *   healthNowFn?: () => number,
+ *   serviceVersion?: string,
+ *   startedAt?: number,
+ *   advisoryCoordinator?: null | ((context: any) => unknown | Promise<unknown>)
+ * }} [options]
+ */
 export function createApp({
   vertexClient,
   db,
