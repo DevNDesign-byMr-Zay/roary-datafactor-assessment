@@ -62,7 +62,8 @@ async function main() {
   const root = new URL('../', import.meta.url);
   await Promise.all(REQUIRED_FILES.map((path) => access(new URL(path, root))));
 
-  const [pkg, verify, failures, env, changelog, ci, codeql, release, dependabot] = await Promise.all([
+  const [pkg, verify, failures, env, changelog, ci, codeql, release, dependabot, appSource] =
+    await Promise.all([
     json('package.json'),
     json('VERIFY_REPORT.json'),
     json('IMPORT_FAILURES.json'),
@@ -72,9 +73,18 @@ async function main() {
     text('.github/workflows/codeql.yml'),
     text('.github/workflows/release.yml'),
     text('.github/dependabot.yml'),
+    text('src/app.mjs'),
   ]);
 
   assert(/^\d+\.\d+\.\d+$/u.test(pkg.version), 'package version must be stable semantic version');
+  assert(
+    appSource.includes(`const SERVICE_VERSION = '${pkg.version}';`),
+    'health service version must match package.json',
+  );
+  assert(
+    /uptimeSeconds/u.test(appSource) && /status:\s*'ok'/u.test(appSource),
+    'health endpoint must expose conventional status and uptime metadata',
+  );
   assert(pkg.private === true, 'package must remain private');
   assert(typeof pkg.engines?.node === 'string' && pkg.engines.node.includes('22'), 'Node 22+ runtime contract is required');
   for (const name of REQUIRED_SCRIPTS) {

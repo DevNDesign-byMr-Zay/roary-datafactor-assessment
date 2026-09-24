@@ -99,7 +99,7 @@ startServer({
 
 ### `GET /health`
 
-Returns service readiness metadata and HTTP 200.
+Returns HTTP 200 with service identity, `status`, package-aligned `version`, `uptimeSeconds`, project/location, and model metadata.
 
 ### `POST /chat`
 

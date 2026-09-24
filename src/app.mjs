@@ -14,6 +14,8 @@ import { extractModelText } from './model-response.mjs';
 import { classifyProviderFailure } from './provider-failure.mjs';
 import { parseChatRequest } from './validation.mjs';
 
+const SERVICE_VERSION = '1.1.0';
+
 const SYSTEM_INSTRUCTION = `You are a concise, helpful conversational assistant.
 - Keep answers short unless asked.
 - If you do not know, say so and offer next steps.
@@ -63,6 +65,9 @@ export function createApp({
   setTimeoutFn = setTimeout,
   clearTimeoutFn = clearTimeout,
   nowFn = Date.now,
+  healthNowFn = Date.now,
+  serviceVersion = SERVICE_VERSION,
+  startedAt = healthNowFn(),
   advisoryCoordinator = null,
 } = {}) {
   if (!vertexClient?.getGenerativeModel) {
@@ -80,6 +85,13 @@ export function createApp({
     throw new TypeError('timer functions must be functions.');
   }
   if (typeof nowFn !== 'function') throw new TypeError('nowFn must be a function.');
+  if (typeof healthNowFn !== 'function') throw new TypeError('healthNowFn must be a function.');
+  if (typeof serviceVersion !== 'string' || !serviceVersion.trim()) {
+    throw new TypeError('serviceVersion must be a non-empty string.');
+  }
+  if (!Number.isFinite(startedAt) || startedAt < 0) {
+    throw new TypeError('startedAt must be a non-negative finite number.');
+  }
   if (advisoryCoordinator !== null && typeof advisoryCoordinator !== 'function') {
     throw new TypeError('advisoryCoordinator must be a function when provided.');
   }
@@ -105,7 +117,16 @@ export function createApp({
   app.use(express.json({ limit: '64kb' }));
 
   app.get('/health', (_req, res) => {
-    res.status(200).json({ ok: true, project, location, model: modelName });
+    res.status(200).json({
+      ok: true,
+      status: 'ok',
+      service: 'conversational-ai-service',
+      version: serviceVersion.trim(),
+      uptimeSeconds: Math.max(0, Math.floor((healthNowFn() - startedAt) / 1000)),
+      project,
+      location,
+      model: modelName,
+    });
   });
 
   app.get('/', (_req, res) => {
