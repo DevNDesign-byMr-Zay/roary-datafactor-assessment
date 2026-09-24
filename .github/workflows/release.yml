@@ -42,6 +42,14 @@ jobs:
           docker compose config --quiet
           docker build --tag roary-release-candidate:${{ github.sha }} .
 
+      - name: Build release evidence bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm sbom --sbom-format=cyclonedx > sbom.cdx.json
+          printf '%s\n' "$GITHUB_SHA" > release-commit.txt
+          sha256sum sbom.cdx.json release-commit.txt > release-artifacts.sha256
+
       - name: Validate requested tag
         shell: bash
         run: |
@@ -62,6 +70,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ inputs.tag }}" \
+            sbom.cdx.json release-commit.txt release-artifacts.sha256 \
             --target "$GITHUB_SHA" \
             --title "${{ inputs.tag }}" \
             --generate-notes
