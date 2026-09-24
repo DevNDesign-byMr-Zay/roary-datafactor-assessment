@@ -115,6 +115,16 @@ async function main() {
   assert(/release-artifacts\.sha256/u.test(release), 'release workflow must checksum attached evidence');
   assert(/release-manifest\.json/u.test(release), 'release workflow must attach an exact provenance manifest');
   assert(/RELEASE_TAG/u.test(release) && /GITHUB_SHA/u.test(release), 'release manifest must bind requested tag and exact commit');
+  assert(
+    /sha256sum --check release-artifacts\.sha256/u.test(release),
+    'release workflow must verify its evidence checksums before publication',
+  );
+  assert(
+    /actions\/upload-artifact@v7/u.test(release),
+    'release workflow must retain the verified evidence bundle as a workflow artifact',
+  );
+  assert(/retention-days: 30/u.test(release), 'release evidence retention must remain explicit');
+
   assert(/gh release create/u.test(release), 'release workflow must publish through GitHub Releases');
 
   process.stdout.write(
