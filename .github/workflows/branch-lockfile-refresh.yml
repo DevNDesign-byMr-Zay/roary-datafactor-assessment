@@ -1,0 +1,41 @@
+name: branch-lockfile-refresh
+
+on:
+  push:
+    branches:
+      - mrzay/pin-typescript-toolchain-v1
+    paths:
+      - package.json
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v7
+        with:
+          ref: mrzay/pin-typescript-toolchain-v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Regenerate lockfile only
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Commit refreshed lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo "package-lock.json already synchronized"
+            exit 0
+          fi
+          git commit -m "chore(deps): refresh locked TypeScript toolchain"
+          git push origin HEAD:mrzay/pin-typescript-toolchain-v1
