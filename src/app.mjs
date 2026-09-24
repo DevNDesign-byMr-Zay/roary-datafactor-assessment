@@ -65,8 +65,9 @@ export function createApp({
   setTimeoutFn = setTimeout,
   clearTimeoutFn = clearTimeout,
   nowFn = Date.now,
+  healthNowFn = Date.now,
   serviceVersion = SERVICE_VERSION,
-  startedAt = nowFn(),
+  startedAt = healthNowFn(),
   advisoryCoordinator = null,
 } = {}) {
   if (!vertexClient?.getGenerativeModel) {
@@ -84,6 +85,7 @@ export function createApp({
     throw new TypeError('timer functions must be functions.');
   }
   if (typeof nowFn !== 'function') throw new TypeError('nowFn must be a function.');
+  if (typeof healthNowFn !== 'function') throw new TypeError('healthNowFn must be a function.');
   if (typeof serviceVersion !== 'string' || !serviceVersion.trim()) {
     throw new TypeError('serviceVersion must be a non-empty string.');
   }
@@ -120,7 +122,7 @@ export function createApp({
       status: 'ok',
       service: 'conversational-ai-service',
       version: serviceVersion.trim(),
-      uptimeSeconds: Math.max(0, Math.floor((nowFn() - startedAt) / 1000)),
+      uptimeSeconds: Math.max(0, Math.floor((healthNowFn() - startedAt) / 1000)),
       project,
       location,
       model: modelName,
