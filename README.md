@@ -66,7 +66,7 @@ Default port: `8080`.
 The existing Dockerfile and Compose definition provide a one-command startup path from a fresh checkout:
 
 ```bash
-docker compose up --build
+docker compose -f docker-compose.yml up --build
 ```
 
 The service is available at `http://127.0.0.1:8080` by default. Set `HOST_PORT` to expose a different host port without changing the container's runtime port.
@@ -129,7 +129,7 @@ npm ci --ignore-scripts
 npm audit --audit-level=moderate
 npm run lint
 npm run test:coverage
-docker compose config --quiet
+docker compose -f docker-compose.yml config --quiet
 docker compose up --build --detach
 curl --fail http://127.0.0.1:8080/health
 ```
