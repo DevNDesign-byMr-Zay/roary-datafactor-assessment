@@ -51,7 +51,7 @@ npm ci
 npm run check
 ```
 
-`npm run check` lints the maintained service, promoted corpus artifacts, and all test specs, then runs Jest with enforced coverage thresholds. The global coverage floor is 85% for statements/functions/lines and 75% for branches across the measured surface.
+`npm run check` now mirrors the complete non-container maintained verification lane: staged JavaScript type-checking, maintained/historical surface validation, lint, promoted-corpus integrity, release-readiness verification, enforced Jest coverage, and the deterministic renewable-evidence demo. The global coverage floor is 85% for statements/functions/lines and 75% for branches across the measured surface.
 
 For production execution, copy `.env.example` values into your deployment environment and configure Google Application Default Credentials. No credential files belong in this repository.
 
