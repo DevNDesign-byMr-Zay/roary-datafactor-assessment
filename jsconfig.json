@@ -23,6 +23,8 @@
     "src/services/workload-classifier.mjs",
     "src/services/workload-decision-summary.mjs",
     "src/services/renewable-workload-policy.mjs",
-    "src/services/decision-trace.mjs"
+    "src/services/decision-trace.mjs",
+    "src/app.mjs",
+    "src/server.mjs"
   ]
 }
