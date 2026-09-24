@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "primaryClass": "application-service",
+  "secondaryClasses": [
+    "conversational-ai-service",
+    "developer-tooling",
+    "historical-corpus"
+  ],
+  "excludedClasses": [
+    "infrastructure-as-code"
+  ],
+  "maintainedSurfaces": [
+    "src",
+    "tests",
+    "scripts",
+    "index.mjs",
+    "index.test.mjs"
+  ],
+  "evidence": {
+    "projectScope": "docs/PROJECT_SCOPE.md",
+    "surfaceManifest": "config/repository-surfaces.json"
+  }
+}
