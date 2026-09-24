@@ -4,6 +4,7 @@
 
 ### Added
 
+- Pinned TypeScript 5.9.3 as a local development dependency with a synchronized npm lockfile and release-readiness enforcement.
 - Explicit credential-free `npm test` execution in CI so the runnable suite is visible to conventional repository scanners.
 
 ### Changed
