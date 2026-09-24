@@ -52,11 +52,12 @@ async function main() {
   const root = new URL('../', import.meta.url);
   await Promise.all(REQUIRED_FILES.map((path) => access(new URL(path, root))));
 
-  const [pkg, verify, failures, env, ci, codeql] = await Promise.all([
+  const [pkg, verify, failures, env, changelog, ci, codeql] = await Promise.all([
     json('package.json'),
     json('VERIFY_REPORT.json'),
     json('IMPORT_FAILURES.json'),
     text('.env.example'),
+    text('CHANGELOG.md'),
     text('.github/workflows/ci.yml'),
     text('.github/workflows/codeql.yml'),
   ]);
@@ -76,6 +77,12 @@ async function main() {
     'verified corpus counts must match',
   );
   assert(Array.isArray(failures) && failures.length === 0, 'release cannot proceed with unresolved import failures');
+
+  assert(/## Unreleased/u.test(changelog), 'changelog must describe the current unreleased state');
+  assert(
+    /no hosted release or tag is claimed/iu.test(changelog),
+    'changelog must not fabricate a published release',
+  );
 
   const configured = envKeys(env);
   for (const key of REQUIRED_ENV_KEYS) {
