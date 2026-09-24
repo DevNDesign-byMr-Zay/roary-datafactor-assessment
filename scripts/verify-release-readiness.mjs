@@ -115,6 +115,8 @@ async function main() {
   assert(/npm run typecheck/u.test(ci), 'quality workflow must enforce maintained JavaScript type-checking');
   assert(/npm run verify:surface/u.test(ci), 'quality workflow must verify the maintained/historical split');
   assert(/npm run test:coverage/u.test(ci), 'quality workflow must enforce coverage');
+  assert(/env -u GOOGLE_APPLICATION_CREDENTIALS npm run test:coverage/u.test(ci), 'coverage tests must explicitly run without Google credential environment');
+  assert(/actions\/upload-artifact@v7/u.test(ci) && /path:\s*coverage\//u.test(ci), 'quality workflow must retain Jest coverage evidence');
   assert(/docker compose -f docker-compose\.yml config --quiet/u.test(ci), 'quality workflow must validate canonical docker-compose.yml');
   assert(/docker compose up --build --detach/u.test(ci), 'quality workflow must prove container startup');
   assert(/pull_request:/u.test(codeql), 'CodeQL must run for pull requests');

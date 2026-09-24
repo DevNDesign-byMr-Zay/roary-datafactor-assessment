@@ -134,6 +134,8 @@ docker compose up --build --detach
 curl --fail http://127.0.0.1:8080/health
 ```
 
+The coverage suite is explicitly executed with `GOOGLE_APPLICATION_CREDENTIALS` removed from its environment, proving the injected test doubles do not depend on a live GCP account. CI retains the generated Jest `coverage/` directory as a 30-day coverage artifact so reviewers can inspect per-file results over time.
+
 The same checks run weekly so dependency/security and container startup state are re-evaluated against current code and advisories. Dependabot is configured for npm and GitHub Actions dependencies. Static analysis is also maintained separately through CodeQL. Drive-corpus import and verification workflows remain separate maintenance concerns.
 
 ## Release readiness
