@@ -1,0 +1,8 @@
+# Preserve the historical corpus in Git while excluding it from active-language
+# statistics. Exact promoted artifacts are re-enabled below because they are part
+# of the maintained quality surface and are covered by blocking tests.
+"Software Engineering & AI Tooling/**" linguist-detectable=false
+
+"Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs" linguist-detectable=true
+"Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs" linguist-detectable=true
+"Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs" linguist-detectable=true

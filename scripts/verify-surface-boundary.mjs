@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const manifestPath = resolve(root, 'config/repository-surfaces.json');
+const attributesPath = resolve(root, '.gitattributes');
 
 function exactPath(value, label) {
   if (typeof value !== 'string' || !value.trim()) {
@@ -19,12 +20,25 @@ function exactPath(value, label) {
   return resolved;
 }
 
-const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+function quotedAttributePath(path) {
+  return `"${path}"`;
+}
+
+const [manifestSource, attributes] = await Promise.all([
+  readFile(manifestPath, 'utf8'),
+  readFile(attributesPath, 'utf8'),
+]);
+const manifest = JSON.parse(manifestSource);
 if (manifest.schemaVersion !== 1) throw new TypeError('surface schemaVersion must be 1');
 
 const historicalRoot = exactPath(manifest.historicalCorpusRoot, 'historicalCorpusRoot');
 if (!(await stat(historicalRoot)).isDirectory()) {
   throw new TypeError('historicalCorpusRoot must reference a directory');
+}
+
+const historicalPattern = `${quotedAttributePath(`${manifest.historicalCorpusRoot}/**`)} linguist-detectable=false`;
+if (!attributes.includes(historicalPattern)) {
+  throw new TypeError('historical corpus must be excluded from active language statistics');
 }
 
 for (const [index, value] of manifest.maintainedRoots.entries()) {
@@ -53,6 +67,11 @@ for (const [index, value] of manifest.promotedHistoricalArtifacts.entries()) {
   if (promoted.has(path)) throw new TypeError('promoted historical artifacts must be unique');
   promoted.add(path);
   await access(path);
+
+  const promotedRule = `${quotedAttributePath(value)} linguist-detectable=true`;
+  if (!attributes.includes(promotedRule)) {
+    throw new TypeError(`promoted historical artifact must be detectable in repository statistics: ${value}`);
+  }
 }
 
 process.stdout.write(
