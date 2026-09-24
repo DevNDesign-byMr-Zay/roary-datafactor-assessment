@@ -107,6 +107,8 @@ async function main() {
   assert(/workflow_dispatch:/u.test(release), 'GitHub release workflow must remain manual-only');
   assert(/github\.ref == 'refs\/heads\/main'/u.test(release), 'release workflow must require main');
   assert(/Requested tag must equal/u.test(release), 'release workflow must bind the tag to package version');
+  assert(/npm sbom --sbom-format=cyclonedx/u.test(release), 'release workflow must generate a dependency SBOM');
+  assert(/release-artifacts\.sha256/u.test(release), 'release workflow must checksum attached evidence');
   assert(/gh release create/u.test(release), 'release workflow must publish through GitHub Releases');
 
   process.stdout.write(
