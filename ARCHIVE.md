@@ -19,6 +19,14 @@ The default lint and coverage gates include all maintained `src/**/*.mjs` code p
 
 These promotions are intentional because each artifact is exercised by focused tests and contributes distinct maintained behavior.
 
+## Repository statistics boundary
+
+`.gitattributes` marks the historical corpus root as `linguist-detectable=false` so repository language statistics do not treat preserved revision snapshots as the active application. The three explicitly promoted artifacts are then re-enabled with exact-path `linguist-detectable=true` overrides.
+
+This metadata changes classification only. It does **not** delete, ignore, rewrite, or exclude historical files from Git, Drive verification, provenance audits, archive packaging, or buyer-facing corpus completeness checks.
+
+The blocking `npm run verify:surface` gate verifies that the statistics rule still matches `config/repository-surfaces.json` and that every promoted artifact has an explicit override.
+
 ## Promotion rule
 
 A historical artifact may enter the maintained quality surface only through a focused change that:
