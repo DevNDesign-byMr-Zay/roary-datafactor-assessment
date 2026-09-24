@@ -16,6 +16,7 @@
 
 ### Release policy
 
+- Current package candidate: `1.1.0`. No hosted tag or release is claimed until the gated manual release workflow publishes it.
 - This section records current repository work only; no hosted release or tag is claimed until one is actually published.
 
 ## 1.0.0 — 2026-09-02
