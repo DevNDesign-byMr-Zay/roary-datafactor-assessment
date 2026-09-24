@@ -14,6 +14,7 @@ const REQUIRED_FILES = Object.freeze([
   'VERIFY_REPORT.json',
   'IMPORT_FAILURES.json',
   'docs/RELEASE_READINESS.md',
+  '.github/workflows/release.yml',
 ]);
 const REQUIRED_SCRIPTS = Object.freeze([
   'start',
@@ -52,7 +53,7 @@ async function main() {
   const root = new URL('../', import.meta.url);
   await Promise.all(REQUIRED_FILES.map((path) => access(new URL(path, root))));
 
-  const [pkg, verify, failures, env, changelog, ci, codeql] = await Promise.all([
+  const [pkg, verify, failures, env, changelog, ci, codeql, release] = await Promise.all([
     json('package.json'),
     json('VERIFY_REPORT.json'),
     json('IMPORT_FAILURES.json'),
@@ -60,6 +61,7 @@ async function main() {
     text('CHANGELOG.md'),
     text('.github/workflows/ci.yml'),
     text('.github/workflows/codeql.yml'),
+    text('.github/workflows/release.yml'),
   ]);
 
   assert(/^\d+\.\d+\.\d+$/u.test(pkg.version), 'package version must be stable semantic version');
@@ -98,6 +100,10 @@ async function main() {
   assert(/docker compose up --build --detach/u.test(ci), 'quality workflow must prove container startup');
   assert(/pull_request:/u.test(codeql), 'CodeQL must run for pull requests');
   assert(/javascript-typescript/u.test(codeql), 'CodeQL must analyze the maintained JavaScript surface');
+  assert(/workflow_dispatch:/u.test(release), 'GitHub release workflow must remain manual-only');
+  assert(/github\.ref == 'refs\/heads\/main'/u.test(release), 'release workflow must require main');
+  assert(/Requested tag must equal/u.test(release), 'release workflow must bind the tag to package version');
+  assert(/gh release create/u.test(release), 'release workflow must publish through GitHub Releases');
 
   process.stdout.write(
     `release readiness verified: v${pkg.version}, ${verify.repository_files_under_corpus_root} corpus files, no unresolved import failures\n`,
