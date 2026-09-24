@@ -126,6 +126,7 @@ async function main() {
   assert(weeklySchedules.length >= 2, 'Dependabot must run weekly for npm and GitHub Actions');
   assert(/npm run typecheck/u.test(ci), 'quality workflow must enforce maintained JavaScript type-checking');
   assert(/npm run verify:surface/u.test(ci), 'quality workflow must verify the maintained/historical split');
+  assert(/npm test/u.test(ci), 'quality workflow must expose the conventional npm test suite');
   assert(/npm run test:coverage/u.test(ci), 'quality workflow must enforce coverage');
   assert(/env -u GOOGLE_APPLICATION_CREDENTIALS npm run test:coverage/u.test(ci), 'coverage tests must explicitly run without Google credential environment');
   assert(/actions\/upload-artifact@v7/u.test(ci) && /path:\s*coverage\//u.test(ci), 'quality workflow must retain Jest coverage evidence');
