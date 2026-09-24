@@ -19,6 +19,7 @@ const REQUIRED_FILES = Object.freeze([
   'CONTRIBUTING.md',
   '.github/CODEOWNERS',
   '.github/pull_request_template.md',
+  'scripts/create-release-manifest.mjs',
 ]);
 const REQUIRED_SCRIPTS = Object.freeze([
   'start',
@@ -125,6 +126,14 @@ async function main() {
   );
   assert(/retention-days: 30/u.test(release), 'release evidence retention must remain explicit');
 
+  assert(
+    /node scripts\/create-release-manifest\.mjs/u.test(release),
+    'release workflow must use the validated manifest generator',
+  );
+  assert(
+    /node scripts\/create-release-manifest\.mjs/u.test(ci),
+    'quality workflow must smoke-test release manifest generation',
+  );
   assert(/gh release create/u.test(release), 'release workflow must publish through GitHub Releases');
 
   process.stdout.write(
