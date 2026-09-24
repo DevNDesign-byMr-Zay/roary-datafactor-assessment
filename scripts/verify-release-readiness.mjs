@@ -13,6 +13,8 @@ const REQUIRED_FILES = Object.freeze([
   'compose.yaml',
   'docker-compose.yml',
   '.env.example',
+  '.repo-class.json',
+  'docs/PROJECT_SCOPE.md',
   'ARCHIVE.md',
   'VERIFY_REPORT.json',
   'IMPORT_FAILURES.json',
@@ -62,8 +64,20 @@ async function main() {
   const root = new URL('../', import.meta.url);
   await Promise.all(REQUIRED_FILES.map((path) => access(new URL(path, root))));
 
-  const [pkg, verify, failures, env, changelog, ci, codeql, release, dependabot, appSource] =
-    await Promise.all([
+  const [
+    pkg,
+    verify,
+    failures,
+    env,
+    changelog,
+    ci,
+    codeql,
+    release,
+    dependabot,
+    classification,
+    projectScope,
+    appSource,
+  ] = await Promise.all([
     json('package.json'),
     json('VERIFY_REPORT.json'),
     json('IMPORT_FAILURES.json'),
@@ -73,6 +87,8 @@ async function main() {
     text('.github/workflows/codeql.yml'),
     text('.github/workflows/release.yml'),
     text('.github/dependabot.yml'),
+    json('.repo-class.json'),
+    text('docs/PROJECT_SCOPE.md'),
     text('src/app.mjs'),
   ]);
 
@@ -84,6 +100,18 @@ async function main() {
   assert(
     /uptimeSeconds/u.test(appSource) && /status:\s*'ok'/u.test(appSource),
     'health endpoint must expose conventional status and uptime metadata',
+  );
+  assert(
+    classification.primaryClass === 'application-service',
+    'repository classification must remain application-service',
+  );
+  assert(
+    classification.excludedClasses?.includes('infrastructure-as-code'),
+    'repository classification must explicitly exclude infrastructure-as-code',
+  );
+  assert(
+    /not an infrastructure-as-code repository/iu.test(projectScope),
+    'project scope must preserve the application-vs-IaC boundary',
   );
   assert(pkg.private === true, 'package must remain private');
   assert(typeof pkg.engines?.node === 'string' && pkg.engines.node.includes('22'), 'Node 22+ runtime contract is required');
