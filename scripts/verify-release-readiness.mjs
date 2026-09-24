@@ -85,6 +85,10 @@ async function main() {
     /no hosted release or tag is claimed/iu.test(changelog),
     'changelog must not fabricate a published release',
   );
+  assert(
+    changelog.includes(`Current package candidate: \`${pkg.version}\``),
+    'changelog candidate version must match package.json',
+  );
 
   const configured = envKeys(env);
   for (const key of REQUIRED_ENV_KEYS) {
