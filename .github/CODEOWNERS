@@ -1,0 +1,13 @@
+# Default review routing
+* @DevNDesign-byMr-Zay @DevNDesign-Team
+
+# Maintained service and runtime boundaries
+/src/** @DevNDesign-byMr-Zay @DevNDesign-Team
+/index.mjs @DevNDesign-byMr-Zay @DevNDesign-Team
+
+# Tests and verification contracts
+/tests/** @DevNDesign-byMr-Zay @DevNDesign-Team
+/scripts/** @DevNDesign-byMr-Zay @DevNDesign-Team
+
+# Repository automation and governance
+/.github/** @DevNDesign-byMr-Zay @DevNDesign-Team
