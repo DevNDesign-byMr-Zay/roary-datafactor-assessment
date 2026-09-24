@@ -54,7 +54,7 @@ describe('assessment service', () => {
       vertexClient,
       db,
       logger: makeLogger(),
-      nowFn: () => 7_000,
+      healthNowFn: () => 7_000,
       startedAt: 2_000,
       serviceVersion: '1.1.0-test',
     });
