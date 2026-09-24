@@ -113,6 +113,8 @@ async function main() {
   assert(/Requested tag must equal/u.test(release), 'release workflow must bind the tag to package version');
   assert(/npm sbom --sbom-format=cyclonedx/u.test(release), 'release workflow must generate a dependency SBOM');
   assert(/release-artifacts\.sha256/u.test(release), 'release workflow must checksum attached evidence');
+  assert(/release-manifest\.json/u.test(release), 'release workflow must attach an exact provenance manifest');
+  assert(/RELEASE_TAG/u.test(release) && /GITHUB_SHA/u.test(release), 'release manifest must bind requested tag and exact commit');
   assert(/gh release create/u.test(release), 'release workflow must publish through GitHub Releases');
 
   process.stdout.write(
