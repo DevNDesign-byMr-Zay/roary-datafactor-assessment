@@ -14,7 +14,7 @@ import { extractModelText } from './model-response.mjs';
 import { classifyProviderFailure } from './provider-failure.mjs';
 import { parseChatRequest } from './validation.mjs';
 
-const SERVICE_VERSION = '1.1.0';
+const SERVICE_VERSION = '1.1.1';
 
 const SYSTEM_INSTRUCTION = `You are a concise, helpful conversational assistant.
 - Keep answers short unless asked.

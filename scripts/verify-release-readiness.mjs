@@ -102,8 +102,10 @@ async function main() {
 
   assert(/## Unreleased/u.test(changelog), 'changelog must describe the current unreleased state');
   assert(
-    /no hosted release or tag is claimed/iu.test(changelog),
-    'changelog must not fabricate a published release',
+    /candidate is not published until the gated manual release workflow publishes it/iu.test(
+      changelog,
+    ),
+    'changelog must distinguish the current candidate from hosted releases',
   );
   assert(
     changelog.includes(`Current package candidate: \`${pkg.version}\``),
