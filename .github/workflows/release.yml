@@ -53,6 +53,21 @@ jobs:
           printf '%s\n' "$GITHUB_SHA" > release-commit.txt
           sha256sum sbom.cdx.json release-commit.txt release-manifest.json > release-artifacts.sha256
 
+      - name: Verify release evidence checksums
+        run: sha256sum --check release-artifacts.sha256
+
+      - name: Retain release evidence before publication
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-evidence-${{ inputs.tag }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            sbom.cdx.json
+            release-commit.txt
+            release-manifest.json
+            release-artifacts.sha256
+
       - name: Validate requested tag
         shell: bash
         run: |
