@@ -36,6 +36,14 @@ jobs:
         run: npm run verify:integrity
       - name: Verify release-readiness contract
         run: npm run verify:release
+      - name: Smoke-test release manifest generation
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_tag="v$(node -p "require('./package.json').version")"
+          node scripts/create-release-manifest.mjs "$release_tag" "$GITHUB_SHA" "$RUNNER_TEMP/release-manifest.json"
+          test -s "$RUNNER_TEMP/release-manifest.json"
+
       - name: Run tests with enforced coverage
         run: npm run test:coverage
       - name: Run renewable evidence demo
