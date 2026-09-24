@@ -1,6 +1,19 @@
 # Changelog
 
-## Unreleased — maintained service hardening
+## Unreleased — post-release hardening
+
+### Added
+
+- Canonical root `docker-compose.yml` discovery backed by CI validation and fresh-clone environment contract tests.
+- Credential-free Jest coverage execution with the generated coverage report retained as a 30-day workflow artifact.
+- Conventional health metadata including service status, package-aligned version, and uptime without sharing the request-deadline clock.
+
+### Changed
+
+- CI-only release metadata names are documented in `.env.example` and enforced by release-readiness verification.
+- Current package candidate: `1.1.1`. The `v1.1.0` release remains the latest hosted milestone; this candidate is not published until the gated manual release workflow publishes it.
+
+## 1.1.0 — 2026-09-24 — maintained service hardening
 
 ### Added
 
@@ -22,8 +35,8 @@
 
 ### Release policy
 
-- Current package candidate: `1.1.0`. No hosted tag or release is claimed until the gated manual release workflow publishes it.
-- This section records current repository work only; no hosted release or tag is claimed until one is actually published.
+- Published as `v1.1.0` on 2026-09-24 through the gated manual release workflow.
+- This section records the verified 1.1.0 milestone and its release evidence.
 
 ## 1.0.0 — 2026-09-02
 
