@@ -1,6 +1,16 @@
 # Changelog
 
-## Unreleased — post-release hardening
+## Unreleased — pre-rescore detector hardening
+
+### Added
+
+- Explicit credential-free `npm test` execution in CI so the runnable suite is visible to conventional repository scanners.
+
+### Changed
+
+- Current package candidate: `1.1.2`. The `v1.1.1` release is the latest hosted milestone; this candidate is not published until the gated manual release workflow publishes it.
+
+## 1.1.1 — 2026-09-24 — post-release hardening
 
 ### Added
 
@@ -11,7 +21,7 @@
 ### Changed
 
 - CI-only release metadata names are documented in `.env.example` and enforced by release-readiness verification.
-- Current package candidate: `1.1.1`. The `v1.1.0` release remains the latest hosted milestone; this candidate is not published until the gated manual release workflow publishes it.
+- Published as `v1.1.1` on 2026-09-24 through the gated manual release workflow.
 
 ## 1.1.0 — 2026-09-24 — maintained service hardening
 
