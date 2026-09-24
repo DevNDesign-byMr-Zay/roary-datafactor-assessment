@@ -5,10 +5,13 @@ const REQUIRED_ENV_KEYS = Object.freeze([
   'VERTEX_LOCATION',
   'PORT',
   'LOG_LEVEL',
+  'GITHUB_SHA',
+  'RELEASE_TAG',
 ]);
 const REQUIRED_FILES = Object.freeze([
   'Dockerfile',
   'compose.yaml',
+  'docker-compose.yml',
   '.env.example',
   'ARCHIVE.md',
   'VERIFY_REPORT.json',
@@ -112,6 +115,7 @@ async function main() {
   assert(/npm run typecheck/u.test(ci), 'quality workflow must enforce maintained JavaScript type-checking');
   assert(/npm run verify:surface/u.test(ci), 'quality workflow must verify the maintained/historical split');
   assert(/npm run test:coverage/u.test(ci), 'quality workflow must enforce coverage');
+  assert(/docker compose -f docker-compose\.yml config --quiet/u.test(ci), 'quality workflow must validate canonical docker-compose.yml');
   assert(/docker compose up --build --detach/u.test(ci), 'quality workflow must prove container startup');
   assert(/pull_request:/u.test(codeql), 'CodeQL must run for pull requests');
   assert(/javascript-typescript/u.test(codeql), 'CodeQL must analyze the maintained JavaScript surface');

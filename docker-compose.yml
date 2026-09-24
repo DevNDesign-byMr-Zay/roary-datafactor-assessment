@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+    environment:
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT:-assessment-project}
+      VERTEX_LOCATION: ${VERTEX_LOCATION:-us-central1}
+      PORT: "8080"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:8080/health').then((response) => { if (!response.ok) process.exit(1); }).catch(() => process.exit(1));"
+      interval: 5s
+      timeout: 3s
+      retries: 6
+      start_period: 5s

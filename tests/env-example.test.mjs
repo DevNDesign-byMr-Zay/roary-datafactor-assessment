@@ -9,6 +9,8 @@ const MAINTAINED_ENV_KEYS = Object.freeze([
   'LOG_LEVEL',
 ]);
 
+const CI_RELEASE_ENV_KEYS = Object.freeze(['GITHUB_SHA', 'RELEASE_TAG']);
+
 const HISTORICAL_REFERENCE_ENV_KEYS = Object.freeze([
   'ALLOWED_ORIGINS',
   'APP_API_TOKEN',
@@ -38,6 +40,15 @@ describe('environment example', () => {
     const keys = declaredKeys(source);
 
     for (const key of MAINTAINED_ENV_KEYS) {
+      expect(keys.has(key)).toBe(true);
+    }
+  });
+
+  test('documents CI-only release metadata names for complete environment discovery', async () => {
+    const source = await readFile(new URL('../.env.example', import.meta.url), 'utf8');
+    const keys = declaredKeys(source);
+
+    for (const key of CI_RELEASE_ENV_KEYS) {
       expect(keys.has(key)).toBe(true);
     }
   });
