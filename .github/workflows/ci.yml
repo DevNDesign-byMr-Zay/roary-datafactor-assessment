@@ -44,8 +44,19 @@ jobs:
           node scripts/create-release-manifest.mjs "$release_tag" "$GITHUB_SHA" "$RUNNER_TEMP/release-manifest.json"
           test -s "$RUNNER_TEMP/release-manifest.json"
 
-      - name: Run tests with enforced coverage
-        run: npm run test:coverage
+      - name: Run credential-free tests with enforced coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "${GOOGLE_APPLICATION_CREDENTIALS:-}"
+          env -u GOOGLE_APPLICATION_CREDENTIALS npm run test:coverage
+      - name: Retain Jest coverage report
+        uses: actions/upload-artifact@v7
+        with:
+          name: jest-coverage-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 30
+          path: coverage/
       - name: Run renewable evidence demo
         run: npm run demo:renewable-evidence
 
