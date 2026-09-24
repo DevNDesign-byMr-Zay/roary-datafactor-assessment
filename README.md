@@ -128,6 +128,7 @@ Every push and pull request runs a Drive-independent quality workflow containing
 npm ci --ignore-scripts
 npm audit --audit-level=moderate
 npm run lint
+npm test
 npm run test:coverage
 docker compose -f docker-compose.yml config --quiet
 docker compose up --build --detach
