@@ -11,6 +11,7 @@
 
 ### Changed
 
+- Release readiness now requires the security policy, contribution guide, review ownership, and pull-request validation template.
 - Gated releases now attach a CycloneDX dependency SBOM, exact commit evidence, and SHA-256 checksums as release artifacts.
 - Refreshed the current Node dependency set and verified the resulting lockfile through assessment CI and CodeQL.
 - Strengthened the maintained service boundary so release and scoring workflows operate on the current runtime surface without reclassifying preserved historical corpus files.

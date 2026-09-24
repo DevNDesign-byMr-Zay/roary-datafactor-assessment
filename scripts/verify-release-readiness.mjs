@@ -15,6 +15,10 @@ const REQUIRED_FILES = Object.freeze([
   'IMPORT_FAILURES.json',
   'docs/RELEASE_READINESS.md',
   '.github/workflows/release.yml',
+  'SECURITY.md',
+  'CONTRIBUTING.md',
+  '.github/CODEOWNERS',
+  '.github/pull_request_template.md',
 ]);
 const REQUIRED_SCRIPTS = Object.freeze([
   'start',
