@@ -10,7 +10,7 @@
     "verify:integrity": "node scripts/verify-promoted-integrity.mjs",
     "demo:renewable-evidence": "node scripts/renewable-evidence-demo.mjs",
     "lint": "eslint --max-warnings=0 index.mjs index.test.mjs src tests scripts/renewable-evidence-demo.mjs scripts/verify-release-readiness.mjs scripts/verify-surface-boundary.mjs 'Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs' 'Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs' 'Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs'",
-    "check": "npm run typecheck && npm run lint && npm run verify:surface && npm run verify:integrity && npm run test:coverage",
+    "check": "npm run typecheck && npm run lint && npm run verify:surface && npm run verify:integrity && npm run verify:release && npm run test:coverage && npm run demo:renewable-evidence",
     "verify:release": "node scripts/verify-release-readiness.mjs",
     "typecheck": "npx --yes --package typescript@5.9.3 tsc -p jsconfig.json",
     "verify:surface": "node scripts/verify-surface-boundary.mjs"
