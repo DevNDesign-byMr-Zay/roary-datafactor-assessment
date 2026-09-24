@@ -50,13 +50,28 @@ describe('assessment service', () => {
   test('GET /health returns a healthy service contract', async () => {
     const { db } = makeDb();
     const { vertexClient } = makeVertex(async () => ({ response: { text: () => 'unused' } }));
-    const app = createApp({ vertexClient, db, logger: makeLogger() });
+    const app = createApp({
+      vertexClient,
+      db,
+      logger: makeLogger(),
+      nowFn: () => 7_000,
+      startedAt: 2_000,
+      serviceVersion: '1.1.0-test',
+    });
 
     const response = await request(app).get('/health');
 
     expect(response.status).toBe(200);
-    expect(response.body.ok).toBe(true);
-    expect(response.body.model).toBe('gemini-2.5-flash');
+    expect(response.body).toEqual({
+      ok: true,
+      status: 'ok',
+      service: 'conversational-ai-service',
+      version: '1.1.0-test',
+      uptimeSeconds: 5,
+      project: 'assessment-project',
+      location: 'us-central1',
+      model: 'gemini-2.5-flash',
+    });
   });
 
   test('POST /chat returns a mocked model reply and persists both turns', async () => {
