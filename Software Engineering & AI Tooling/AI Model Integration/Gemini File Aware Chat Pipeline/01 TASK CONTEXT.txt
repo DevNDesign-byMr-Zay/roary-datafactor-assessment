@@ -1,1 +1,0 @@
-Historical file-aware chat path: GCS object -> signed URL -> Gemini fileData part -> response.
