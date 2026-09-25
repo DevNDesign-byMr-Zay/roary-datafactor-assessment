@@ -17,8 +17,9 @@ const REQUIRED_FILES = Object.freeze([
   'docs/PROJECT_SCOPE.md',
   'jsconfig.json',
   'ARCHIVE.md',
-  'VERIFY_REPORT.json',
-  'IMPORT_FAILURES.json',
+  'config/repository-surfaces.json',
+  'provenance/HISTORICAL_CORPUS_V1_1_2_MANIFEST.json',
+  'docs/HISTORICAL_CORPUS_SEPARATION.md',
   'docs/RELEASE_READINESS.md',
   '.github/workflows/release.yml',
   '.github/dependabot.yml',
@@ -67,8 +68,8 @@ async function main() {
 
   const [
     pkg,
-    verify,
-    failures,
+    surfaces,
+    archiveManifest,
     env,
     changelog,
     ci,
@@ -82,8 +83,8 @@ async function main() {
     appSource,
   ] = await Promise.all([
     json('package.json'),
-    json('VERIFY_REPORT.json'),
-    json('IMPORT_FAILURES.json'),
+    json('config/repository-surfaces.json'),
+    json('provenance/HISTORICAL_CORPUS_V1_1_2_MANIFEST.json'),
     text('.env.example'),
     text('CHANGELOG.md'),
     text('.github/workflows/ci.yml'),
@@ -144,14 +145,34 @@ async function main() {
     assert(typeof pkg.scripts?.[name] === 'string' && pkg.scripts[name].trim(), `missing package script: ${name}`);
   }
 
-  assert(verify.status === 'PASS — EXACT LIVE MATCH', 'live corpus verification must be an exact PASS');
-  assert(verify.missing_repository_files === 0, 'release cannot proceed with missing corpus files');
-  assert(verify.unexpected_repository_files === 0, 'release cannot proceed with unexpected corpus files');
+  assert(surfaces.schemaVersion === 2, 'repository surface manifest must use external-archive schema');
   assert(
-    verify.eligible_drive_files === verify.repository_files_under_corpus_root,
-    'verified corpus counts must match',
+    surfaces.historicalArchive?.releaseCommit === archiveManifest.release_commit,
+    'historical archive release commit must match the full corpus manifest',
   );
-  assert(Array.isArray(failures) && failures.length === 0, 'release cannot proceed with unresolved import failures');
+  assert(
+    surfaces.historicalArchive?.releaseTree === archiveManifest.release_tree,
+    'historical archive release tree must match the full corpus manifest',
+  );
+  assert(
+    surfaces.historicalArchive?.fileCount === 1610 &&
+      archiveManifest.corpus_file_count === 1610 &&
+      archiveManifest.files?.length === 1610,
+    'historical archive manifest must preserve all 1610 released corpus files',
+  );
+  assert(
+    surfaces.historicalArchive?.canonicalInventorySha256 ===
+      archiveManifest.canonical_inventory_sha256,
+    'historical archive inventory digest must match the repository surface contract',
+  );
+  let corpusPresent = true;
+  try {
+    await access(new URL('../Software Engineering & AI Tooling/', import.meta.url));
+  } catch (error) {
+    if (error?.code === 'ENOENT') corpusPresent = false;
+    else throw error;
+  }
+  assert(!corpusPresent, 'historical corpus must remain outside the scored application tree');
 
   assert(/## Unreleased/u.test(changelog), 'changelog must describe the current unreleased state');
   assert(
@@ -178,7 +199,7 @@ async function main() {
   const weeklySchedules = dependabot.match(/interval:\s*weekly/gu) ?? [];
   assert(weeklySchedules.length >= 2, 'Dependabot must run weekly for npm and GitHub Actions');
   assert(/npm run typecheck/u.test(ci), 'quality workflow must enforce maintained JavaScript type-checking');
-  assert(/npm run verify:surface/u.test(ci), 'quality workflow must verify the maintained/historical split');
+  assert(/npm run verify:surface/u.test(ci), 'quality workflow must verify the maintained/archive split');
   assert(/npm test/u.test(ci), 'quality workflow must expose the conventional npm test suite');
   assert(/npm run test:coverage/u.test(ci), 'quality workflow must enforce coverage');
   assert(/env -u GOOGLE_APPLICATION_CREDENTIALS npm run test:coverage/u.test(ci), 'coverage tests must explicitly run without Google credential environment');
@@ -215,7 +236,7 @@ async function main() {
   assert(/gh release create/u.test(release), 'release workflow must publish through GitHub Releases');
 
   process.stdout.write(
-    `release readiness verified: v${pkg.version}, ${verify.repository_files_under_corpus_root} corpus files, no unresolved import failures\n`,
+    `release readiness verified: v${pkg.version}, ${archiveManifest.corpus_file_count} historical files preserved outside the scored application tree\n`,
   );
 }
 
