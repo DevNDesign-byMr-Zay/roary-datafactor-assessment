@@ -1,14 +1,10 @@
-# Software Engineering & AI Tooling — Deidentified Assessment Repository
+# ROARY Conversational AI Service
 
-This repository contains the complete deidentified **Software Engineering & AI Tooling** assessment corpus plus a runnable conversational-AI reference service used to exercise the repository's backend engineering patterns.
+ROARY is a maintained Node.js conversational-AI **application service** with validated HTTP request boundaries, Vertex AI integration, Firestore-backed conversation history, structured observability, deterministic tests, and reproducible container/release verification.
 
-## Corpus completeness
+The active engineering surface lives in `src/`, `tests/`, `scripts/`, `index.mjs`, and `index.test.mjs`. A complete deidentified historical engineering corpus is preserved separately under `Software Engineering & AI Tooling/` for provenance; it is not treated as homogeneous maintained production code.
 
-The mirrored corpus lives under `Software Engineering & AI Tooling/` and spans application bootstrap, reliability and infrastructure, AI model integration, storage and file services, cloud deployment, authentication and security, API foundations, full-stack workflows, backend engineering, and frontend engineering.
-
-`VERIFY_REPORT.md` is generated from a fresh recursive probe of the source Drive folder. The current verification is **1,610 expected / 1,610 present, 0 missing, 0 unexpected**.
-
-## Architecture
+## Maintained application architecture
 
 The maintained reference service is intentionally layered instead of monolithic:
 
@@ -24,6 +20,12 @@ The maintained reference service is intentionally layered instead of monolithic:
 - `tests/` — focused unit, edge-contract, and promoted-corpus specs.
 
 The application factory accepts cloud/database dependencies, so importing or testing the service does **not** require Google Application Default Credentials and does not bind a network port. Production cloud construction uses `@google/genai` for Vertex AI access and `@google-cloud/firestore` directly rather than the broader Firebase Admin dependency tree.
+
+## Historical corpus completeness
+
+The mirrored corpus lives under `Software Engineering & AI Tooling/` and spans application bootstrap, reliability and infrastructure, AI model integration, storage and file services, cloud deployment, authentication and security, API foundations, full-stack workflows, backend engineering, and frontend engineering.
+
+`VERIFY_REPORT.md` is generated from a fresh recursive probe of the source Drive folder. The current verification is **1,610 expected / 1,610 present, 0 missing, 0 unexpected**.
 
 ## Maintained and measured surface
 
