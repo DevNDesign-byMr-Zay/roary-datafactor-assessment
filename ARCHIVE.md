@@ -2,45 +2,45 @@
 
 ## Purpose
 
-The repository contains two deliberately different surfaces:
+The scored application tree contains maintained ROARY software only. The complete historical/versioned engineering corpus remains preserved as immutable released provenance rather than as 1,610 source files beside the application.
 
-1. **Maintained software** — the runnable service under `src/`, the root entrypoint, tests, maintenance scripts, and explicitly promoted corpus artifacts.
-2. **Historical/versioned provenance** — the complete mirrored corpus under `Software Engineering & AI Tooling/`.
+## Immutable preservation point
 
-The historical corpus is preserved because revision history, alternative implementations, corrected versions, and workflow context are part of the repository's evidence. It is not implicitly treated as one production application and must not be bulk-rewritten merely to satisfy current lint, formatting, or coverage rules.
+- Release: `v1.1.2`
+- Release commit: `67e7a0c297451b438ed950ba743318e3f7454159`
+- Preservation branch: `archive/historical-corpus-v1.1.2`
+- Released corpus files: **1,610**
+- Released corpus directories: **40**
+- Released corpus bytes: **1,731,712**
+- Canonical inventory SHA-256: `52723960e5d5297151a48c646f21eb262324168f350acf34318fe4a60554d260`
 
-## Measured maintained surface
+The complete per-file path, Git blob SHA-1, byte count, and mode inventory is committed at `provenance/HISTORICAL_CORPUS_V1_1_2_MANIFEST.json`.
 
-The default lint and coverage gates include all maintained `src/**/*.mjs` code plus these three explicitly promoted final/canonical corpus artifacts:
+## Maintained promoted copies
 
-- `Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs`
-- `Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs`
-- `Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs`
+Three historically sourced final artifacts remain under active tests, lint, coverage, and integrity verification as byte-identical maintained copies:
 
-These promotions are intentional because each artifact is exercised by focused tests and contributes distinct maintained behavior.
+- `src/promoted/auth-middleware.mjs`
+- `src/promoted/cors-policy.mjs`
+- `src/promoted/sign-route.mjs`
 
-## Repository statistics boundary
+`provenance/PROMOTED_CORPUS_INTEGRITY.json` records each maintained path together with its original archive path, byte count, SHA-256, Git blob identity, release tag, release commit, and archive branch.
 
-`.gitattributes` marks the historical corpus root as `linguist-detectable=false` so repository language statistics do not treat preserved revision snapshots as the active application. The three explicitly promoted artifacts are then re-enabled with exact-path `linguist-detectable=true` overrides.
+## Scored-tree contract
 
-This metadata changes classification only. It does **not** delete, ignore, rewrite, or exclude historical files from Git, Drive verification, provenance audits, archive packaging, or buyer-facing corpus completeness checks.
+The historical `Software Engineering & AI Tooling/` directory must not exist in the future scored application tree.
 
-The blocking `npm run verify:surface` gate verifies that the statistics rule still matches `config/repository-surfaces.json` and that every promoted artifact has an explicit override.
+`npm run verify:surface` fails if:
 
-## Promotion rule
+- the physical historical directory reappears;
+- the archive release/tag/tree/count/digest contract drifts;
+- the full manifest stops listing all 1,610 released files; or
+- a promoted maintained copy loses its recorded archive identity.
 
-A historical artifact may enter the maintained quality surface only through a focused change that:
-
-- identifies the exact source path being promoted;
-- adds or updates behavior-focused tests;
-- includes the exact path in lint/coverage configuration rather than a broad historical-corpus glob;
-- preserves the original provenance unless a separately justified source correction is required; and
-- passes the normal pull-request CI and security analysis on the exact proposed head.
-
-Do not add a wildcard such as `Software Engineering & AI Tooling/**` to maintained lint or coverage configuration. That would collapse the distinction between preserved revision history and actively maintained software, distort test-density signals, and make routine maintenance rewrite provenance.
+`npm run verify:integrity` independently hashes the three promoted maintained copies and rejects byte drift.
 
 ## Corpus maintenance
 
-Drive mirror/import tooling is a separate provenance-maintenance concern. A refresh must remain transactional: a partial or blocked remote download must not replace the currently verified corpus. Corpus and verification-report changes are reviewed through pull requests rather than written directly to `main`.
+Future archive refreshes must happen on an archive-specific branch or repository surface. They must not write the complete corpus back into application `main`.
 
-See `README.md`, `CONTRIBUTING.md`, `IMPORT_REPORT.md`, and `VERIFY_REPORT.md` for the adjacent onboarding and provenance contracts.
+No release tag or existing Git history is rewritten by this separation.
