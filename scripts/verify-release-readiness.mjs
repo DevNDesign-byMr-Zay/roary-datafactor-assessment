@@ -76,6 +76,7 @@ async function main() {
     dependabot,
     classification,
     projectScope,
+    readme,
     appSource,
   ] = await Promise.all([
     json('package.json'),
@@ -89,6 +90,7 @@ async function main() {
     text('.github/dependabot.yml'),
     json('.repo-class.json'),
     text('docs/PROJECT_SCOPE.md'),
+    text('README.md'),
     text('src/app.mjs'),
   ]);
 
@@ -113,6 +115,9 @@ async function main() {
     /not an infrastructure-as-code repository/iu.test(projectScope),
     'project scope must preserve the application-vs-IaC boundary',
   );
+  assert(/^# ROARY Conversational AI Service$/mu.test(readme), 'README must lead with the maintained ROARY application');
+  assert(/application service/iu.test(readme.slice(0, 1200)), 'README opening must identify ROARY as an application service');
+  assert(/historical engineering corpus/iu.test(readme.slice(0, 1600)), 'README opening must preserve the historical-corpus boundary');
   assert(pkg.private === true, 'package must remain private');
   assert(typeof pkg.engines?.node === 'string' && pkg.engines.node.includes('22'), 'Node 22+ runtime contract is required');
   for (const name of REQUIRED_SCRIPTS) {
