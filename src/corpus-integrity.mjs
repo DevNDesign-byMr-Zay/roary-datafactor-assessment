@@ -6,9 +6,9 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 export const PROMOTED_ARTIFACT_PATHS = Object.freeze([
-  'Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs',
-  'Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs',
-  'Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs',
+  'src/promoted/auth-middleware.mjs',
+  'src/promoted/cors-policy.mjs',
+  'src/promoted/sign-route.mjs',
 ]);
 
 export const DEFAULT_INTEGRITY_MANIFEST = path.join(
@@ -36,7 +36,7 @@ export async function readIntegrityManifest(
   const text = await readFile(manifestPath, 'utf8');
   const manifest = JSON.parse(text);
   if (manifest?.schema_version !== 1 || !Array.isArray(manifest.artifacts)) {
-    throw new Error('promoted corpus integrity manifest schema is invalid');
+    throw new Error('promoted artifact integrity manifest schema is invalid');
   }
   return manifest;
 }
@@ -49,13 +49,13 @@ export async function verifyPromotedCorpusIntegrity({
   const manifest = await readIntegrityManifest(manifestPath);
   const paths = manifest.artifacts.map(({ path: artifactPath }) => artifactPath);
   if (new Set(paths).size !== paths.length) {
-    throw new Error('promoted corpus integrity manifest contains duplicate paths');
+    throw new Error('promoted artifact integrity manifest contains duplicate paths');
   }
 
   const expected = normalizeRequiredPaths(requiredPaths);
   const actual = normalizeRequiredPaths(paths);
   if (JSON.stringify(actual) !== JSON.stringify(expected)) {
-    throw new Error('promoted corpus integrity manifest does not match required surface');
+    throw new Error('promoted artifact integrity manifest does not match required surface');
   }
 
   const verified = [];
@@ -74,7 +74,7 @@ export async function verifyPromotedCorpusIntegrity({
       observed.git_blob_sha1 !== artifact.git_blob_sha1
     ) {
       throw Object.assign(
-        new Error(`promoted corpus integrity drift: ${artifact.path}`),
+        new Error(`promoted artifact integrity drift: ${artifact.path}`),
         {
           expected: {
             bytes: artifact.bytes,
