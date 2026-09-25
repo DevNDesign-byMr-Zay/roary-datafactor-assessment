@@ -26,6 +26,9 @@
     "src/services/decision-trace.mjs",
     "src/app.mjs",
     "src/server.mjs",
-    "src/cloud.mjs"
+    "src/cloud.mjs",
+    "src/holographic/contracts.mjs",
+    "src/holographic/planner.mjs",
+    "src/holographic/calibration.mjs"
   ]
 }

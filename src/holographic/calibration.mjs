@@ -9,6 +9,17 @@ function positive(value, name) {
   return number;
 }
 
+/**
+ * @param {{
+ *   width?: number,
+ *   height?: number,
+ *   originX?: number,
+ *   originY?: number,
+ *   scaleX?: number,
+ *   scaleY?: number,
+ *   depthScale?: number
+ * }} [options]
+ */
 export function createCalibrationProfile({ width, height, originX = 0, originY = 0, scaleX = 1, scaleY = 1, depthScale = 1 } = {}) {
   return Object.freeze({
     width: positive(width, 'width'),
