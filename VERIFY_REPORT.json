@@ -1,13 +1,13 @@
 {
-  "status": "PASS \u2014 EXACT LIVE MATCH",
-  "live_recursive_drive_files": 1610,
-  "eligible_drive_files": 1610,
-  "excluded_drive_files": 0,
-  "repository_files_under_corpus_root": 1610,
+  "status": "ARCHIVED RELEASE SNAPSHOT",
+  "release_tag": "v1.1.2",
+  "release_commit": "67e7a0c297451b438ed950ba743318e3f7454159",
+  "archive_branch": "archive/historical-corpus-v1.1.2",
+  "corpus_file_count": 1610,
+  "corpus_directory_count": 40,
+  "corpus_total_bytes": 1731712,
   "missing_repository_files": 0,
   "unexpected_repository_files": 0,
-  "duplicate_planned_repository_paths": 0,
-  "excluded": [],
-  "missing": [],
-  "unexpected": []
+  "canonical_inventory_sha256": "52723960e5d5297151a48c646f21eb262324168f350acf34318fe4a60554d260",
+  "physical_corpus_in_scored_tree": false
 }
