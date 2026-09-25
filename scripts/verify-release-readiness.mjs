@@ -15,6 +15,7 @@ const REQUIRED_FILES = Object.freeze([
   '.env.example',
   '.repo-class.json',
   'docs/PROJECT_SCOPE.md',
+  'jsconfig.json',
   'ARCHIVE.md',
   'VERIFY_REPORT.json',
   'IMPORT_FAILURES.json',
@@ -77,6 +78,7 @@ async function main() {
     classification,
     projectScope,
     readme,
+    typeConfig,
     appSource,
   ] = await Promise.all([
     json('package.json'),
@@ -91,6 +93,7 @@ async function main() {
     json('.repo-class.json'),
     text('docs/PROJECT_SCOPE.md'),
     text('README.md'),
+    json('jsconfig.json'),
     text('src/app.mjs'),
   ]);
 
@@ -118,6 +121,18 @@ async function main() {
   assert(/^# ROARY Conversational AI Service$/mu.test(readme), 'README must lead with the maintained ROARY application');
   assert(/application service/iu.test(readme.slice(0, 1200)), 'README opening must identify ROARY as an application service');
   assert(/historical engineering corpus/iu.test(readme.slice(0, 1600)), 'README opening must preserve the historical-corpus boundary');
+  assert(typeConfig.compilerOptions?.checkJs === true, 'maintained JavaScript checkJs must remain enabled');
+  for (const path of [
+    'src/app.mjs',
+    'src/server.mjs',
+    'src/cloud.mjs',
+    'src/holographic/contracts.mjs',
+    'src/holographic/planner.mjs',
+    'src/holographic/calibration.mjs',
+  ]) {
+    assert(typeConfig.files?.includes(path), `critical maintained typecheck surface missing: ${path}`);
+  }
+
   assert(pkg.private === true, 'package must remain private');
   assert(typeof pkg.engines?.node === 'string' && pkg.engines.node.includes('22'), 'Node 22+ runtime contract is required');
   for (const name of REQUIRED_SCRIPTS) {
