@@ -129,6 +129,11 @@ async function main() {
     'src/holographic/contracts.mjs',
     'src/holographic/planner.mjs',
     'src/holographic/calibration.mjs',
+    'src/holographic/adapters.mjs',
+    'src/holographic/runtime.mjs',
+    'src/holographic/scene-packet.mjs',
+    'src/services/renewable-opportunity-advisory.mjs',
+    'src/services/workload-flexibility-evidence.mjs',
   ]) {
     assert(typeConfig.files?.includes(path), `critical maintained typecheck surface missing: ${path}`);
   }
