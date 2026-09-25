@@ -15,6 +15,15 @@ export function createTransform({ x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, s
   });
 }
 
+/**
+ * @param {{
+ *   id?: string,
+ *   sceneId?: string,
+ *   version?: number,
+ *   nodes?: any[],
+ *   metadata?: Record<string, unknown>
+ * }} [options]
+ */
 export function createScene({ id, sceneId, version = 1, nodes = [], metadata = {} } = {}) {
   const normalizedId = id ?? sceneId;
   if (typeof normalizedId !== 'string' || !normalizedId.trim()) throw new TypeError('Scene id is required.');
@@ -36,6 +45,14 @@ export function createScene({ id, sceneId, version = 1, nodes = [], metadata = {
   return Object.freeze({ id: trimmedId, sceneId: trimmedId, version, nodes: Object.freeze(normalizedNodes), metadata: Object.freeze({ ...metadata }) });
 }
 
+/**
+ * @param {{
+ *   id?: string,
+ *   type?: string,
+ *   capabilities?: unknown[],
+ *   simulated?: boolean
+ * }} [options]
+ */
 export function createDeviceDescriptor({ id, type, capabilities = [], simulated = true } = {}) {
   if (typeof id !== 'string' || !id.trim()) throw new TypeError('Device id is required.');
   if (!DEVICE_TYPES.includes(type)) throw new TypeError(`Unsupported holographic device type: ${type}`);
