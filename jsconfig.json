@@ -25,6 +25,7 @@
     "src/services/renewable-workload-policy.mjs",
     "src/services/decision-trace.mjs",
     "src/app.mjs",
-    "src/server.mjs"
+    "src/server.mjs",
+    "src/cloud.mjs"
   ]
 }
