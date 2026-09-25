@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased — pre-rescore detector hardening
+## Unreleased
+
+### Changed
+
+- Externalized the complete 1,610-file historical corpus from the future scored application tree while preserving the exact released tree at `archive/historical-corpus-v1.1.2` and recording every released path/blob/size identity under `provenance/`.
+- Promoted the three actively tested historical artifacts into byte-identical maintained copies under `src/promoted/`, with original archive paths and hashes retained in integrity metadata.
+ — pre-rescore detector hardening
 
 ### Added
 
