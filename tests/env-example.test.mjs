@@ -11,17 +11,9 @@ const MAINTAINED_ENV_KEYS = Object.freeze([
 
 const CI_RELEASE_ENV_KEYS = Object.freeze(['GITHUB_SHA', 'RELEASE_TAG']);
 
-const HISTORICAL_REFERENCE_ENV_KEYS = Object.freeze([
+const PROMOTED_ARTIFACT_ENV_KEYS = Object.freeze([
   'ALLOWED_ORIGINS',
   'APP_API_TOKEN',
-  'ASTER_API_TOKEN',
-  'ASTER_EXPAND_MASK_FEATHER',
-  'ASTER_EXPAND_PREFILL_BLUR',
-  'ASTER_FILL_GUIDANCE',
-  'ASTER_PROMPT_MAX_CHARS',
-  'BUCKET_NAME',
-  'GEMINI_API_KEY',
-  'GOOGLE_CLOUD_REGION',
 ]);
 
 function declaredKeys(source) {
@@ -53,11 +45,11 @@ describe('environment example', () => {
     }
   });
 
-  test('documents reference-only environment names found in the preserved corpus', async () => {
+  test('documents environment names required by promoted maintained artifacts', async () => {
     const source = await readFile(new URL('../.env.example', import.meta.url), 'utf8');
     const keys = declaredKeys(source);
 
-    for (const key of HISTORICAL_REFERENCE_ENV_KEYS) {
+    for (const key of PROMOTED_ARTIFACT_ENV_KEYS) {
       expect(keys.has(key)).toBe(true);
     }
   });
