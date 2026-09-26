@@ -139,7 +139,9 @@ curl --fail http://127.0.0.1:8080/health
 
 The coverage suite is explicitly executed with `GOOGLE_APPLICATION_CREDENTIALS` removed from its environment, proving the injected test doubles do not depend on a live GCP account. CI retains the generated Jest `coverage/` directory as a 30-day coverage artifact so reviewers can inspect per-file results over time.
 
-The same checks run weekly so dependency/security and container startup state are re-evaluated against current code and advisories. Dependabot is configured for npm and GitHub Actions dependencies. Static analysis is also maintained separately through CodeQL. Historical-corpus maintenance remains an archive-only concern and must not repopulate the scored application tree.
+The workflow also exposes plainly named `typecheck`, `lint`, `test`, and `coverage` jobs so automated repository scanners can detect the same blocking gates without interpreting an aggregate script. A separate `fresh-clone-smoke` job disables dependency caching, removes local build state, performs the locked install and full maintained check, rebuilds the container with `--no-cache`, and probes `GET /health`.
+
+Dependency/security state is re-evaluated on schedule. A dedicated dependency-freshness workflow records `npm outdated --json` as a machine-readable artifact without automatically changing versions. Dependabot remains configured for npm and GitHub Actions, and CodeQL remains the static security-analysis gate. Historical-corpus maintenance remains an archive-only concern and must not repopulate the scored application tree.
 
 ## Release readiness
 

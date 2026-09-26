@@ -22,6 +22,7 @@ const REQUIRED_FILES = Object.freeze([
   'docs/HISTORICAL_CORPUS_SEPARATION.md',
   'docs/RELEASE_READINESS.md',
   '.github/workflows/release.yml',
+  '.github/workflows/dependency-freshness.yml',
   '.github/dependabot.yml',
   'SECURITY.md',
   'CONTRIBUTING.md',
@@ -75,6 +76,7 @@ async function main() {
     ci,
     codeql,
     release,
+    dependencyFreshness,
     dependabot,
     classification,
     projectScope,
@@ -90,6 +92,7 @@ async function main() {
     text('.github/workflows/ci.yml'),
     text('.github/workflows/codeql.yml'),
     text('.github/workflows/release.yml'),
+    text('.github/workflows/dependency-freshness.yml'),
     text('.github/dependabot.yml'),
     json('.repo-class.json'),
     text('docs/PROJECT_SCOPE.md'),
@@ -198,14 +201,24 @@ async function main() {
   assert(/package-ecosystem:\s*github-actions/u.test(dependabot), 'Dependabot must track GitHub Actions');
   const weeklySchedules = dependabot.match(/interval:\s*weekly/gu) ?? [];
   assert(weeklySchedules.length >= 2, 'Dependabot must run weekly for npm and GitHub Actions');
+  assert(/\n  typecheck:\n/u.test(ci), 'CI must expose a plainly named typecheck job');
+  assert(/\n  lint:\n/u.test(ci), 'CI must expose a plainly named lint job');
+  assert(/\n  test:\n/u.test(ci), 'CI must expose a plainly named test job');
+  assert(/\n  coverage:\n/u.test(ci), 'CI must expose a plainly named coverage job');
+  assert(/\n  fresh-clone-smoke:\n/u.test(ci), 'CI must expose a zero-cache fresh-clone-smoke job');
   assert(/npm run typecheck/u.test(ci), 'quality workflow must enforce maintained JavaScript type-checking');
   assert(/npm run verify:surface/u.test(ci), 'quality workflow must verify the maintained/archive split');
   assert(/npm test/u.test(ci), 'quality workflow must expose the conventional npm test suite');
   assert(/npm run test:coverage/u.test(ci), 'quality workflow must enforce coverage');
+  assert(/docker compose -f docker-compose\.yml build --no-cache/u.test(ci), 'fresh-clone CI must rebuild the container without cached layers');
+  assert(/rm -rf node_modules coverage/u.test(ci), 'fresh-clone CI must remove prior local build state');
   assert(/env -u GOOGLE_APPLICATION_CREDENTIALS npm run test:coverage/u.test(ci), 'coverage tests must explicitly run without Google credential environment');
   assert(/actions\/upload-artifact@v7/u.test(ci) && /path:\s*coverage\//u.test(ci), 'quality workflow must retain Jest coverage evidence');
   assert(/docker compose -f docker-compose\.yml config --quiet/u.test(ci), 'quality workflow must validate canonical docker-compose.yml');
   assert(/docker compose up --build --detach/u.test(ci), 'quality workflow must prove container startup');
+  assert(/schedule:/u.test(dependencyFreshness), 'dependency freshness evidence must run on a schedule');
+  assert(/npm outdated --json/u.test(dependencyFreshness), 'dependency freshness workflow must inspect current direct versions');
+  assert(/actions\/upload-artifact@v7/u.test(dependencyFreshness), 'dependency freshness workflow must retain machine-readable evidence');
   assert(/pull_request:/u.test(codeql), 'CodeQL must run for pull requests');
   assert(/javascript-typescript/u.test(codeql), 'CodeQL must analyze the maintained JavaScript surface');
   assert(/workflow_dispatch:/u.test(release), 'GitHub release workflow must remain manual-only');
