@@ -1,1 +1,0 @@
-Memory upload -> GCS object persistence flow from the historical backend.

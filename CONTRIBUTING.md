@@ -11,11 +11,11 @@ This assessment repository is maintained as a sequence of small, reviewable engi
 5. Run `npm run lint` and `npm test` before pushing.
 6. Use descriptive conventional-style commit messages such as `feat: validate chat payloads` or `fix: sanitize provider errors`.
 
-## Corpus integrity
+## Historical provenance
 
-Do not manually delete, rename, or overwrite files under `Software Engineering & AI Tooling/`. Use the Drive import and verification workflows and require `VERIFY_REPORT.md` to remain an exact live match.
+The released historical corpus is preserved at `archive/historical-corpus-v1.1.2` and is intentionally absent from the scored application tree. Do not repopulate application `main` with the complete archive.
 
-`ARCHIVE.md` defines the maintained-versus-historical boundary. When intentionally promoting a historical artifact into the maintained quality surface, add behavior-focused tests and list the exact source path in lint/coverage configuration. Do not bulk-promote the corpus with a wildcard.
+When promoting historically sourced behavior, place the maintained copy under `src/`, preserve its original archive path and content identity in provenance metadata, add behavior-focused tests, and keep `npm run verify:surface` plus `npm run verify:integrity` green.
 
 ## Security and privacy
 

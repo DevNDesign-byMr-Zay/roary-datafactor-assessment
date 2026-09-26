@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const manifestPath = resolve(root, 'config/repository-surfaces.json');
-const attributesPath = resolve(root, '.gitattributes');
 
 function exactPath(value, label) {
   if (typeof value !== 'string' || !value.trim()) {
@@ -20,60 +19,95 @@ function exactPath(value, label) {
   return resolved;
 }
 
-function quotedAttributePath(path) {
-  return `"${path}"`;
+function assert(condition, message) {
+  if (!condition) throw new TypeError(message);
 }
 
-const [manifestSource, attributes] = await Promise.all([
-  readFile(manifestPath, 'utf8'),
-  readFile(attributesPath, 'utf8'),
-]);
-const manifest = JSON.parse(manifestSource);
-if (manifest.schemaVersion !== 1) throw new TypeError('surface schemaVersion must be 1');
-
-const historicalRoot = exactPath(manifest.historicalCorpusRoot, 'historicalCorpusRoot');
-if (!(await stat(historicalRoot)).isDirectory()) {
-  throw new TypeError('historicalCorpusRoot must reference a directory');
+async function pathExists(path) {
+  try {
+    await access(path);
+    return true;
+  } catch (error) {
+    if (error?.code === 'ENOENT') return false;
+    throw error;
+  }
 }
 
-const historicalPattern = `${quotedAttributePath(`${manifest.historicalCorpusRoot}/**`)} linguist-detectable=false`;
-if (!attributes.includes(historicalPattern)) {
-  throw new TypeError('historical corpus must be excluded from active language statistics');
-}
+const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+assert(manifest.schemaVersion === 2, 'surface schemaVersion must be 2');
 
 for (const [index, value] of manifest.maintainedRoots.entries()) {
   const path = exactPath(value, `maintainedRoots[${index}]`);
-  if (!(await stat(path)).isDirectory()) {
-    throw new TypeError(`maintainedRoots[${index}] must reference a directory`);
-  }
-  if (path === historicalRoot || path.startsWith(`${historicalRoot}${sep}`)) {
-    throw new TypeError('historical corpus cannot be classified as a maintained root');
-  }
+  assert((await stat(path)).isDirectory(), `maintainedRoots[${index}] must reference a directory`);
 }
 
 for (const [index, value] of manifest.maintainedEntrypoints.entries()) {
   const path = exactPath(value, `maintainedEntrypoints[${index}]`);
-  if (!(await stat(path)).isFile()) {
-    throw new TypeError(`maintainedEntrypoints[${index}] must reference a file`);
-  }
+  assert((await stat(path)).isFile(), `maintainedEntrypoints[${index}] must reference a file`);
 }
 
-const promoted = new Set();
-for (const [index, value] of manifest.promotedHistoricalArtifacts.entries()) {
-  const path = exactPath(value, `promotedHistoricalArtifacts[${index}]`);
-  if (!path.startsWith(`${historicalRoot}${sep}`)) {
-    throw new TypeError('promoted historical artifacts must remain under historicalCorpusRoot');
-  }
-  if (promoted.has(path)) throw new TypeError('promoted historical artifacts must be unique');
-  promoted.add(path);
-  await access(path);
+const archive = manifest.historicalArchive;
+assert(archive?.releaseTag === 'v1.1.2', 'historical archive release tag must remain v1.1.2');
+assert(
+  archive?.releaseCommit === '67e7a0c297451b438ed950ba743318e3f7454159',
+  'historical archive release commit drifted',
+);
+assert(
+  archive?.archiveBranch === 'archive/historical-corpus-v1.1.2',
+  'historical archive branch drifted',
+);
+assert(archive?.fileCount === 1610, 'historical archive file count must remain 1610');
+assert(archive?.totalBytes === 1731712, 'historical archive byte count drifted');
 
-  const promotedRule = `${quotedAttributePath(value)} linguist-detectable=true`;
-  if (!attributes.includes(promotedRule)) {
-    throw new TypeError(`promoted historical artifact must be detectable in repository statistics: ${value}`);
-  }
+const archiveManifestPath = exactPath(archive.manifest, 'historicalArchive.manifest');
+const archiveManifest = JSON.parse(await readFile(archiveManifestPath, 'utf8'));
+assert(archiveManifest.release_tag === archive.releaseTag, 'archive manifest release tag mismatch');
+assert(
+  archiveManifest.release_commit === archive.releaseCommit,
+  'archive manifest release commit mismatch',
+);
+assert(archiveManifest.release_tree === archive.releaseTree, 'archive manifest release tree mismatch');
+assert(
+  archiveManifest.corpus_file_count === archive.fileCount,
+  'archive manifest corpus file count mismatch',
+);
+assert(
+  archiveManifest.corpus_total_bytes === archive.totalBytes,
+  'archive manifest corpus byte count mismatch',
+);
+assert(
+  archiveManifest.canonical_inventory_sha256 === archive.canonicalInventorySha256,
+  'archive manifest inventory digest mismatch',
+);
+assert(
+  Array.isArray(archiveManifest.files) && archiveManifest.files.length === archive.fileCount,
+  'archive manifest must list every historical file',
+);
+
+const corpusRoot = exactPath(archive.corpusRootAtRelease, 'historicalArchive.corpusRootAtRelease');
+assert(
+  !(await pathExists(corpusRoot)),
+  'historical corpus must remain outside the scored application tree',
+);
+
+const archiveByPath = new Map(archiveManifest.files.map((entry) => [entry.path, entry]));
+const promoted = new Set();
+for (const [index, artifact] of manifest.promotedMaintainedArtifacts.entries()) {
+  const path = exactPath(artifact.path, `promotedMaintainedArtifacts[${index}].path`);
+  assert((await stat(path)).isFile(), `promotedMaintainedArtifacts[${index}] must reference a file`);
+  assert(
+    artifact.path.startsWith('src/promoted/'),
+    'promoted maintained artifacts must live under src/promoted',
+  );
+  assert(!promoted.has(artifact.path), 'promoted maintained artifacts must be unique');
+  promoted.add(artifact.path);
+
+  const archived = archiveByPath.get(artifact.archivePath);
+  assert(archived, `archive path missing from full corpus manifest: ${artifact.archivePath}`);
+  assert(archived.git_blob_sha1 === artifact.gitBlobSha1, 'promoted archive blob identity mismatch');
+  assert(archived.bytes === artifact.bytes, 'promoted archive byte count mismatch');
 }
 
 process.stdout.write(
-  `surface boundary verified: ${manifest.maintainedRoots.length} maintained roots, ${promoted.size} promoted historical artifacts\n`,
+  `surface boundary verified: ${manifest.maintainedRoots.length} maintained roots, ${promoted.size} promoted maintained artifacts, ${archive.fileCount} archived files externalized\n`,
 );

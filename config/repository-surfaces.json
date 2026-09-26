@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "maintainedRoots": [
     "src",
     "tests",
@@ -9,16 +9,45 @@
     "index.mjs",
     "index.test.mjs"
   ],
-  "historicalCorpusRoot": "Software Engineering & AI Tooling",
-  "promotedHistoricalArtifacts": [
-    "Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs",
-    "Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs",
-    "Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs"
+  "historicalArchive": {
+    "releaseTag": "v1.1.2",
+    "releaseCommit": "67e7a0c297451b438ed950ba743318e3f7454159",
+    "releaseTree": "77e60e4488002dee7cf5e9f839bf23b4628b931b",
+    "archiveBranch": "archive/historical-corpus-v1.1.2",
+    "manifest": "provenance/HISTORICAL_CORPUS_V1_1_2_MANIFEST.json",
+    "corpusRootAtRelease": "Software Engineering & AI Tooling",
+    "fileCount": 1610,
+    "directoryCount": 40,
+    "totalBytes": 1731712,
+    "canonicalInventorySha256": "52723960e5d5297151a48c646f21eb262324168f350acf34318fe4a60554d260"
+  },
+  "promotedMaintainedArtifacts": [
+    {
+      "path": "src/promoted/auth-middleware.mjs",
+      "archivePath": "Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs",
+      "gitBlobSha1": "f1cc6cff92b3784580910d10bdb219303eb96832",
+      "sha256": "542d8bcb97d86cd33dc4573eef71c7bffe2ed98e8f366bfaefdb27e31b6f7809",
+      "bytes": 314
+    },
+    {
+      "path": "src/promoted/cors-policy.mjs",
+      "archivePath": "Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs",
+      "gitBlobSha1": "3e97cdf62fab3ea6e769ac9be9155c725e1670f2",
+      "sha256": "d25a30f7629b21e87b779cf405ddec6f5ba7ce6c437fab4ba5647fdfb116c612",
+      "bytes": 521
+    },
+    {
+      "path": "src/promoted/sign-route.mjs",
+      "archivePath": "Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs",
+      "gitBlobSha1": "ac683ef87c219da88dcf3b8c1c52b4ff72af6da7",
+      "sha256": "a6531428bbd95a9d45e77d1bf15b499232e730bde8e6394156f92a1caaf34f74",
+      "bytes": 537
+    }
   ],
   "classification": {
     "maintainedRoots": "active-service-and-verification",
     "maintainedEntrypoints": "active-runtime-entrypoints",
-    "historicalCorpusRoot": "preserved-development-history",
-    "promotedHistoricalArtifacts": "historical-artifacts-under-active-quality-gates"
+    "historicalArchive": "immutable-released-provenance-outside-scored-tree",
+    "promotedMaintainedArtifacts": "byte-identical-maintained-copies-with-archive-lineage"
   }
 }

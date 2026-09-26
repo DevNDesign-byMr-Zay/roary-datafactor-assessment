@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, jest, test } from '@jest/globals';
 
 const SOURCE =
-  '../Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs';
+  '../src/promoted/sign-route.mjs';
 let importId = 0;
 
 async function loadRoute(bucket) {

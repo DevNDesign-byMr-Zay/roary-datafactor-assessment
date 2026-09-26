@@ -45,7 +45,7 @@ async function fixture() {
   return { root, manifestPath, artifactPath, absolute };
 }
 
-describe('promoted corpus integrity', () => {
+describe('promoted artifact integrity', () => {
   test('verifies the repository promoted assessment surface', async () => {
     const result = await verifyPromotedCorpusIntegrity();
     expect(result.ok).toBe(true);
@@ -66,7 +66,7 @@ describe('promoted corpus integrity', () => {
         requiredPaths: [artifactPath],
       }),
     ).rejects.toMatchObject({
-      message: `promoted corpus integrity drift: ${artifactPath}`,
+      message: `promoted artifact integrity drift: ${artifactPath}`,
       expected: expect.objectContaining({ sha256: expect.any(String) }),
       observed: expect.objectContaining({ sha256: expect.any(String) }),
     });
@@ -84,7 +84,7 @@ describe('promoted corpus integrity', () => {
         manifestPath,
         requiredPaths: [artifactPath],
       }),
-    ).rejects.toThrow('promoted corpus integrity manifest contains duplicate paths');
+    ).rejects.toThrow('promoted artifact integrity manifest contains duplicate paths');
   });
 
   test('rejects manifest surface changes that silently drop promoted artifacts', async () => {
@@ -97,7 +97,7 @@ describe('promoted corpus integrity', () => {
         requiredPaths: [artifactPath, 'fixture/missing.mjs'],
       }),
     ).rejects.toThrow(
-      'promoted corpus integrity manifest does not match required surface',
+      'promoted artifact integrity manifest does not match required surface',
     );
   });
 
@@ -111,6 +111,6 @@ describe('promoted corpus integrity', () => {
         manifestPath,
         requiredPaths: [artifactPath],
       }),
-    ).rejects.toThrow('promoted corpus integrity manifest schema is invalid');
+    ).rejects.toThrow('promoted artifact integrity manifest schema is invalid');
   });
 });

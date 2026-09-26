@@ -1,17 +1,14 @@
-# Drive Import Report
+# Historical Corpus Import Snapshot
+
+The complete deidentified historical corpus was imported and verified before release `v1.1.2`.
 
 - Source folder ID: `1oUiGwTRyBuDRNsy6bRyx7v78d94ASEYs`
-- Recursive Drive entries discovered by the latest attempted refresh: **1610**
-- Assessment-relevant source/configuration entries selected: **1610**
-- Files downloaded successfully during that attempt: **1609**
-- Transient direct-download failures during that attempt: **1**
-- Previously verified repository file restored byte-for-byte from Git history: **1**
-- Final repository corpus after repair: **1610 / 1610**
-- Unresolved repository gaps: **0**
-- Non-source/binary entries excluded: **0**
-- Files in duplicate-path groups preserved with Drive-ID suffixes: **615**
-- Direct-download workers: **32**
+- Released corpus files: **1,610**
+- Released corpus bytes: **1,731,712**
+- Release commit: `67e7a0c297451b438ed950ba743318e3f7454159`
+- Preservation branch: `archive/historical-corpus-v1.1.2`
+- Unresolved repository gaps at release: **0**
 
-The latest legacy refresh encountered a transient HTTP 503 while fetching one source file. That older importer deleted the live mirror before downloads completed, so the blocked fetch removed a previously valid repository file. The file has been restored from its exact prior Git blob; no source was reconstructed or regenerated.
+The future scored application tree intentionally omits the physical corpus. Archive refresh automation targets the archive branch only; it must not repopulate application `main`.
 
-Future refreshes are transactional. All selected files download into a temporary tree first. If any fetch is blocked, the workflow fails and the existing verified corpus remains untouched. A complete refresh is published to a dedicated automation branch and reviewed through normal pull-request CI and CodeQL before it can reach `main`.
+See `provenance/HISTORICAL_CORPUS_V1_1_2_MANIFEST.json` for the complete released path/blob/size inventory.

@@ -1,53 +1,57 @@
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { test } from '@jest/globals';
 import assert from 'node:assert/strict';
 
-const ROOT = 'Software Engineering & AI Tooling/';
-const PROMOTED = Object.freeze([
-  "Software Engineering & AI Tooling/Authentication & Security/Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs",
-  "Software Engineering & AI Tooling/API Foundations/Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs",
-  "Software Engineering & AI Tooling/Storage & File Services/Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs"
-]);
-
+const CORPUS_ROOT = new URL('../Software Engineering & AI Tooling/', import.meta.url);
 const PACKAGE = new URL('../package.json', import.meta.url);
 const JEST_CONFIG = new URL('../jest.config.mjs', import.meta.url);
 const ESLINT_CONFIG = new URL('../eslint.config.js', import.meta.url);
+const SURFACES = new URL('../config/repository-surfaces.json', import.meta.url);
 const ARCHIVE = new URL('../ARCHIVE.md', import.meta.url);
 
-function corpusPaths(source) {
-  return [...source.matchAll(/['"]((?:Software Engineering & AI Tooling\/)[^'"]+)['"]/gu)]
-    .map((match) => match[1]);
-}
+const PROMOTED = Object.freeze([
+  'src/promoted/auth-middleware.mjs',
+  'src/promoted/cors-policy.mjs',
+  'src/promoted/sign-route.mjs',
+]);
 
-test('coverage measures only exact promoted corpus artifacts', async () => {
-  const source = await readFile(JEST_CONFIG, 'utf8');
-  const paths = corpusPaths(source);
-
-  assert.deepEqual(paths, PROMOTED);
-  assert.ok(paths.every((path) => !path.includes('*')));
-  assert.match(source, /'src\/\*\*\/\*\.mjs'/u);
+test('historical corpus is externalized from the scored application tree', async () => {
+  await assert.rejects(access(CORPUS_ROOT), (error) => error?.code === 'ENOENT');
 });
 
-test('lint does not bulk-promote the historical corpus', async () => {
+test('coverage measures the maintained source tree', async () => {
+  const source = await readFile(JEST_CONFIG, 'utf8');
+  assert.match(source, /'src\/\*\*\/\*\.mjs'/u);
+  assert.doesNotMatch(source, /Software Engineering & AI Tooling/u);
+});
+
+test('lint targets maintained promoted copies without archive paths', async () => {
   const pkg = JSON.parse(await readFile(PACKAGE, 'utf8'));
   const eslint = await readFile(ESLINT_CONFIG, 'utf8');
   const lint = pkg?.scripts?.lint ?? '';
 
+  assert.doesNotMatch(lint, /Software Engineering & AI Tooling/u);
+  assert.doesNotMatch(eslint, /Software Engineering & AI Tooling/u);
   for (const path of PROMOTED) {
-    assert.ok(lint.includes(path), `lint script must include exact promoted artifact: ${path}`);
-    assert.ok(eslint.includes(path), `ESLint config must include exact promoted artifact: ${path}`);
+    assert.ok(eslint.includes(path), `ESLint config must retain promoted globals for ${path}`);
   }
-
-  assert.doesNotMatch(lint, /Software Engineering & AI Tooling\/[^'"]*\*/u);
-  assert.ok(corpusPaths(eslint).every((path) => !path.includes('*')));
 });
 
-test('archive contract documents the same promoted paths', async () => {
-  const source = await readFile(ARCHIVE, 'utf8');
+test('archive contract binds maintained copies to immutable released provenance', async () => {
+  const surfaces = JSON.parse(await readFile(SURFACES, 'utf8'));
+  const archive = await readFile(ARCHIVE, 'utf8');
 
-  assert.match(source, /Historical Corpus Boundary/u);
-  assert.match(source, /Historical\/versioned provenance/u);
-  for (const path of PROMOTED) {
-    assert.ok(source.includes(`${ROOT}${path.slice(ROOT.length)}`));
-  }
+  assert.equal(surfaces.schemaVersion, 2);
+  assert.equal(surfaces.historicalArchive.releaseTag, 'v1.1.2');
+  assert.equal(
+    surfaces.historicalArchive.releaseCommit,
+    '67e7a0c297451b438ed950ba743318e3f7454159',
+  );
+  assert.equal(surfaces.historicalArchive.fileCount, 1610);
+  assert.deepEqual(
+    surfaces.promotedMaintainedArtifacts.map(({ path }) => path),
+    PROMOTED,
+  );
+  assert.match(archive, /archive\/historical-corpus-v1\.1\.2/u);
+  assert.match(archive, /1,610/u);
 });

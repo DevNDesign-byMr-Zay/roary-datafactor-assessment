@@ -2,7 +2,7 @@
 
 ROARY is a maintained Node.js conversational-AI **application service** with validated HTTP request boundaries, Vertex AI integration, Firestore-backed conversation history, structured observability, deterministic tests, and reproducible container/release verification.
 
-The active engineering surface lives in `src/`, `tests/`, `scripts/`, `index.mjs`, and `index.test.mjs`. A complete deidentified historical engineering corpus is preserved separately under `Software Engineering & AI Tooling/` for provenance; it is not treated as homogeneous maintained production code.
+The active engineering surface lives in `src/`, `tests/`, `scripts/`, `index.mjs`, and `index.test.mjs`. The complete deidentified historical engineering corpus is preserved outside the scored application tree at release `v1.1.2` and branch `archive/historical-corpus-v1.1.2`; its 1,610 released paths and Git blob identities are recorded in `provenance/HISTORICAL_CORPUS_V1_1_2_MANIFEST.json`.
 
 ## Maintained application architecture
 
@@ -21,26 +21,26 @@ The maintained reference service is intentionally layered instead of monolithic:
 
 The application factory accepts cloud/database dependencies, so importing or testing the service does **not** require Google Application Default Credentials and does not bind a network port. Production cloud construction uses `@google/genai` for Vertex AI access and `@google-cloud/firestore` directly rather than the broader Firebase Admin dependency tree.
 
-## Historical corpus completeness
+## Historical corpus provenance
 
-The mirrored corpus lives under `Software Engineering & AI Tooling/` and spans application bootstrap, reliability and infrastructure, AI model integration, storage and file services, cloud deployment, authentication and security, API foundations, full-stack workflows, backend engineering, and frontend engineering.
+The complete released corpus remains recoverable from `archive/historical-corpus-v1.1.2`, which points directly at release commit `67e7a0c297451b438ed950ba743318e3f7454159`. The release contains **1,610 corpus files / 40 directories / 1,731,712 bytes** under the historical corpus root.
 
-`VERIFY_REPORT.md` is generated from a fresh recursive probe of the source Drive folder. The current verification is **1,610 expected / 1,610 present, 0 missing, 0 unexpected**.
+The future scored application tree does not carry those 1,610 historical snapshots as active source. The canonical path/blob/size inventory is committed under `provenance/`, and `npm run verify:surface` fails if the archive contract drifts or the physical corpus reappears in the application tree.
 
 ## Maintained and measured surface
 
-The quality surface is deliberately broader than the reference service. In addition to every module under `src/`, three authentic final/canonical corpus artifacts are promoted into the same lint, test, and coverage gates:
+The quality surface includes every module under `src/`, including three byte-identical promoted copies whose original released paths remain recorded in provenance metadata:
 
-- **Authentication & Security** — `Token Authentication Regression/06 FINAL CORRECTED CODE/auth_middleware.mjs`
-- **API Foundations** — `Express Gemini Backend Foundation/06 FINAL CORRECTED CODE/cors_policy.mjs`
-- **Storage & File Services** — `Signed URL File Access/06 FINAL CORRECTED CODE/sign_route.mjs`
+- **Authentication & Security** — `src/promoted/auth-middleware.mjs`
+- **API Foundations** — `src/promoted/cors-policy.mjs`
+- **Storage & File Services** — `src/promoted/sign-route.mjs`
 
-These corpus tests cover authorization success/failure, fail-closed configuration, preflight behavior, CORS allow/deny/error propagation, signed-read URL generation, validation, missing configuration, and signing failures. The historical/versioned corpus remains provenance material and is not bulk-rewritten or falsely labeled as maintained production code. `ARCHIVE.md` defines and regression-protects this boundary, including the exact promoted corpus paths that participate in maintained lint and coverage.
+These promoted copies retain the exact released Git blob identities and SHA-256 values of their archived sources. Their tests cover authorization success/failure, fail-closed configuration, preflight behavior, CORS allow/deny/error propagation, signed-read URL generation, validation, missing configuration, and signing failures.
 
 
 ### Machine-readable repository surfaces
 
-`config/repository-surfaces.json` declares the active runtime/test roots separately from the preserved historical corpus and lists only the exact historical artifacts intentionally promoted into blocking quality gates. `npm run verify:surface` validates that split in CI, while `npm run typecheck` applies a staged JavaScript type-check gate to maintained runtime modules without treating the historical archive as homogeneous production code.
+`config/repository-surfaces.json` declares the active runtime/test roots, the immutable historical archive reference, and the byte-identical maintained copies promoted into blocking quality gates. `npm run verify:surface` validates that split in CI and requires the physical corpus to stay outside the scored application tree.
 
 ## Fresh-clone setup
 
@@ -53,7 +53,7 @@ npm ci
 npm run check
 ```
 
-`npm run check` now mirrors the complete non-container maintained verification lane: staged JavaScript type-checking, maintained/historical surface validation, lint, promoted-corpus integrity, release-readiness verification, enforced Jest coverage, and the deterministic renewable-evidence demo. The global coverage floor is 85% for statements/functions/lines and 75% for branches across the measured surface.
+`npm run check` now mirrors the complete non-container maintained verification lane: staged JavaScript type-checking, maintained/archive surface validation, lint, promoted-artifact integrity, release-readiness verification, enforced Jest coverage, and the deterministic renewable-evidence demo. The global coverage floor is 85% for statements/functions/lines and 75% for branches across the measured surface.
 
 For production execution, copy `.env.example` values into your deployment environment and configure Google Application Default Credentials. No credential files belong in this repository.
 
@@ -139,11 +139,11 @@ curl --fail http://127.0.0.1:8080/health
 
 The coverage suite is explicitly executed with `GOOGLE_APPLICATION_CREDENTIALS` removed from its environment, proving the injected test doubles do not depend on a live GCP account. CI retains the generated Jest `coverage/` directory as a 30-day coverage artifact so reviewers can inspect per-file results over time.
 
-The same checks run weekly so dependency/security and container startup state are re-evaluated against current code and advisories. Dependabot is configured for npm and GitHub Actions dependencies. Static analysis is also maintained separately through CodeQL. Drive-corpus import and verification workflows remain separate maintenance concerns.
+The same checks run weekly so dependency/security and container startup state are re-evaluated against current code and advisories. Dependabot is configured for npm and GitHub Actions dependencies. Static analysis is also maintained separately through CodeQL. Historical-corpus maintenance remains an archive-only concern and must not repopulate the scored application tree.
 
 ## Release readiness
 
-`npm run verify:release` checks the release metadata and provenance prerequisites that should be true before a semantic release is cut: stable package versioning, required maintained scripts, exact corpus verification, zero unresolved import failures, documented runtime environment keys, pull-request quality gates, container startup proof, and CodeQL coverage.
+`npm run verify:release` checks the release metadata and provenance prerequisites that should be true before a semantic release is cut: stable package versioning, required maintained scripts, immutable archive-manifest verification, documented runtime environment keys, pull-request quality gates, container startup proof, and CodeQL coverage.
 
 See `docs/RELEASE_READINESS.md` for the full release discipline. The document intentionally distinguishes a verified release-ready commit from an actual Git tag or hosted release; tags should represent real milestones and should not be manufactured for history.
 

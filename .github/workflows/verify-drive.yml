@@ -1,4 +1,4 @@
-name: Verify live Drive corpus
+name: Verify archived Drive corpus
 
 on:
   workflow_dispatch:
@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Check out current main
+      - name: Check out immutable archive baseline
         uses: actions/checkout@v7
         with:
-          ref: main
+          ref: archive/historical-corpus-v1.1.2
           fetch-depth: 0
 
       - name: Install Drive probe dependency
@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          branch="automation/drive-verification-report"
+          branch="automation/archive-drive-verification-report"
 
           git add -- VERIFY_REPORT.md VERIFY_REPORT.json
           if git diff --cached --quiet; then
@@ -51,11 +51,11 @@ jobs:
           fi
           git push --force-with-lease origin HEAD:"$branch"
 
-          pr_number="$(gh pr list --head "$branch" --base main --state open --json number --jq '.[0].number // empty')"
-          body="Automated live-corpus verification completed with an exact match. The changed verification report is submitted through normal review so assessment CI and CodeQL validate the exact report branch before merge. Verification mismatches fail before this publication step and leave main untouched."
+          pr_number="$(gh pr list --head "$branch" --base archive/historical-corpus-v1.1.2 --state open --json number --jq '.[0].number // empty')"
+          body="Automated live-corpus verification completed with an exact match. The changed verification report is submitted through normal review so assessment CI and CodeQL validate the exact report branch before merge. Verification mismatches fail before this publication step and leave the application main branch untouched."
 
           if [ -n "$pr_number" ]; then
-            gh pr edit "$pr_number" --title "Refresh live corpus verification report" --body "$body"
+            gh pr edit "$pr_number" --title "Refresh archived corpus verification report" --body "$body"
           else
-            gh pr create --base main --head "$branch" --title "Refresh live corpus verification report" --body "$body"
+            gh pr create --base archive/historical-corpus-v1.1.2 --head "$branch" --title "Refresh live corpus verification report" --body "$body"
           fi
