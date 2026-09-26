@@ -1,0 +1,44 @@
+name: dependency-freshness
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 11 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-freshness:
+    name: dependency-freshness
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+      - name: Capture direct dependency freshness
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          npm outdated --json > dependency-outdated.json
+          status=$?
+          set -e
+          if [ "$status" -gt 1 ]; then
+            echo "npm outdated failed with status $status"
+            exit "$status"
+          fi
+          node -e "JSON.parse(require('node:fs').readFileSync('dependency-outdated.json','utf8') || '{}')"
+      - name: Retain dependency freshness evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependency-freshness-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 30
+          path: dependency-outdated.json
