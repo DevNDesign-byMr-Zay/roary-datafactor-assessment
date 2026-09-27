@@ -1,6 +1,19 @@
 {
   "name": "conversational-ai-service-assessment",
   "version": "1.1.2",
+  "description": "ROARY Conversational AI Node.js application service with validated HTTP request boundaries, Vertex AI integration, Firestore conversation history, and structured observability.",
+  "keywords": [
+    "conversational-ai",
+    "express",
+    "vertex-ai",
+    "firestore",
+    "nodejs",
+    "application-service"
+  ],
+  "main": "index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
   "private": true,
   "type": "module",
   "scripts": {
