@@ -25,4 +25,33 @@ export function shouldPreferRenewableExecution(policy, { renewableAvailable = fa
   return renewableAvailable && policy.mode === 'balanced';
 }
 
+export function chooseExecutionStrategy({
+  renewableAvailability = 0,
+  urgency = 'normal',
+} = {}) {
+  const renewableAvailable = renewableAvailability >= 0.75;
+  const policy = {
+    mode: 'balanced',
+  };
+
+  if (urgency === 'critical') {
+    return Object.freeze({
+      strategy: 'immediate',
+      reason: 'latency requirement prioritized',
+    });
+  }
+
+  if (shouldPreferRenewableExecution(policy, { renewableAvailable })) {
+    return Object.freeze({
+      strategy: 'renewable-preferred',
+      reason: 'flexible workload shifted toward cleaner energy availability',
+    });
+  }
+
+  return Object.freeze({
+    strategy: 'immediate',
+    reason: 'latency requirement prioritized',
+  });
+}
+
 export const RENEWABLE_POLICY_MODES = VALID_MODES;

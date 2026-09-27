@@ -1,14 +1,14 @@
 import { describe, expect, test } from '@jest/globals';
 import {
+  chooseExecutionStrategy,
   createRenewablePolicy,
   shouldPreferRenewableExecution,
-} from './renewable-policy.mjs';
-import { chooseExecutionStrategy } from './renewablePolicy.js';
-import { selectExecutionMode } from './renewable-workload-policy.mjs';
-import { classifyWorkload } from './workload-classifier.mjs';
-import { createDecisionTrace } from './decision-trace.mjs';
-import { createRenewableDecision } from './renewable-decision-result.mjs';
-import { summarizeWorkloadDecision } from './workload-decision-summary.mjs';
+} from '../../src/services/renewable-policy.mjs';
+import { selectExecutionMode } from '../../src/services/renewable-workload-policy.mjs';
+import { classifyWorkload } from '../../src/services/workload-classifier.mjs';
+import { createDecisionTrace } from '../../src/services/decision-trace.mjs';
+import { createRenewableDecision } from '../../src/services/renewable-decision-result.mjs';
+import { summarizeWorkloadDecision } from '../../src/services/workload-decision-summary.mjs';
 
 describe('canonical renewable policy', () => {
   test('prefers renewable execution only when policy and runtime evidence allow it', () => {
