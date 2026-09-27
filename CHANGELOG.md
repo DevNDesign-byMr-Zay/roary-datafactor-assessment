@@ -1,13 +1,12 @@
 # Changelog
 
-## Unreleased
+## Unreleased — pre-rescore detector hardening
 
 ### Changed
 
 - Externalized the complete 1,610-file historical corpus from the future scored application tree while preserving the exact released tree at `archive/historical-corpus-v1.1.2` and recording every released path/blob/size identity under `provenance/`.
 - Promoted the three actively tested historical artifacts into byte-identical maintained copies under `src/promoted/`, with original archive paths and hashes retained in integrity metadata.
 - Added plainly named lint/typecheck/test/coverage CI jobs, a zero-cache fresh-clone/container proof, dedicated health/error-hook tests, and scheduled dependency-freshness evidence.
- — pre-rescore detector hardening
 
 ### Added
 
@@ -16,7 +15,7 @@
 
 ### Changed
 
-- Current package candidate: `1.1.2`. The `v1.1.1` release is the latest hosted milestone; this candidate is not published until the gated manual release workflow publishes it.
+- Current package candidate: `1.1.3`. The `v1.1.2` release is the latest hosted milestone; this candidate is not published until the gated manual release workflow publishes it.
 
 ## 1.1.1 — 2026-09-24 — post-release hardening
 
