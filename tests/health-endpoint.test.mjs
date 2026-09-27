@@ -15,7 +15,7 @@ test('GET /health exposes the documented conventional health contract', async ()
     project: 'assessment-project',
     location: 'us-central1',
     modelName: 'gemini-2.5-flash',
-    serviceVersion: '1.1.2',
+    serviceVersion: '1.1.3',
     startedAt: 2_000,
     healthNowFn: () => 7_000,
   });
@@ -27,7 +27,7 @@ test('GET /health exposes the documented conventional health contract', async ()
     ok: true,
     status: 'ok',
     service: 'conversational-ai-service',
-    version: '1.1.2',
+    version: '1.1.3',
     uptimeSeconds: 5,
     project: 'assessment-project',
     location: 'us-central1',
