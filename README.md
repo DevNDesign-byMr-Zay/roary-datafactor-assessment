@@ -21,6 +21,32 @@ The maintained reference service is intentionally layered instead of monolithic:
 
 The application factory accepts cloud/database dependencies, so importing or testing the service does **not** require Google Application Default Credentials and does not bind a network port. Production cloud construction uses `@google/genai` for Vertex AI access and `@google-cloud/firestore` directly rather than the broader Firebase Admin dependency tree.
 
+### Holographic interaction subsystem (`src/holographic/`)
+
+The holographic subsystem provides spatial multi-surface frame orchestration, interaction session management, and rendering dispatch verification for ROARY's conversational-AI runtime.
+
+- **Purpose**: Manages multi-surface display packets, spatial interaction sessions, frame dispatch receipts, and multi-surface rendering calibration.
+- **Runtime integration**: Interfaces enter the application service via surface session coordinators and advisory orchestration adapters during conversational AI interaction flows, enabling spatial frame verification and multi-surface output.
+- **Module-to-test mapping**:
+  - `src/holographic/adapters.mjs` → `tests/holographic/public-api.integration.test.mjs`, `tests/holographic/public-session-flow.test.mjs`
+  - `src/holographic/batch-failure-evidence.mjs` → `tests/holographic/batch-failure-evidence.test.mjs`
+  - `src/holographic/calibration.mjs` → `tests/holographic/calibration.test.mjs`, `tests/holographic/calibrated-dispatch.test.mjs`
+  - `src/holographic/contracts.mjs` → `tests/holographic/contracts.test.mjs`, `tests/holographic/inherited-operation-boundary.test.mjs`
+  - `src/holographic/dispatch-batch-receipt.mjs` → `tests/holographic/dispatch-batch-receipt.test.mjs`
+  - `src/holographic/display-dispatch.mjs` → `tests/holographic/display-dispatch-fingerprint.test.mjs`
+  - `src/holographic/display-session.mjs` → `tests/holographic/display-session.test.mjs`, `tests/holographic/display-session-integration.test.mjs`
+  - `src/holographic/executor.mjs` → `tests/holographic/executor.test.mjs`
+  - `src/holographic/index.mjs` → `tests/holographic/public-api.integration.test.mjs`
+  - `src/holographic/interaction-session.mjs` → `tests/holographic/interaction-session.integration.test.mjs`
+  - `src/holographic/interaction.mjs` → `tests/holographic/interaction.test.mjs`
+  - `src/holographic/planner.mjs` → `tests/holographic/planner.test.mjs`
+  - `src/holographic/runtime.mjs` → `tests/holographic/runtime.test.mjs`, `tests/holographic/renderer-session-safety.test.mjs`
+  - `src/holographic/scene-packet.mjs` → `tests/holographic/scene-packet.test.mjs`
+  - `src/holographic/surface-dispatch.mjs` → `tests/holographic/surface-dispatch.test.mjs`, `tests/holographic/public-surface-dispatch.test.mjs`
+  - `src/holographic/surface-session.mjs` → `tests/holographic/surface-session.test.mjs`, `tests/holographic/surface-session-integrity.test.mjs`
+  - `src/holographic/verified-dispatch-record.mjs` → `tests/holographic/verified-dispatch-record.test.mjs`
+  - `src/holographic/verified-multi-surface-dispatch.mjs` → `tests/holographic/verified-multi-surface-dispatch.test.mjs`, `tests/holographic/verified-multi-surface-preflight.test.mjs`, `tests/holographic/multi-surface-dispatch.test.mjs`
+
 ## Historical corpus provenance
 
 The complete released corpus remains recoverable from `archive/historical-corpus-v1.1.2`, which points directly at release commit `67e7a0c297451b438ed950ba743318e3f7454159`. The release contains **1,610 corpus files / 40 directories / 1,731,712 bytes** under the historical corpus root.
