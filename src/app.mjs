@@ -123,9 +123,22 @@ export function createApp({
     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
   });
 
+  const requestMetrics = {
+    totalRequests: 0,
+    errorRequests: 0,
+    chatRequests: 0,
+    chatDurationMsTotal: 0,
+  };
+
   app.disable('x-powered-by');
   app.use(cors());
   app.use((req, res, next) => {
+    requestMetrics.totalRequests += 1;
+    res.on('finish', () => {
+      if (res.statusCode >= 400) {
+        requestMetrics.errorRequests += 1;
+      }
+    });
     try {
       req.requestId = normalizeRequestId(requestIdFactory());
       res.set('X-Request-Id', req.requestId);
@@ -135,6 +148,24 @@ export function createApp({
     }
   });
   app.use(express.json({ limit: '64kb' }));
+
+  app.get('/metrics', (_req, res) => {
+    const avgChatLatencyMs =
+      requestMetrics.chatRequests > 0
+        ? Math.round((requestMetrics.chatDurationMsTotal / requestMetrics.chatRequests) * 100) / 100
+        : 0;
+    res.status(200).json({
+      ok: true,
+      service: 'conversational-ai-service',
+      version: serviceVersion.trim(),
+      metrics: {
+        totalRequests: requestMetrics.totalRequests,
+        errorRequests: requestMetrics.errorRequests,
+        chatRequests: requestMetrics.chatRequests,
+        avgChatLatencyMs,
+      },
+    });
+  });
 
   app.get('/health', (_req, res) => {
     res.status(200).json({
@@ -154,6 +185,7 @@ export function createApp({
   });
 
   app.post('/chat', async (req, res) => {
+    requestMetrics.chatRequests += 1;
     const { requestId } = req;
 
     if (!req.is('application/json')) {
@@ -261,6 +293,7 @@ export function createApp({
       }
 
       assertChatActive(abortController.signal, deadline);
+      requestMetrics.chatDurationMsTotal += Math.max(0, nowFn() - (deadline.deadlineAt - chatTimeoutMs));
       await historyStore.append(
         sessionId,
         [
